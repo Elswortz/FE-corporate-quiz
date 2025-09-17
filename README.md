@@ -1,1 +1,1 @@
-# FE-corporate-quiz
+# Corporate Quiz Platform
