@@ -1,12 +1,25 @@
-import { Button, Typography, Container } from '@mui/material';
+import { Route, Routes } from 'react-router-dom';
+
+import AppShell from './layouts/AppShell';
+
+import About from './pages/About';
+import Users from './pages/Users';
+import UserProfile from './pages/UserProfile';
+import Companies from './pages/Companies';
+import CompanyProfile from './pages/CompanyProfile';
 
 function App() {
   return (
     <>
-      <Container maxWidth="lg">
-        <Typography variant="h1">Welcome to Corporate Quiz Platform starting page!</Typography>
-        <Button variant="contained">Lets start</Button>
-      </Container>
+      <Routes>
+        <Route path="/" element={<AppShell />}>
+          <Route index element={<About />} />
+          <Route path="users" element={<Users />} />
+          <Route path="users/:userId" element={<UserProfile />} />
+          <Route path="companies" element={<Companies />} />
+          <Route path="companies/:companyId" element={<CompanyProfile />} />
+        </Route>
+      </Routes>
     </>
   );
 }
