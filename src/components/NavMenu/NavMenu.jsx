@@ -1,22 +1,23 @@
-import { Toolbar, AppBar, Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 function NavMenu() {
+  const { t } = useTranslation();
+
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <Button component={NavLink} to="/" color="inherit">
-          About
-        </Button>
-        <Button component={NavLink} to="/users" color="inherit">
-          Users
-        </Button>
-        <Button component={NavLink} to="/companies" color="inherit">
-          Companies
-        </Button>
-      </Toolbar>
-    </AppBar>
+    <Box display="flex" gap={2}>
+      <Button component={NavLink} to="/" color="inherit">
+        {t('nav1')}
+      </Button>
+      <Button component={NavLink} to="/users" color="inherit">
+        {t('nav2')}
+      </Button>
+      <Button component={NavLink} to="/companies" color="inherit">
+        {t('nav3')}
+      </Button>
+    </Box>
   );
 }
 
