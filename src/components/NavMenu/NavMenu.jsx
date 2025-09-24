@@ -9,13 +9,13 @@ function NavMenu() {
   return (
     <Box display="flex" gap={2}>
       <Button component={NavLink} to="/" color="inherit">
-        {t('nav1')}
+        {t('navigation.nav1')}
       </Button>
       <Button component={NavLink} to="/users" color="inherit">
-        {t('nav2')}
+        {t('navigation.nav2')}
       </Button>
       <Button component={NavLink} to="/companies" color="inherit">
-        {t('nav3')}
+        {t('navigation.nav3')}
       </Button>
     </Box>
   );

@@ -1,0 +1,11 @@
+{
+  "navigation": {
+    "nav1": "About",
+    "nav2": "Users",
+    "nav3": "Companies"
+  },
+  "authButtons": {
+    "loginBtn": "Login",
+    "registerBtn": "Registration"
+  }
+}

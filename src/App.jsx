@@ -8,7 +8,16 @@ import UserProfile from './pages/UserProfile';
 import Companies from './pages/Companies';
 import CompanyProfile from './pages/CompanyProfile';
 
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+
 function App() {
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    i18n.changeLanguage(localStorage.getItem('lang') || 'en');
+  }, []);
+
   return (
     <>
       <Routes>

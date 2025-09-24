@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Select, MenuItem, FormControl, Box } from '@mui/material';
+import { useEffect } from 'react';
 
 const languages = {
   en: { flag: '🇬🇧', label: 'English' },
@@ -9,8 +10,12 @@ const languages = {
 function LangSelector() {
   const { i18n } = useTranslation();
 
+  console.log(i18n);
+
   const handleChange = e => {
-    i18n.changeLanguage(e.target.value);
+    const newLang = e.target.value;
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('lang', newLang);
   };
 
   return (

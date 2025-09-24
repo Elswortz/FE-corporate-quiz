@@ -5,9 +5,9 @@ const AuthNav = () => {
   const { t } = useTranslation();
   return (
     <Box>
-      <Button color="inherit">{t('loginBtn')}</Button>
+      <Button color="inherit">{t('authButtons.loginBtn')}</Button>
       <Button variant="outlined" color="inherit">
-        {t('registerBtn')}
+        {t('authButtons.registerBtn')}
       </Button>
     </Box>
   );
