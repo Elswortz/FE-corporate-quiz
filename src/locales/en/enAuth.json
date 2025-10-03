@@ -1,0 +1,19 @@
+{
+  "formFields": {
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "E-mail",
+    "password": "Password"
+  },
+  "buttons": {
+    "registerBtn": "Registration",
+    "loginBtn": "Login",
+    "googleBtn": "Sign in with Google",
+    "azureBtn": "Sign in with Azure"
+  },
+  "text": {
+    "loginTitle": "Login to account",
+    "registerTitle": "Account registration",
+    "or": "OR"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "formFields": {
+    "firstName": "Ім'я",
+    "lastName": "Призвіще",
+    "email": "Електронна адреса",
+    "password": "Пароль"
+  },
+  "buttons": {
+    "registerBtn": "Реєстрація",
+    "loginBtn": "Вхід",
+    "googleBtn": "Вхід за допомогою Google",
+    "azureBtn": "Вхід за допомогою Azure"
+  },
+  "text": {
+    "loginTitle": "Вхід в аккаунт",
+    "registerTitle": "Реєстрація аккаунта",
+    "or": "АБО"
+  }
+}
