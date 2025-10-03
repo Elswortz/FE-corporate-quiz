@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 function NavMenu() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('header');
 
   return (
     <Box display="flex" gap={2}>

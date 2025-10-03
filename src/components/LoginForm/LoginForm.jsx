@@ -1,22 +1,18 @@
 import { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import * as Yup from 'yup';
-import AlterLogin from '../AlterLogin/AlterLogin';
 import { useTranslation } from 'react-i18next';
+import AlterLogin from '../AlterLogin/AlterLogin';
 
 const schema = Yup.object().shape({
-  firstName: Yup.string().required('Введите имя'),
-  lastName: Yup.string().required('Введите фамилию'),
   email: Yup.string().email('Некорректный e-mail').required('Введите e-mail'),
   password: Yup.string()
     .min(6, 'Пароль должен быть не менее 6 символов')
     .required('Введите пароль'),
 });
 
-const RegistrationForm = () => {
+const LoginForm = () => {
   const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
     email: '',
     password: '',
   });
@@ -34,7 +30,7 @@ const RegistrationForm = () => {
       await schema.validate(form, { abortEarly: false });
       setErrors({});
 
-      // логика регистрации
+      // логика логина
     } catch (validationError) {
       const newErrors = {};
       validationError.inner.forEach(err => {
@@ -57,26 +53,8 @@ const RegistrationForm = () => {
       }}
     >
       <Typography variant="h5" align="center" gutterBottom>
-        {t('text.registerTitle')}
+        {t('text.loginTitle')}
       </Typography>
-      <TextField
-        label={t('formFields.firstName')}
-        name="firstName"
-        value={form.firstName}
-        onChange={handleChange}
-        required
-        error={!!errors.firstName}
-        helperText={errors.firstName}
-      />
-      <TextField
-        label={t('formFields.lastName')}
-        name="lastName"
-        value={form.lastName}
-        onChange={handleChange}
-        required
-        error={!!errors.lastName}
-        helperText={errors.lastName}
-      />
       <TextField
         label={t('formFields.email')}
         name="email"
@@ -98,11 +76,11 @@ const RegistrationForm = () => {
         helperText={errors.password}
       />
       <Button type="submit" variant="contained" color="primary">
-        {t('buttons.registerBtn')}
+        {t('buttons.loginBtn')}
       </Button>
       <AlterLogin />
     </Box>
   );
 };
 
-export default RegistrationForm;
+export default LoginForm;

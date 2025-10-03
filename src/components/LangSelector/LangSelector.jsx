@@ -8,7 +8,7 @@ const languages = {
 };
 
 function LangSelector() {
-  const { i18n } = useTranslation();
+  const { i18n } = useTranslation('header');
 
   console.log(i18n);
 
