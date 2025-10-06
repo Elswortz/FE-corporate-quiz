@@ -1,9 +1,10 @@
 const initialState = {
   user: null,
-  token: null,
+  accessToken: null,
   refreshToken: null,
-  isLoggedIn: false,
+  isAuthenticated: false,
   isLoading: false,
+  error: null,
 };
 
 export default initialState;

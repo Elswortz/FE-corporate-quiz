@@ -1,5 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
 import { PrivateRoute, RestrictedRoute } from './utils';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserProfile } from './store/auth/operations';
+import { setAuthTokens, logOut } from './store/auth/slice';
 
 import AppShell from './layouts/AppShell';
 
@@ -16,10 +19,28 @@ import { useTranslation } from 'react-i18next';
 
 function App() {
   const { i18n } = useTranslation();
+  const dispatch = useDispatch();
+  const { isLoading, user } = useSelector(state => state.auth);
 
   useEffect(() => {
     i18n.changeLanguage(localStorage.getItem('lang') || 'en');
-  }, []);
+
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (accessToken && refreshToken) {
+      dispatch(setAuthTokens({ accessToken, refreshToken }));
+      dispatch(getUserProfile())
+        .unwrap()
+        .catch(() => {
+          dispatch(logOut());
+        });
+    }
+  }, [dispatch, i18n]);
+
+  if (isLoading && !user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
