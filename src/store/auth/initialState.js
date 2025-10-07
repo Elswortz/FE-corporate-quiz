@@ -1,9 +1,9 @@
 const initialState = {
-  user: null,
-  token: null,
-  refreshToken: null,
-  isLoggedIn: false,
+  accessToken: localStorage.getItem('accessToken') || null,
+  refreshToken: localStorage.getItem('refreshToken') || null,
+  isAuthenticated: !!localStorage.getItem('accessToken'),
   isLoading: false,
+  error: null,
 };
 
 export default initialState;

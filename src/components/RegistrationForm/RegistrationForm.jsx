@@ -3,6 +3,7 @@ import { Box, TextField, Button, Typography } from '@mui/material';
 import * as Yup from 'yup';
 import AlterLogin from '../AlterLogin/AlterLogin';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 
 const schema = Yup.object().shape({
   firstName: Yup.string().required('Введите имя'),
