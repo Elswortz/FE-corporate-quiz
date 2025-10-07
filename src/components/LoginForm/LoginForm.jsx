@@ -3,6 +3,8 @@ import { Box, TextField, Button, Typography } from '@mui/material';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import AlterLogin from '../AlterLogin/AlterLogin';
+import { useDispatch } from 'react-redux';
+import { logIn } from '../../store/auth/operations';
 
 const schema = Yup.object().shape({
   email: Yup.string().email('Некорректный e-mail').required('Введите e-mail'),
@@ -17,6 +19,7 @@ const LoginForm = () => {
     password: '',
   });
   const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
   const { t } = useTranslation('auth');
 
   const handleChange = e => {
@@ -30,7 +33,12 @@ const LoginForm = () => {
       await schema.validate(form, { abortEarly: false });
       setErrors({});
 
-      // логика логина
+      const body = {
+        email: form.email,
+        password: form.password,
+      };
+
+      dispatch(logIn(body));
     } catch (validationError) {
       const newErrors = {};
       validationError.inner.forEach(err => {

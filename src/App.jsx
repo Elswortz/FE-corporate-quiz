@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
 import { PrivateRoute, RestrictedRoute } from './utils';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUserProfile } from './store/auth/operations';
-import { setAuthTokens, logOut } from './store/auth/slice';
+import { useDispatch } from 'react-redux';
+import { setAuthTokens } from './store/auth/slice';
+import { refreshToken } from './store/auth/operations';
 
 import AppShell from './layouts/AppShell';
 
@@ -20,27 +20,24 @@ import { useTranslation } from 'react-i18next';
 function App() {
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
-  const { isLoading, user } = useSelector(state => state.auth);
 
   useEffect(() => {
     i18n.changeLanguage(localStorage.getItem('lang') || 'en');
+  }, []);
 
+  useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refresh_Token = localStorage.getItem('refreshToken');
 
     if (accessToken && refreshToken) {
-      dispatch(setAuthTokens({ accessToken, refreshToken }));
-      dispatch(getUserProfile())
+      dispatch(setAuthTokens({ accessToken, refreshToken: refresh_Token }));
+      dispatch(refreshToken())
         .unwrap()
         .catch(() => {
-          dispatch(logOut());
+          console.log('Session expired, logging out');
         });
     }
-  }, [dispatch, i18n]);
-
-  if (isLoading && !user) {
-    return <div>Loading...</div>;
-  }
+  }, [dispatch]);
 
   return (
     <>
