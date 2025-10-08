@@ -1,6 +1,6 @@
 import api from './api';
 
-export const getUsers = () => api.get('users');
+export const getUsers = ({ limit, offset }) => api.get('users', { params: { limit, offset } });
 
 export const updateUser = credentials => api.put('users', credentials);
 
@@ -12,4 +12,5 @@ export const getUserProfile = () => api.get('users/profile');
 
 export const getUserByEmail = email => api.get(`users/${email}`);
 
-export const updateAvatar = avatarFile => api.post('users/avatar', avatarFile);
+export const updateAvatar = formData =>
+  api.post('users/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } });

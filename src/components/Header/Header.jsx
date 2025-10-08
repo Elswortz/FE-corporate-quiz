@@ -5,18 +5,10 @@ import AuthNav from '../AuthNav/AuthNav';
 import AccountMenu from '../AccountMenu/AccountMenu';
 import { useAuth } from '../../hooks/useAuth';
 
-import { useEffect } from 'react';
-import { getUsers } from '../../api/usersApi';
-
 import { AppBar, Toolbar, Box } from '@mui/material';
 
 function Header() {
   const { isLoggedIn } = useAuth();
-  useEffect(() => {
-    getUsers()
-      .then(res => console.log('Данные пользователя:', res.data))
-      .catch(err => console.error(err));
-  }, []);
 
   return (
     <AppBar position="static" color="primary">
