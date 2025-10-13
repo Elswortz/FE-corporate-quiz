@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { logIn, refreshToken, googleLogIn, azureLogIn } from './operations';
+import { logIn, fetchUserProfile, refreshToken, googleLogIn, azureLogIn } from './operations';
 import initialState from './initialState';
 
 const handleAuthSuccess = (state, action) => {
-  const { access_token: accessToken, refresh_token: refreshToken } = action.payload;
+  const { access_token: accessToken, refresh_token: refreshToken, user } = action.payload;
+  state.user = user;
   state.accessToken = accessToken;
   state.refreshToken = refreshToken;
   state.isAuthenticated = true;
@@ -28,6 +29,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logOut(state) {
+      state.user = null;
       state.accessToken = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
@@ -52,13 +54,24 @@ const authSlice = createSlice({
       .addCase(azureLogIn.pending, handleAuthPending)
       .addCase(azureLogIn.fulfilled, handleAuthSuccess)
       .addCase(azureLogIn.rejected, handleAuthRejected)
-      .addCase(refreshToken.fulfilled, handleAuthSuccess)
+      .addCase(refreshToken.fulfilled, (state, action) => {
+        const { access_token, refresh_token } = action.payload;
+        state.accessToken = access_token;
+        state.refreshToken = refresh_token;
+        state.isAuthenticated = true;
+        localStorage.setItem('accessToken', access_token);
+        localStorage.setItem('refreshToken', refresh_token);
+      })
       .addCase(refreshToken.rejected, state => {
+        state.user = null;
         state.accessToken = null;
         state.refreshToken = null;
         state.isAuthenticated = false;
         state.isLoading = false;
         state.error = 'Session expired';
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
       }),
 });
 
