@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Menu, MenuItem, IconButton, Typography, Box, Divider } from '@mui/material';
+import { useAuth } from '../../hooks/useAuth';
 
 import { logOut } from '../../store/auth/slice';
 
 const AccountMenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -37,7 +39,7 @@ const AccountMenu = () => {
       </IconButton>
 
       <Typography variant="body1" sx={{ ml: 1, color: 'white' }}>
-        {'User'}
+        {`${user.first_name} ${user.last_name}`}
       </Typography>
 
       <Menu

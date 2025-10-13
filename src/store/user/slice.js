@@ -2,8 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import initialState from './initialState';
 import {
   fetchUsers,
-  fetchUserByEmail,
-  fetchCurrentUser,
+  fetchUserById,
   createUser,
   updateUser,
   removeUser,
@@ -24,7 +23,7 @@ const usersSlice = createSlice({
         state.isLoading = false;
         state.list = payload.items;
         state.pagination.total = payload.meta.total || 0;
-        state.pagination.limit = payload.meta.limit || 10;
+        state.pagination.limit = payload.meta.limit || 1;
         state.pagination.offset = payload.meta.offset || 0;
         state.pagination.hasNext = payload.meta.has_next || false;
         state.pagination.hasPrevious = payload.meta.has_previous || false;
@@ -33,18 +32,18 @@ const usersSlice = createSlice({
         state.isLoading = false;
         state.error = payload;
       })
-      .addCase(fetchCurrentUser.pending, state => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(fetchCurrentUser.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.current = payload;
-      })
-      .addCase(fetchCurrentUser.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
-      })
+      // .addCase(fetchCurrentUser.pending, state => {
+      //   state.isLoading = true;
+      //   state.error = null;
+      // })
+      // .addCase(fetchCurrentUser.fulfilled, (state, { payload }) => {
+      //   state.isLoading = false;
+      //   state.current = payload;
+      // })
+      // .addCase(fetchCurrentUser.rejected, (state, { payload }) => {
+      //   state.isLoading = false;
+      //   state.error = payload;
+      // })
       .addCase(updateUser.fulfilled, (state, { payload }) => {
         state.current = { ...state.current, ...payload };
       })
@@ -56,15 +55,15 @@ const usersSlice = createSlice({
       .addCase(removeUser.fulfilled, state => {
         state.current = null;
       })
-      .addCase(fetchUserByEmail.pending, state => {
+      .addCase(fetchUserById.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchUserByEmail.fulfilled, (state, { payload }) => {
+      .addCase(fetchUserById.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.selected = payload;
       })
-      .addCase(fetchUserByEmail.rejected, (state, { payload }) => {
+      .addCase(fetchUserById.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.error = payload;
       }),

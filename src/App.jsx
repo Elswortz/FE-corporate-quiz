@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { PrivateRoute, RestrictedRoute } from './utils';
 import { useDispatch } from 'react-redux';
 import { setAuthTokens } from './store/auth/slice';
-import { refreshToken } from './store/auth/operations';
+import { fetchUserProfile, refreshToken } from './store/auth/operations';
 
 import AppShell from './layouts/AppShell';
 
@@ -13,6 +13,7 @@ import Companies from './pages/Companies';
 import CompanyProfile from './pages/CompanyProfile';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
+import AuthSuccess from './components/AuthSuccess/AuthSuccess';
 
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,10 +30,11 @@ function App() {
     const accessToken = localStorage.getItem('accessToken');
     const refresh_Token = localStorage.getItem('refreshToken');
 
-    if (accessToken && refreshToken) {
+    if (accessToken && refresh_Token) {
       dispatch(setAuthTokens({ accessToken, refreshToken: refresh_Token }));
       dispatch(refreshToken())
         .unwrap()
+        .then(() => dispatch(fetchUserProfile()))
         .catch(() => {
           console.log('Session expired, logging out');
         });
@@ -44,12 +46,13 @@ function App() {
       <Routes>
         <Route path="/" element={<AppShell />}>
           <Route index element={<About />} />
-          <Route path="users" element={<Users />} />
+          <Route path="users" element={<PrivateRoute component={Users} />} />
           <Route path="users/:userId" element={<UserProfile />} />
           <Route path="companies" element={<Companies />} />
           <Route path="companies/:companyId" element={<CompanyProfile />} />
           <Route path="registration" element={<RestrictedRoute component={Registration} />} />
           <Route path="login" element={<RestrictedRoute component={Login} />} />
+          <Route path="login/success" element={<AuthSuccess />} />
         </Route>
       </Routes>
     </>

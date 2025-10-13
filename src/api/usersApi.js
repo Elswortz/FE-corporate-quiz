@@ -10,7 +10,7 @@ export const deleteUser = () => api.delete('users');
 
 export const getUserProfile = () => api.get('users/profile');
 
-export const getUserByEmail = email => api.get(`users/${email}`);
+export const getUserById = id => api.get(`users/${id}`);
 
 export const updateAvatar = formData =>
   api.post('users/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
