@@ -35,11 +35,16 @@ const AccountMenu = () => {
   return (
     <Box display="flex" alignItems="center">
       <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 2 }}>
-        <Avatar sx={{ bgcolor: 'secondary.main', width: 36, height: 36 }}>{'A'}</Avatar>
+        <Avatar
+          sx={{ bgcolor: 'secondary.main', width: 36, height: 36 }}
+          src={user?.avatar || undefined}
+        >
+          {user?.first_name?.[0] || '?'}
+        </Avatar>
       </IconButton>
 
       <Typography variant="body1" sx={{ ml: 1, color: 'white' }}>
-        {`${user.first_name} ${user.last_name}`}
+        {user ? `${user.first_name || ''} ${user.last_name || ''}` : 'Loading...'}
       </Typography>
 
       <Menu
