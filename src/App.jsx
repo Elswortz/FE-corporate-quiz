@@ -8,6 +8,7 @@ import AppShell from './layouts/AppShell';
 
 import About from './pages/About';
 import Users from './pages/Users';
+import UserDetails from './pages/UserDetails';
 import UserProfile from './pages/UserProfile';
 import Companies from './pages/Companies';
 import CompanyProfile from './pages/CompanyProfile';
@@ -47,7 +48,8 @@ function App() {
         <Route path="/" element={<AppShell />}>
           <Route index element={<About />} />
           <Route path="users" element={<PrivateRoute component={Users} />} />
-          <Route path="users/:userId" element={<UserProfile />} />
+          <Route path="users/:userId" element={<UserDetails />} />
+          <Route path="users/profile" element={<UserProfile />} />
           <Route path="companies" element={<Companies />} />
           <Route path="companies/:companyId" element={<CompanyProfile />} />
           <Route path="registration" element={<RestrictedRoute component={Registration} />} />
