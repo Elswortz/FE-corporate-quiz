@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Box, TextField, Button, Typography } from '@mui/material';
+import { Box, TextField, Button, Typography, Snackbar, Alert } from '@mui/material';
 import * as Yup from 'yup';
 import AlterLogin from '../AlterLogin/AlterLogin';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
+import { createUser } from '../../api/usersApi';
 
 const schema = Yup.object().shape({
   firstName: Yup.string().required('Введите имя'),
@@ -22,6 +22,8 @@ const RegistrationForm = () => {
     password: '',
   });
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const { t } = useTranslation('auth');
 
   const handleChange = e => {
@@ -35,13 +37,33 @@ const RegistrationForm = () => {
       await schema.validate(form, { abortEarly: false });
       setErrors({});
 
-      // логика регистрации
-    } catch (validationError) {
-      const newErrors = {};
-      validationError.inner.forEach(err => {
-        newErrors[err.path] = err.message;
+      await createUser({
+        first_name: form.firstName,
+        last_name: form.lastName,
+        email: form.email,
+        password: form.password,
       });
-      setErrors(newErrors);
+
+      setSuccessMessage('Регистрация прошла успешно!');
+      setOpenSnackbar(true);
+
+      setForm({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+      });
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        const newErrors = {};
+        error.inner.forEach(err => {
+          newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
+      } else {
+        setSuccessMessage('Ошибка при регистрации. Попробуйте снова.');
+        setOpenSnackbar(true);
+      }
     }
   };
 
@@ -102,6 +124,21 @@ const RegistrationForm = () => {
         {t('buttons.registerBtn')}
       </Button>
       <AlterLogin />
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={4000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={successMessage.includes('ошибка') ? 'error' : 'success'}
+          sx={{ width: '100%' }}
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
