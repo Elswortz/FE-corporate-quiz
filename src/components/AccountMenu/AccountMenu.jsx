@@ -37,7 +37,7 @@ const AccountMenu = () => {
       <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 2 }}>
         <Avatar
           sx={{ bgcolor: 'secondary.main', width: 36, height: 36 }}
-          src={user?.avatar || undefined}
+          src={user?.avatar_url || undefined}
         >
           {user?.first_name?.[0] || '?'}
         </Avatar>

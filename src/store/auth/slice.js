@@ -1,6 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { logIn, fetchUserProfile, refreshToken, googleLogIn, azureLogIn } from './operations';
+import {
+  logIn,
+  fetchUserProfile,
+  refreshToken,
+  googleLogIn,
+  azureLogIn,
+  updateUser,
+  removeUser,
+  updateUserAvatar,
+} from './operations';
 import initialState from './initialState';
+
+const resetAuthState = state => {
+  state.user = null;
+  state.accessToken = null;
+  state.refreshToken = null;
+  state.isAuthenticated = false;
+  state.isLoading = false;
+  state.error = null;
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+};
 
 const handleAuthSuccess = (state, action) => {
   const { access_token: accessToken, refresh_token: refreshToken, user } = action.payload;
@@ -28,14 +48,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logOut(state) {
-      state.user = null;
-      state.accessToken = null;
-      state.refreshToken = null;
-      state.isAuthenticated = false;
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-    },
+    logOut: resetAuthState,
     setAuthTokens(state, action) {
       const { accessToken, refreshToken } = action.payload;
       state.accessToken = accessToken;
@@ -72,7 +85,23 @@ const authSlice = createSlice({
       })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.user = action.payload;
-      }),
+        state.isLoading = false;
+      })
+      .addCase(updateUser.pending, handleAuthPending)
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(updateUser.rejected, handleAuthRejected)
+      .addCase(removeUser.pending, handleAuthPending)
+      .addCase(removeUser.fulfilled, resetAuthState)
+      .addCase(removeUser.rejected, handleAuthRejected)
+      .addCase(updateUserAvatar.pending, handleAuthPending)
+      .addCase(updateUserAvatar.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isLoading = false;
+      })
+      .addCase(updateUserAvatar.rejected, handleAuthRejected),
 });
 
 export const { logOut, setAuthTokens } = authSlice.actions;

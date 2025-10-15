@@ -49,7 +49,7 @@ function App() {
           <Route index element={<About />} />
           <Route path="users" element={<PrivateRoute component={Users} />} />
           <Route path="users/:userId" element={<UserDetails />} />
-          <Route path="users/profile" element={<UserProfile />} />
+          <Route path="users/profile" element={<PrivateRoute component={UserProfile} />} />
           <Route path="companies" element={<Companies />} />
           <Route path="companies/:companyId" element={<CompanyProfile />} />
           <Route path="registration" element={<RestrictedRoute component={Registration} />} />

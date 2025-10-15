@@ -22,39 +22,3 @@ export const fetchUserById = createAsyncThunk('users/fetchById', async (id, thun
     return thunkAPI.rejectWithValue(err.response?.data || 'Failed to load user');
   }
 });
-
-export const createUser = createAsyncThunk('users/create', async (data, thunkAPI) => {
-  try {
-    const res = await usersAPI.createUser(data);
-    return res.data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || 'Failed to create user');
-  }
-});
-
-export const updateUser = createAsyncThunk('users/update', async (data, thunkAPI) => {
-  try {
-    const res = await usersAPI.updateUser(data);
-    return res.data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || 'Failed to update user');
-  }
-});
-
-export const removeUser = createAsyncThunk('users/delete', async (_, thunkAPI) => {
-  try {
-    await usersAPI.deleteUser();
-    return true;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || 'Failed to delete user');
-  }
-});
-
-export const updateAvatar = createAsyncThunk('users/updateAvatar', async (formData, thunkAPI) => {
-  try {
-    const res = await usersAPI.updateAvatar(formData);
-    return res.data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || 'Failed to update avatar');
-  }
-});
