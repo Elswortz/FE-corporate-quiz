@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { store } from '../store/store';
-import { refreshToken } from '../store/auth/operations';
-import { logOut } from '../store/auth/slice';
+import { refresh } from './authApi';
+import { setAuthTokens, logOut } from '../store/auth/slice';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: 'http://localhost:8000',
   timeout: 10000,
   headers: {
@@ -11,13 +11,15 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use(config => {
-  const state = store.getState();
-  const token = state.auth.accessToken;
+export const refreshApi = axios.create({
+  baseURL: 'http://localhost:8000',
+  timeout: 10000,
+  headers: { 'Content-Type': 'application/json' },
+});
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+api.interceptors.request.use(config => {
+  const token = store.getState().auth.accessToken;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
@@ -25,51 +27,71 @@ let isRefreshing = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
-  failedQueue.forEach(promise => {
-    if (error) promise.reject(error);
-    else promise.resolve(token);
+  failedQueue.forEach(prom => {
+    if (error) prom.reject(error);
+    else prom.resolve(token);
   });
   failedQueue = [];
+};
+
+let isLoggedOut = false;
+const logout = () => {
+  isLoggedOut = true;
+  store.dispatch(logOut());
 };
 
 api.interceptors.response.use(
   response => response,
   async error => {
-    const originalRequest = error.config;
+    const originalRequest = error.config || {};
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (originalRequest.url.includes('/auth/refresh')) {
+      logout();
+      return Promise.reject(error);
+    }
+
+    if (error?.response?.status === 401 && !originalRequest._isRetry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then(token => {
+            if (isLoggedOut) return Promise.reject(error);
             originalRequest.headers.Authorization = `Bearer ${token}`;
-            return api(originalRequest);
+            return api.request(originalRequest);
           })
           .catch(err => Promise.reject(err));
       }
-      originalRequest._retry = true;
+
+      originalRequest._isRetry = true;
       isRefreshing = true;
 
       try {
-        const result = await store.dispatch(refreshToken()).unwrap();
-        const newAccessToken = result.access_token;
+        const currentRefreshToken = store.getState().auth.refreshToken;
 
-        processQueue(null, newAccessToken);
+        if (!currentRefreshToken) {
+          logout();
+          return Promise.reject(error);
+        }
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
+        const res = await refresh(currentRefreshToken);
+        const { access_token: accessToken, refresh_token: refreshToken } = res.data;
+
+        if (!isLoggedOut) store.dispatch(setAuthTokens({ accessToken, refreshToken }));
+
+        processQueue(null, accessToken);
+
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        return api.request(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        store.dispatch(logOut());
-        window.location.href = '/login';
+        logout();
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
       }
     }
+
     return Promise.reject(error);
   }
 );
-
-export default api;

@@ -1,8 +1,8 @@
-import api from './api';
+import { api, refreshApi } from './api';
 
 export const login = credentials => api.post('auth/login', credentials);
 
-export const refresh = token => api.post('auth/refresh', { refresh_token: token });
+export const refresh = refresh_token => refreshApi.post('auth/refresh', { refresh_token });
 
 export const changePassword = passwords => api.patch('/auth/change-password', passwords);
 

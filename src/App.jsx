@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { PrivateRoute, RestrictedRoute } from './utils';
 import { useDispatch } from 'react-redux';
 import { setAuthTokens } from './store/auth/slice';
-import { fetchUserProfile, refreshToken } from './store/auth/operations';
+import { fetchUserProfile, checkAuth } from './store/auth/operations';
 
 import AppShell from './layouts/AppShell';
 
@@ -25,21 +25,23 @@ function App() {
 
   useEffect(() => {
     i18n.changeLanguage(localStorage.getItem('lang') || 'en');
-  }, []);
+  }, [i18n]);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    const refresh_Token = localStorage.getItem('refreshToken');
+    (async () => {
+      const accessToken = localStorage.getItem('accessToken');
+      const refreshToken = localStorage.getItem('refreshToken');
 
-    if (accessToken && refresh_Token) {
-      dispatch(setAuthTokens({ accessToken, refreshToken: refresh_Token }));
-      dispatch(refreshToken())
-        .unwrap()
-        .then(() => dispatch(fetchUserProfile()))
-        .catch(() => {
+      if (accessToken && refreshToken) {
+        dispatch(setAuthTokens({ accessToken, refreshToken }));
+        try {
+          await dispatch(checkAuth()).unwrap();
+          await dispatch(fetchUserProfile()).unwrap();
+        } catch {
           console.log('Session expired, logging out');
-        });
-    }
+        }
+      }
+    })();
   }, [dispatch]);
 
   return (
