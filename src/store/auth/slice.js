@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
   logIn,
   fetchUserProfile,
-  refreshToken,
+  checkAuth,
   googleLogIn,
   azureLogIn,
   updateUser,
@@ -54,6 +54,8 @@ const authSlice = createSlice({
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
       state.isAuthenticated = true;
+      if (accessToken) localStorage.setItem('accessToken', accessToken);
+      if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
     },
   },
   extraReducers: builder =>
@@ -67,7 +69,8 @@ const authSlice = createSlice({
       .addCase(azureLogIn.pending, handleAuthPending)
       .addCase(azureLogIn.fulfilled, handleAuthSuccess)
       .addCase(azureLogIn.rejected, handleAuthRejected)
-      .addCase(refreshToken.fulfilled, (state, action) => {
+      .addCase(checkAuth.pending, handleAuthPending)
+      .addCase(checkAuth.fulfilled, (state, action) => {
         const { access_token, refresh_token } = action.payload;
         state.accessToken = access_token;
         state.refreshToken = refresh_token;
@@ -75,18 +78,13 @@ const authSlice = createSlice({
         localStorage.setItem('accessToken', access_token);
         localStorage.setItem('refreshToken', refresh_token);
       })
-      .addCase(refreshToken.rejected, state => {
-        state.user = null;
-        state.accessToken = null;
-        state.refreshToken = null;
-        state.isAuthenticated = false;
-        state.isLoading = false;
-        state.error = 'Session expired';
-      })
+      .addCase(checkAuth.rejected, resetAuthState)
+      .addCase(fetchUserProfile.pending, handleAuthPending)
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isLoading = false;
       })
+      .addCase(fetchUserProfile.rejected, handleAuthRejected)
       .addCase(updateUser.pending, handleAuthPending)
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload;

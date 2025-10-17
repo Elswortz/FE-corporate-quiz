@@ -1,4 +1,4 @@
-import api from '../../api/api.js';
+import { api } from '../../api/api.js';
 import * as authAPI from '../../api/authApi.js';
 import * as usersAPI from '../../api/usersApi.js';
 import { setAuthTokens, logOut } from './slice.js';
@@ -44,7 +44,7 @@ export const azureLogIn = createAsyncThunk('auth/azureLogin', async (_, thunkAPI
   }
 });
 
-export const refreshToken = createAsyncThunk('auth/refresh', async (_, thunkAPI) => {
+export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
   try {
     const state = thunkAPI.getState();
     const currentRefreshToken = state.auth.refreshToken;
@@ -54,10 +54,10 @@ export const refreshToken = createAsyncThunk('auth/refresh', async (_, thunkAPI)
       return thunkAPI.rejectWithValue('No refresh token available');
     }
 
-    const response = await authAPI.refresh(currentRefreshToken);
-    const { access_token, refresh_token } = response.data;
+    const res = await authAPI.refresh(currentRefreshToken);
+    const { access_token, refresh_token } = res.data;
     thunkAPI.dispatch(setAuthTokens({ accessToken: access_token, refreshToken: refresh_token }));
-    return response.data;
+    return res.data;
   } catch (err) {
     thunkAPI.dispatch(logOut());
     return thunkAPI.rejectWithValue('Session expired. Please login again.');
