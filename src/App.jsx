@@ -15,6 +15,7 @@ import CompanyProfile from './pages/CompanyProfile';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
 import AuthSuccess from './components/AuthSuccess/AuthSuccess';
+import NotificationProvider from './components/NotificationProvider/NotificationProvider';
 
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +60,7 @@ function App() {
           <Route path="login/success" element={<AuthSuccess />} />
         </Route>
       </Routes>
+      <NotificationProvider />
     </>
   );
 }

@@ -1,18 +1,15 @@
 import { Divider, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-import { googleLogIn, azureLogIn } from '../../store/auth/operations';
 
 const AlterLogin = () => {
   const { t } = useTranslation('auth');
-  const dispatch = useDispatch();
 
-  const handleGoogleLogin = () => {
-    dispatch(googleLogIn());
+  const handleGoogleLogin = async () => {
+    window.location.href = 'http://localhost:8000/auth/google/login';
   };
 
-  const handleAzureLogin = () => {
-    dispatch(azureLogIn());
+  const handleAzureLogin = async () => {
+    window.location.href = 'http://localhost:8000/auth/azure/login';
   };
 
   return (
@@ -24,7 +21,6 @@ const AlterLogin = () => {
       <Button variant="outlined" color="secondary" onClick={handleAzureLogin}>
         {t('buttons.azureBtn')}
       </Button>
-      <a href="http://localhost:8000/auth/google/login">Войти через Google</a>
     </>
   );
 };

@@ -77,7 +77,9 @@ api.interceptors.response.use(
         const res = await refresh(currentRefreshToken);
         const { access_token: accessToken, refresh_token: refreshToken } = res.data;
 
-        if (!isLoggedOut) store.dispatch(setAuthTokens({ accessToken, refreshToken }));
+        if (!isLoggedOut) {
+          store.dispatch(setAuthTokens({ accessToken, refreshToken }));
+        }
 
         processQueue(null, accessToken);
 
