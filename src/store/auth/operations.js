@@ -2,20 +2,29 @@ import { api } from '../../api/api.js';
 import * as authAPI from '../../api/authApi.js';
 import * as usersAPI from '../../api/usersApi.js';
 import { setAuthTokens, logOut } from './slice.js';
+import { jwtDecode } from 'jwt-decode';
+import { showNotification } from '../notification/slice.js';
 
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const logIn = createAsyncThunk('auth/login', async (credentials, thunkAPI) => {
-  try {
-    const response = await authAPI.login(credentials);
-    const { access_token, refresh_token } = response.data;
-    api.defaults.headers.common.Authorization = `Bearer ${access_token}`;
-    const profile = await usersAPI.getUserProfile();
-    return { access_token, refresh_token, user: profile.data };
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Login failed');
+export const logIn = createAsyncThunk(
+  'auth/login',
+  async (credentials, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await authAPI.login(credentials);
+      dispatch(showNotification({ message: 'Login successful', severity: 'success' }));
+      const { access_token, refresh_token } = response.data;
+
+      api.defaults.headers.common.Authorization = `Bearer ${access_token}`;
+
+      const profile = await usersAPI.getUserProfile();
+      return { access_token, refresh_token, user: profile.data };
+    } catch (err) {
+      dispatch(showNotification({ message: 'Login failed', severity: 'error' }));
+      return rejectWithValue(err.response?.data?.message || 'Login failed');
+    }
   }
-});
+);
 
 export const fetchUserProfile = createAsyncThunk('auth/fetchUserProfile', async (_, thunkAPI) => {
   try {
@@ -47,16 +56,26 @@ export const azureLogIn = createAsyncThunk('auth/azureLogin', async (_, thunkAPI
 export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
   try {
     const state = thunkAPI.getState();
-    const currentRefreshToken = state.auth.refreshToken;
+    const { accessToken, refreshToken } = state.auth;
 
-    if (!currentRefreshToken) {
+    if (!refreshToken) {
       thunkAPI.dispatch(logOut());
       return thunkAPI.rejectWithValue('No refresh token available');
     }
 
-    const res = await authAPI.refresh(currentRefreshToken);
-    const { access_token, refresh_token } = res.data;
-    thunkAPI.dispatch(setAuthTokens({ accessToken: access_token, refreshToken: refresh_token }));
+    if (accessToken) {
+      const { exp } = jwtDecode(accessToken);
+      const now = Date.now() / 1000;
+
+      if (exp > now + 10) {
+        return thunkAPI.fulfillWithValue({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+      }
+    }
+
+    const res = await authAPI.refresh(refreshToken);
     return res.data;
   } catch (err) {
     thunkAPI.dispatch(logOut());
@@ -64,14 +83,19 @@ export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) 
   }
 });
 
-export const updateUser = createAsyncThunk('auth/updateUser', async (data, thunkAPI) => {
-  try {
-    const res = await usersAPI.updateUser(data);
-    return res.data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || 'Failed to update user');
+export const updateUser = createAsyncThunk(
+  'auth/updateUser',
+  async (data, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await usersAPI.updateUser(data);
+      dispatch(showNotification({ message: 'User updated successfully', severity: 'success' }));
+      return res.data;
+    } catch (err) {
+      dispatch(showNotification({ message: 'Failed to update user', severity: 'error' }));
+      return rejectWithValue(err.response?.data || 'Failed to update user');
+    }
   }
-});
+);
 
 export const removeUser = createAsyncThunk('auth/removeUser', async (_, thunkAPI) => {
   try {
