@@ -73,7 +73,9 @@ const RegistrationForm = () => {
       onSubmit={handleSubmit}
       sx={{
         maxWidth: 400,
-        max: 'auto',
+        width: '100%',
+        mx: 'auto',
+        mt: 8,
         display: 'flex',
         flexDirection: 'column',
         gap: 2,

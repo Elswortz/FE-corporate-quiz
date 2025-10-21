@@ -1,10 +1,21 @@
 import { useState } from 'react';
-import { Box, TextField, Button, Typography } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Link,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import AlterLogin from '../AlterLogin/AlterLogin';
 import { useDispatch } from 'react-redux';
 import { logIn } from '../../store/auth/operations';
+import { resetPassword } from '../../api/authApi';
 
 const schema = Yup.object().shape({
   email: Yup.string().email('Некорректный e-mail').required('Введите e-mail'),
@@ -13,12 +24,22 @@ const schema = Yup.object().shape({
     .required('Введите пароль'),
 });
 
+const forgotSchema = Yup.object().shape({
+  email: Yup.string().email('Некорректный e-mail').required('Введите e-mail'),
+});
+
 const LoginForm = () => {
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
   const [errors, setErrors] = useState({});
+
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotError, setForgotError] = useState('');
+  const [forgotSuccess, setForgotSuccess] = useState('');
+
   const dispatch = useDispatch();
   const { t } = useTranslation('auth');
 
@@ -48,46 +69,101 @@ const LoginForm = () => {
     }
   };
 
+  const handleForgotSubmit = async e => {
+    e.preventDefault();
+    try {
+      await forgotSchema.validate({ email: forgotEmail });
+      setForgotError('');
+      setForgotSuccess('');
+
+      await resetPassword(forgotEmail);
+
+      setForgotSuccess('Письмо для сброса отправлено на вашу почту.');
+    } catch (err) {
+      setForgotError(err.message);
+    }
+  };
+
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        maxWidth: 400,
-        max: 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-      }}
-    >
-      <Typography variant="h5" align="center" gutterBottom>
-        {t('text.loginTitle')}
-      </Typography>
-      <TextField
-        label={t('formFields.email')}
-        name="email"
-        type="email"
-        value={form.email}
-        onChange={handleChange}
-        required
-        error={!!errors.email}
-        helperText={errors.email}
-      />
-      <TextField
-        label={t('formFields.password')}
-        name="password"
-        type="password"
-        value={form.password}
-        onChange={handleChange}
-        required
-        error={!!errors.password}
-        helperText={errors.password}
-      />
-      <Button type="submit" variant="contained" color="primary">
-        {t('buttons.loginBtn')}
-      </Button>
-      <AlterLogin />
-    </Box>
+    <>
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        sx={{
+          maxWidth: 400,
+          width: '100%',
+          mx: 'auto',
+          mt: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
+        <Typography variant="h5" align="center" gutterBottom>
+          {t('text.loginTitle')}
+        </Typography>
+        <TextField
+          label={t('formFields.email')}
+          name="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          required
+          error={!!errors.email}
+          helperText={errors.email}
+        />
+        <TextField
+          label={t('formFields.password')}
+          name="password"
+          type="password"
+          value={form.password}
+          onChange={handleChange}
+          required
+          error={!!errors.password}
+          helperText={errors.password}
+        />
+        <Button type="submit" variant="contained" color="primary">
+          {t('buttons.loginBtn')}
+        </Button>
+        <Link
+          component="button"
+          variant="body2"
+          sx={{ textAlign: 'center', mt: 1 }}
+          onClick={() => setForgotOpen(true)}
+        >
+          Забыли пароль? Сбросить пароль
+        </Link>
+        <AlterLogin />
+      </Box>
+      <Dialog open={forgotOpen} onClose={() => setForgotOpen(false)}>
+        <DialogTitle>Сброс пароля</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            Введите ваш e-mail, и мы отправим письмо для сброса пароля.
+          </Typography>
+          <TextField
+            fullWidth
+            label="E-mail"
+            type="email"
+            value={forgotEmail}
+            onChange={e => setForgotEmail(e.target.value)}
+            error={!!forgotError}
+            helperText={forgotError}
+          />
+          {forgotSuccess && (
+            <Typography color="success.main" sx={{ mt: 1 }}>
+              {forgotSuccess}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setForgotOpen(false)}>Отмена</Button>
+          <Button onClick={handleForgotSubmit} variant="contained">
+            Отправить
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
