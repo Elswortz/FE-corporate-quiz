@@ -97,23 +97,32 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-export const removeUser = createAsyncThunk('auth/removeUser', async (_, thunkAPI) => {
-  try {
-    await usersAPI.deleteUser();
-    return true;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || 'Failed to delete user');
+export const removeUser = createAsyncThunk(
+  'auth/removeUser',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      await usersAPI.deleteUser();
+      dispatch(showNotification({ message: 'User deleted successfully', severity: 'success' }));
+      return true;
+    } catch (err) {
+      dispatch(showNotification({ message: 'Failed to delete user', severity: 'error' }));
+      return rejectWithValue(err.response?.data || 'Failed to delete user');
+    }
   }
-});
+);
 
 export const updateUserAvatar = createAsyncThunk(
   'auth/updateUserAvatar',
-  async (formData, thunkAPI) => {
+  async (formData, { dispatch, rejectWithValue }) => {
     try {
       const res = await usersAPI.updateAvatar(formData);
+      dispatch(
+        showNotification({ message: 'User avatar updated successfully', severity: 'success' })
+      );
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data || 'Failed to update avatar');
+      dispatch(showNotification({ message: 'Failed to update avatar', severity: 'error' }));
+      return rejectWithValue(err.response?.data || 'Failed to update avatar');
     }
   }
 );

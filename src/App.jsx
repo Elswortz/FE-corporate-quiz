@@ -16,6 +16,7 @@ import Registration from './pages/Registration';
 import Login from './pages/Login';
 import AuthSuccess from './components/AuthSuccess/AuthSuccess';
 import NotificationProvider from './components/NotificationProvider/NotificationProvider';
+import ResetPassword from './components/ResetPassword/ResetPassword';
 
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,6 +59,7 @@ function App() {
           <Route path="registration" element={<RestrictedRoute component={Registration} />} />
           <Route path="login" element={<RestrictedRoute component={Login} />} />
           <Route path="login/success" element={<AuthSuccess />} />
+          <Route path="confirm-reset-password" element={<ResetPassword />} />
         </Route>
       </Routes>
       <NotificationProvider />

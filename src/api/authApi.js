@@ -8,8 +8,8 @@ export const changePassword = passwords => api.patch('/auth/change-password', pa
 
 export const resetPassword = email => api.post(`auth/reset-password?email=${email}`);
 
-export const confirmResetPassword = (token, uid) =>
-  api.post(`auth/confirm-reset-password?token=${token}&uid=${uid}`);
+export const confirmResetPassword = (token, uid, password) =>
+  api.post(`auth/confirm-reset-password?token=${token}&uid=${uid}`, { new_password: password });
 
 export const azureLogin = () => api.get('auth/azure/login');
 
