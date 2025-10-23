@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from '../../store/user/operations';
+import { setPage } from '../../store/user/slice';
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -12,11 +13,15 @@ const UsersList = () => {
   const { list, isLoading, pagination } = useSelector(state => state.users);
   const location = useLocation();
 
-  const [page, setPage] = useState(1);
-
   useEffect(() => {
-    dispatch(fetchUsers({ page }));
-  }, [dispatch, page]);
+    if (!list.length) {
+      dispatch(fetchUsers({ page: pagination.page }));
+    }
+  }, [dispatch, pagination.page, list.length]);
+
+  const handlePageChange = newPage => {
+    dispatch(setPage(newPage));
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -54,10 +59,10 @@ const UsersList = () => {
           {list.length > 0 && (
             <Box sx={{ mt: 3 }}>
               <Pagination
-                page={page}
+                page={pagination.page}
                 total={pagination.total}
                 limit={pagination.limit}
-                onPageChange={setPage}
+                onPageChange={handlePageChange}
               />
             </Box>
           )}

@@ -5,7 +5,11 @@ import { fetchUsers, fetchUserById } from './operations';
 const usersSlice = createSlice({
   name: 'users',
   initialState,
-  reducers: {},
+  reducers: {
+    setPage(state, action) {
+      state.pagination.page = action.payload;
+    },
+  },
   extraReducers: builder =>
     builder
       .addCase(fetchUsers.pending, state => {
@@ -39,4 +43,5 @@ const usersSlice = createSlice({
       }),
 });
 
+export const { setPage } = usersSlice.actions;
 export const usersReducer = usersSlice.reducer;
