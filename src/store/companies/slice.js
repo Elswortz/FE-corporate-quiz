@@ -102,4 +102,4 @@ const companiesSlice = createSlice({
 });
 
 export const { clearCurrentCompany } = companiesSlice.actions;
-export default companiesSlice.reducer;
+export const companiesReducer = companiesSlice.reducer;
