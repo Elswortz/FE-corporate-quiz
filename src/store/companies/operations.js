@@ -2,14 +2,18 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as companiesAPI from '../../api/companiesApi';
 import { showNotification } from '../notification/slice';
 
-export const fetchMyCompanies = createAsyncThunk('companies/my', async (_, { rejectWithValue }) => {
-  try {
-    const res = await companiesAPI.getMyCompanies();
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response?.data || 'Failed to load companies');
+export const fetchMyCompanies = createAsyncThunk(
+  'companies/my',
+  async ({ page = 1, limit = 20 } = {}, { rejectWithValue }) => {
+    try {
+      const offset = (page - 1) * limit;
+      const res = await companiesAPI.getMyCompanies({ limit, offset });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || 'Failed to load companies');
+    }
   }
-});
+);
 
 export const fetchAllCompanies = createAsyncThunk('companies/all', async (_, { rejectWithValue }) => {
   try {

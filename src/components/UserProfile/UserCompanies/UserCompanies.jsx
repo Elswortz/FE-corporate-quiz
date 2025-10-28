@@ -1,6 +1,7 @@
 import { Box, Typography, Button } from '@mui/material';
 import { useState } from 'react';
 import CreateCompanyModal from './CreateCompanyModal';
+import UserCompaniesList from './UserCompaniesList';
 const UserCompanies = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -24,6 +25,7 @@ const UserCompanies = () => {
       <Button variant="contained" color="primary" onClick={handleCreate}>
         Create company
       </Button>
+      <UserCompaniesList />
 
       <CreateCompanyModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </Box>

@@ -15,7 +15,6 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { showNotification } from '../../../store/notification/slice';
 import { createCompany } from '../../../store/companies/operations';
 
 const schema = Yup.object().shape({
