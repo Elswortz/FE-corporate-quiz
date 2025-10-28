@@ -21,7 +21,7 @@ const UserCompaniesList = () => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <>
       {isLoading ? (
         <Box
           sx={{
@@ -59,7 +59,7 @@ const UserCompaniesList = () => {
           )}
         </>
       )}
-    </Box>
+    </>
   );
 };
 

@@ -10,7 +10,7 @@ const UserCompanies = () => {
   return (
     <Box
       sx={{
-        maxWidth: 600,
+        maxWidth: 1000,
         mx: 'auto',
         mt: 5,
         p: 4,
@@ -22,7 +22,7 @@ const UserCompanies = () => {
       <Typography variant="h4" mb={3}>
         My Companies
       </Typography>
-      <Button variant="contained" color="primary" onClick={handleCreate}>
+      <Button sx={{ marginBottom: 4 }} variant="contained" color="primary" onClick={handleCreate}>
         Create company
       </Button>
       <UserCompaniesList />
