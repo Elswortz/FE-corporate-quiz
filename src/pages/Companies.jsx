@@ -1,7 +1,9 @@
+import CompaniesList from '../components/Companies/CompaniesList/CompaniesList';
+
 const Companies = () => {
   return (
     <>
-      <h1>Welcome to List of Companies Page!</h1>
+      <CompaniesList />
     </>
   );
 };
