@@ -16,6 +16,9 @@ const companiesSlice = createSlice({
     clearSelectedCompany(state) {
       state.selectedCompany = null;
     },
+    setPage(state, action) {
+      state.pagination.page = action.payload;
+    },
   },
   extraReducers: builder =>
     builder
@@ -101,5 +104,5 @@ const companiesSlice = createSlice({
       }),
 });
 
-export const { clearCurrentCompany } = companiesSlice.actions;
+export const { clearCurrentCompany, setPage } = companiesSlice.actions;
 export const companiesReducer = companiesSlice.reducer;

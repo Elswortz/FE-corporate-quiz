@@ -1,7 +1,9 @@
+import CompaniesDetails from '../components/Companies/CompaniesDetails/CompaniesDetails';
+
 const CompanyProfile = () => {
   return (
     <>
-      <h1>Welcome to Company Profile Page!</h1>
+      <CompaniesDetails />
     </>
   );
 };
