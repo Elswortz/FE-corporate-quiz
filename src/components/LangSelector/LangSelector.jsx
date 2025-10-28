@@ -10,8 +10,6 @@ const languages = {
 function LangSelector() {
   const { i18n } = useTranslation('header');
 
-  console.log(i18n);
-
   const handleChange = e => {
     const newLang = e.target.value;
     i18n.changeLanguage(newLang);
