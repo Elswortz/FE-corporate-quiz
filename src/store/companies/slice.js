@@ -104,5 +104,5 @@ const companiesSlice = createSlice({
       }),
 });
 
-export const { clearCurrentCompany } = companiesSlice.actions;
+export const { clearCurrentCompany, setPage } = companiesSlice.actions;
 export const companiesReducer = companiesSlice.reducer;
