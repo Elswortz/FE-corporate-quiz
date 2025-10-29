@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchMyCompanies } from '../../../store/companies/operations';
+import { fetchMyOwnedCompanies } from '../../../store/companies/operations';
 import { setPage } from '../../../store/companies/slice';
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 import Pagination from '../../Pagination/Pagination';
-import UserCompaniesItem from './UserCompaniesItem';
+// import UserCompaniesItem from './UserCompaniesItem';
+import CompaniesItem from '../../Companies/CompaniesItem/CompaniesItem';
 
 const UserCompaniesList = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const UserCompaniesList = () => {
 
   useEffect(() => {
     if (!myCompanies.length) {
-      dispatch(fetchMyCompanies({ page: pagination.page }));
+      dispatch(fetchMyOwnedCompanies({ page: pagination.page }));
     }
   }, [dispatch, pagination.page, myCompanies.length]);
 
@@ -41,7 +42,7 @@ const UserCompaniesList = () => {
             <Grid container spacing={2}>
               {myCompanies.map(company => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={company.id}>
-                  <UserCompaniesItem company={company} />
+                  <CompaniesItem company={company} />
                 </Grid>
               ))}
             </Grid>

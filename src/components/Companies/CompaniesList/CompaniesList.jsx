@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllCompanies } from '../../../store/companies/operations';
 import { setPage } from '../../../store/companies/slice';
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
-import { NavLink, useLocation } from 'react-router-dom';
 
 import CompaniesItem from '../CompaniesItem/CompaniesItem';
 import Pagination from '../../Pagination/Pagination';
@@ -11,7 +10,6 @@ import Pagination from '../../Pagination/Pagination';
 const CompaniesList = () => {
   const dispatch = useDispatch();
   const { allCompanies, isLoading, pagination } = useSelector(state => state.companies);
-  const location = useLocation();
 
   useEffect(() => {
     if (!allCompanies.length) {
@@ -48,9 +46,7 @@ const CompaniesList = () => {
             <Grid container spacing={2}>
               {allCompanies.map(company => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={company.id}>
-                  <NavLink to={company.id.toString()} state={{ from: location }}>
-                    <CompaniesItem company={company} />
-                  </NavLink>
+                  <CompaniesItem company={company} />
                 </Grid>
               ))}
             </Grid>

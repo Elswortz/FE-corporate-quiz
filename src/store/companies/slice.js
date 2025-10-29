@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import initialState from './initialState';
 import {
-  fetchMyCompanies,
+  fetchMyOwnedCompanies,
   fetchAllCompanies,
   fetchCompanyById,
   createCompany,
@@ -22,15 +22,15 @@ const companiesSlice = createSlice({
   },
   extraReducers: builder =>
     builder
-      .addCase(fetchMyCompanies.pending, state => {
+      .addCase(fetchMyOwnedCompanies.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(fetchMyCompanies.fulfilled, (state, { payload }) => {
+      .addCase(fetchMyOwnedCompanies.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.myCompanies = payload.items;
       })
-      .addCase(fetchMyCompanies.rejected, (state, { payload }) => {
+      .addCase(fetchMyOwnedCompanies.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.error = payload;
       })
@@ -65,6 +65,7 @@ const companiesSlice = createSlice({
       .addCase(createCompany.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.myCompanies.push(payload);
+        state.allCompanies.push(payload);
       })
       .addCase(createCompany.rejected, (state, { payload }) => {
         state.isLoading = false;

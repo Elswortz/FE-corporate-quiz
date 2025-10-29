@@ -1,8 +1,8 @@
-// ...existing code...
 import { NavLink, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchCompanyById } from '../../../store/companies/operations';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Box,
@@ -16,24 +16,46 @@ import {
   Chip,
   Link as MuiLink,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const CompaniesDetails = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { companyId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { selectedCompany, isLoading, error } = useSelector(state => state.companies);
+  const { user } = useSelector(state => state.auth);
   const location = useLocation();
   const backLinkHref = location.state?.from ?? '/companies';
 
   useEffect(() => {
     if (companyId) dispatch(fetchCompanyById(companyId));
   }, [dispatch, companyId]);
+
+  const getUserRoleInCompany = (company, userId) => {
+    if (company?.owner?.id === userId) return 'owner';
+    const member = company?.members?.find(m => m.id === userId);
+    return member?.role || null;
+  };
+
+  const role = getUserRoleInCompany(selectedCompany, user?.id);
+  const isOwner = role === 'owner';
+  const isAdmin = role === 'admin';
+  const isMember = role === 'member';
+
+  const handleDelete = () => {};
 
   if (isLoading) {
     return (
@@ -113,6 +135,31 @@ const CompaniesDetails = () => {
             )
           }
           sx={{ pb: 0 }}
+          action={
+            isOwner ? (
+              <Box display="flex" gap={1}>
+                <Button
+                  component={NavLink}
+                  to={`/companies/${id}/edit`}
+                  startIcon={<EditIcon />}
+                  size="small"
+                  variant="outlined"
+                >
+                  Редактировать
+                </Button>
+
+                <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  startIcon={<DeleteIcon />}
+                  size="small"
+                  variant="contained"
+                  color="error"
+                >
+                  Удалить
+                </Button>
+              </Box>
+            ) : null
+          }
         />
 
         <CardContent>
@@ -168,9 +215,21 @@ const CompaniesDetails = () => {
           </Grid>
         </CardContent>
       </Card>
+
+      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+        <DialogTitle>Confirm Company Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete your company? This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+          <Button color="error" onClick={handleDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
 
 export default CompaniesDetails;
-// ...existing code...
