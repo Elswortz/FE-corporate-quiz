@@ -1,8 +1,9 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { fetchCompanyById } from '../../../store/companies/operations';
+import { fetchCompanyById, deleteCompany } from '../../../store/companies/operations';
 import { useNavigate } from 'react-router-dom';
+import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
 
 import {
   Box,
@@ -31,13 +32,17 @@ import LanguageIcon from '@mui/icons-material/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const CompaniesDetails = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { companyId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const { selectedCompany, isLoading, error } = useSelector(state => state.companies);
   const { user } = useSelector(state => state.auth);
-  const location = useLocation();
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   const backLinkHref = location.state?.from ?? '/companies';
 
   useEffect(() => {
@@ -55,7 +60,11 @@ const CompaniesDetails = () => {
   const isAdmin = role === 'admin';
   const isMember = role === 'member';
 
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    dispatch(deleteCompany(selectedCompany.id));
+    setIsDialogOpen(false);
+    navigate(backLinkHref);
+  };
 
   if (isLoading) {
     return (
@@ -138,13 +147,7 @@ const CompaniesDetails = () => {
           action={
             isOwner ? (
               <Box display="flex" gap={1}>
-                <Button
-                  component={NavLink}
-                  to={`/companies/${id}/edit`}
-                  startIcon={<EditIcon />}
-                  size="small"
-                  variant="outlined"
-                >
+                <Button onClick={() => setIsEditOpen(true)} startIcon={<EditIcon />} size="small" variant="outlined">
                   Редактировать
                 </Button>
 
@@ -228,6 +231,8 @@ const CompaniesDetails = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <EditCompanyModal open={isEditOpen} onClose={() => setIsEditOpen(false)} />
     </Box>
   );
 };

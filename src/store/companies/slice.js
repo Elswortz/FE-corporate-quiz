@@ -79,6 +79,7 @@ const companiesSlice = createSlice({
         state.isLoading = false;
         const updated = payload;
         state.myCompanies = state.myCompanies.map(comp => (comp.id === updated.id ? updated : comp));
+        state.allCompanies = state.allCompanies.map(comp => (comp.id === updated.id ? updated : comp));
         if (state.selectedCompany?.id === updated.id) {
           state.selectedCompany = updated;
         }
@@ -95,6 +96,7 @@ const companiesSlice = createSlice({
         state.isLoading = false;
         const deletedId = payload;
         state.myCompanies = state.myCompanies.filter(comp => comp.id !== deletedId);
+        state.allCompanies = state.allCompanies.filter(comp => comp.id !== deletedId);
         if (state.currentCompany?.id === deletedId) {
           state.currentCompany = null;
         }
