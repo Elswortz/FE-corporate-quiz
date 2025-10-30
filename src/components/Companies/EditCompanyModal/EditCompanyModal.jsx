@@ -23,13 +23,13 @@ const editCompanySchema = Yup.object().shape({
 
 const EditCompanyModal = ({ open, onClose }) => {
   const dispatch = useDispatch();
-  const { selectedCompany, isLoading } = useSelector(state => state.companies);
+  const { data, isLoading } = useSelector(state => state.companies.selected);
   const [form, setForm] = useState({
-    company_name: selectedCompany.company_name || '',
-    company_address: selectedCompany.company_address || '',
-    company_phone: selectedCompany.company_phone || '',
-    company_website: selectedCompany.company_website || '',
-    company_description: selectedCompany.company_description || '',
+    company_name: data.company_name || '',
+    company_address: data.company_address || '',
+    company_phone: data.company_phone || '',
+    company_website: data.company_website || '',
+    company_description: data.company_description || '',
   });
   const [errors, setErrors] = useState({});
 
@@ -44,8 +44,8 @@ const EditCompanyModal = ({ open, onClose }) => {
     try {
       await editCompanySchema.validate(form, { abortEarly: false });
       setErrors({});
-      dispatch(updateCompany({ companyId: selectedCompany.id, data: form }));
-      // setForm(emptyForm);
+      dispatch(updateCompany({ companyId: data.id, data: form }));
+
       onClose();
     } catch (err) {
       if (err.name === 'ValidationError' && err.inner) {
@@ -61,7 +61,6 @@ const EditCompanyModal = ({ open, onClose }) => {
   };
 
   const handleClose = () => {
-    // setForm(emptyForm);
     setErrors({});
     onClose();
   };

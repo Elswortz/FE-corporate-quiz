@@ -18,6 +18,9 @@ const initialState = {
     error: null,
   },
   selected: { data: null, isLoading: false, error: null },
+  create: { isLoading: false, error: null },
+  update: { isLoading: false, error: null },
+  delete: { isLoading: false, error: null },
 };
 
 export default initialState;

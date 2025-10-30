@@ -37,7 +37,7 @@ const CompaniesDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { selectedCompany, isLoading, error } = useSelector(state => state.companies);
+  const { data, isLoading, error } = useSelector(state => state.companies.selected);
   const { user } = useSelector(state => state.auth);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -51,7 +51,7 @@ const CompaniesDetails = () => {
     return member?.role || null;
   };
 
-  const role = getUserRoleInCompany(selectedCompany, user?.id);
+  const role = getUserRoleInCompany(data, user?.id);
   const isOwner = role === 'owner';
   // const isAdmin = role === 'admin';
   // const isMember = role === 'member';
@@ -61,7 +61,7 @@ const CompaniesDetails = () => {
   }, [dispatch, companyId, role]);
 
   const handleDelete = () => {
-    dispatch(deleteCompany(selectedCompany.id));
+    dispatch(deleteCompany(data.id));
     setIsDialogOpen(false);
     navigate(backLinkHref);
   };
@@ -82,7 +82,7 @@ const CompaniesDetails = () => {
     );
   }
 
-  if (!selectedCompany) {
+  if (!data) {
     return (
       <Typography textAlign="center" mt={4}>
         Company not found
@@ -100,7 +100,7 @@ const CompaniesDetails = () => {
     company_logo_url,
     company_description,
     company_status,
-  } = selectedCompany;
+  } = data;
 
   return (
     <Box sx={{ maxWidth: 1100, mx: 'auto', p: { xs: 2, md: 4 } }}>

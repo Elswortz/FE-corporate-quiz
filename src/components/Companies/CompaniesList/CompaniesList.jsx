@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllCompanies } from '../../../store/companies/operations';
-import { setPage } from '../../../store/companies/slice';
+// import { setPage } from '../../../store/companies/slice';
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 
 import CompaniesItem from '../CompaniesItem/CompaniesItem';
@@ -9,16 +9,24 @@ import Pagination from '../../Pagination/Pagination';
 
 const CompaniesList = () => {
   const dispatch = useDispatch();
-  const { allCompanies, isLoading, pagination } = useSelector(state => state.companies);
+  const {
+    data,
+    isLoading,
+    meta: { limit, offset, total },
+  } = useSelector(state => state.companies.all);
+
+  const currentPage = Math.floor(offset / limit) + 1;
+  const totalPages = Math.ceil(total / limit);
 
   useEffect(() => {
-    if (!allCompanies.length) {
-      dispatch(fetchAllCompanies({ page: pagination.page }));
+    if (!data.length) {
+      dispatch(fetchAllCompanies({ limit, offset: 0 }));
     }
-  }, [dispatch, pagination.page, allCompanies.length]);
+  }, [dispatch, data.length, limit]);
 
   const handlePageChange = newPage => {
-    dispatch(setPage(newPage));
+    const newOffset = (newPage - 1) * limit;
+    dispatch(fetchAllCompanies({ limit, offset: newOffset }));
   };
 
   return (
@@ -40,11 +48,11 @@ const CompaniesList = () => {
         </Box>
       ) : (
         <>
-          {allCompanies.length === 0 ? (
+          {data.length === 0 ? (
             <Typography variant="body1">No companies found.</Typography>
           ) : (
             <Grid container spacing={2}>
-              {allCompanies.map(company => (
+              {data.map(company => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={company.id}>
                   <CompaniesItem company={company} />
                 </Grid>
@@ -52,14 +60,9 @@ const CompaniesList = () => {
             </Grid>
           )}
 
-          {allCompanies.length > 0 && (
+          {data.length > 0 && (
             <Box sx={{ mt: 3 }}>
-              <Pagination
-                page={pagination.page}
-                total={pagination.total}
-                limit={pagination.limit}
-                onPageChange={handlePageChange}
-              />
+              <Pagination page={currentPage} total={totalPages} limit={limit} onPageChange={handlePageChange} />
             </Box>
           )}
         </>
