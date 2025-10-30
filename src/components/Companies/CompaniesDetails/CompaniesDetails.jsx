@@ -45,10 +45,6 @@ const CompaniesDetails = () => {
 
   const backLinkHref = location.state?.from ?? '/companies';
 
-  useEffect(() => {
-    if (companyId) dispatch(fetchCompanyById(companyId));
-  }, [dispatch, companyId]);
-
   const getUserRoleInCompany = (company, userId) => {
     if (company?.owner?.id === userId) return 'owner';
     const member = company?.members?.find(m => m.id === userId);
@@ -57,8 +53,12 @@ const CompaniesDetails = () => {
 
   const role = getUserRoleInCompany(selectedCompany, user?.id);
   const isOwner = role === 'owner';
-  const isAdmin = role === 'admin';
-  const isMember = role === 'member';
+  // const isAdmin = role === 'admin';
+  // const isMember = role === 'member';
+
+  useEffect(() => {
+    if (companyId) dispatch(fetchCompanyById(companyId));
+  }, [dispatch, companyId, role]);
 
   const handleDelete = () => {
     dispatch(deleteCompany(selectedCompany.id));
