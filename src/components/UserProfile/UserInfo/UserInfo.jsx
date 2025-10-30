@@ -177,6 +177,7 @@ const UserInfo = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
       <Dialog open={isPasswordDialogOpen} onClose={() => setIsPasswordDialogOpen(false)}>
         <DialogTitle>Change Password</DialogTitle>
         <DialogContent>

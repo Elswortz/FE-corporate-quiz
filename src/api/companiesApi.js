@@ -2,7 +2,9 @@ import { api } from './api';
 
 export const createCompany = data => api.post('companies', data);
 
-export const getMyCompanies = ({ limit, offset }) => api.get('companies', { params: { limit, offset } });
+export const getMyOwnedCompanies = ({ limit, offset }) => api.get('companies/owned', { params: { limit, offset } });
+
+export const getMyJoinedCompanies = ({ limit, offset }) => api.get('companies/joined', { params: { limit, offset } });
 
 export const getAllCompanies = ({ limit, offset }) => api.get('companies/all', { params: { limit, offset } });
 

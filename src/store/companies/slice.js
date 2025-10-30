@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import initialState from './initialState';
 import {
-  fetchMyCompanies,
+  fetchOwnedCompanies,
+  fetchJoinedCompanies,
   fetchAllCompanies,
   fetchCompanyById,
   createCompany,
@@ -22,85 +23,103 @@ const companiesSlice = createSlice({
   },
   extraReducers: builder =>
     builder
-      .addCase(fetchMyCompanies.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+      .addCase(fetchOwnedCompanies.pending, state => {
+        state.owned.isLoading = true;
+        state.owned.error = null;
       })
-      .addCase(fetchMyCompanies.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.myCompanies = payload.items;
+      .addCase(fetchOwnedCompanies.fulfilled, (state, { payload }) => {
+        state.owned.isLoading = false;
+        state.owned.data = payload.items;
+        state.owned.meta = payload.meta;
       })
-      .addCase(fetchMyCompanies.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+      .addCase(fetchOwnedCompanies.rejected, (state, { payload }) => {
+        state.owned.isLoading = false;
+        state.owned.error = payload;
+      })
+      .addCase(fetchJoinedCompanies.pending, state => {
+        state.joined.isLoading = true;
+        state.joined.error = null;
+      })
+      .addCase(fetchJoinedCompanies.fulfilled, (state, { payload }) => {
+        state.joined.isLoading = false;
+        state.joined.data = payload.items;
+        state.joined.meta = payload.meta;
+      })
+      .addCase(fetchJoinedCompanies.rejected, (state, { payload }) => {
+        state.joined.isLoading = false;
+        state.joined.error = payload;
       })
       .addCase(fetchAllCompanies.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+        state.all.isLoading = true;
+        state.all.error = null;
       })
       .addCase(fetchAllCompanies.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.allCompanies = payload.items;
+        state.all.isLoading = false;
+        state.all.data = payload.items;
+        state.all.meta = payload.meta;
       })
       .addCase(fetchAllCompanies.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+        state.all.isLoading = false;
+        state.all.error = payload;
       })
       .addCase(fetchCompanyById.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+        state.selected.isLoading = true;
+        state.selected.error = null;
       })
       .addCase(fetchCompanyById.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.selectedCompany = payload;
+        state.selected.isLoading = false;
+        state.selected.data = payload;
       })
       .addCase(fetchCompanyById.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+        state.selected.isLoading = false;
+        state.selected.error = payload;
       })
       .addCase(createCompany.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+        state.create.isLoading = true;
+        state.create.error = null;
       })
       .addCase(createCompany.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.myCompanies.push(payload);
+        state.create.isLoading = false;
+        state.owned.data.push(payload);
+        state.all.data.push(payload);
       })
       .addCase(createCompany.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+        state.create.isLoading = false;
+        state.create.error = payload;
       })
       .addCase(updateCompany.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+        state.update.isLoading = true;
+        state.update.error = null;
       })
       .addCase(updateCompany.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
+        state.update.isLoading = false;
         const updated = payload;
-        state.myCompanies = state.myCompanies.map(comp => (comp.id === updated.id ? updated : comp));
-        if (state.selectedCompany?.id === updated.id) {
-          state.selectedCompany = updated;
+        state.owned.data = state.owned.data.map(comp => (comp.id === updated.id ? updated : comp));
+        state.all.data = state.all.data.map(comp => (comp.id === updated.id ? updated : comp));
+        if (state.selected.data?.id === updated.id) {
+          state.selected.data = updated;
         }
       })
       .addCase(updateCompany.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+        state.update.isLoading = false;
+        state.update.error = payload;
       })
       .addCase(deleteCompany.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+        state.delete.isLoading = true;
+        state.delete.error = null;
       })
       .addCase(deleteCompany.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
+        state.delete.isLoading = false;
         const deletedId = payload;
-        state.myCompanies = state.myCompanies.filter(comp => comp.id !== deletedId);
-        if (state.currentCompany?.id === deletedId) {
-          state.currentCompany = null;
+        state.owned.data = state.owned.data.filter(comp => comp.id !== deletedId);
+        state.all.data = state.all.data.filter(comp => comp.id !== deletedId);
+        if (state.selected.data?.id === deletedId) {
+          state.selected.data = null;
         }
       })
       .addCase(deleteCompany.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+        state.delete.isLoading = false;
+        state.delete.error = payload;
       }),
 });
 

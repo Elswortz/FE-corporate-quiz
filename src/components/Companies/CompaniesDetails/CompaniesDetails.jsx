@@ -1,8 +1,9 @@
-// ...existing code...
 import { NavLink, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { fetchCompanyById } from '../../../store/companies/operations';
+import { useEffect, useState } from 'react';
+import { fetchCompanyById, deleteCompany } from '../../../store/companies/operations';
+import { useNavigate } from 'react-router-dom';
+import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
 
 import {
   Box,
@@ -16,9 +17,15 @@ import {
   Chip,
   Link as MuiLink,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from '@mui/material';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -27,13 +34,37 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 const CompaniesDetails = () => {
   const { companyId } = useParams();
   const dispatch = useDispatch();
-  const { selectedCompany, isLoading, error } = useSelector(state => state.companies);
+  const navigate = useNavigate();
   const location = useLocation();
+
+  const { data, isLoading, error } = useSelector(state => state.companies.selected);
+  const { user } = useSelector(state => state.auth);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   const backLinkHref = location.state?.from ?? '/companies';
+
+  const getUserRoleInCompany = (company, userId) => {
+    if (company?.owner?.id === userId) return 'owner';
+    const member = company?.members?.find(m => m.id === userId);
+    return member?.role || null;
+  };
+
+  const role = getUserRoleInCompany(data, user?.id);
+  const isOwner = role === 'owner';
+  // const isAdmin = role === 'admin';
+  // const isMember = role === 'member';
 
   useEffect(() => {
     if (companyId) dispatch(fetchCompanyById(companyId));
-  }, [dispatch, companyId]);
+  }, [dispatch, companyId, role]);
+
+  const handleDelete = () => {
+    dispatch(deleteCompany(data.id));
+    setIsDialogOpen(false);
+    navigate(backLinkHref);
+  };
 
   if (isLoading) {
     return (
@@ -51,7 +82,7 @@ const CompaniesDetails = () => {
     );
   }
 
-  if (!selectedCompany) {
+  if (!data) {
     return (
       <Typography textAlign="center" mt={4}>
         Company not found
@@ -69,7 +100,7 @@ const CompaniesDetails = () => {
     company_logo_url,
     company_description,
     company_status,
-  } = selectedCompany;
+  } = data;
 
   return (
     <Box sx={{ maxWidth: 1100, mx: 'auto', p: { xs: 2, md: 4 } }}>
@@ -113,6 +144,25 @@ const CompaniesDetails = () => {
             )
           }
           sx={{ pb: 0 }}
+          action={
+            isOwner ? (
+              <Box display="flex" gap={1}>
+                <Button onClick={() => setIsEditOpen(true)} startIcon={<EditIcon />} size="small" variant="outlined">
+                  Редактировать
+                </Button>
+
+                <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  startIcon={<DeleteIcon />}
+                  size="small"
+                  variant="contained"
+                  color="error"
+                >
+                  Удалить
+                </Button>
+              </Box>
+            ) : null
+          }
         />
 
         <CardContent>
@@ -168,9 +218,23 @@ const CompaniesDetails = () => {
           </Grid>
         </CardContent>
       </Card>
+
+      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+        <DialogTitle>Confirm Company Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete your company? This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+          <Button color="error" onClick={handleDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <EditCompanyModal open={isEditOpen} onClose={() => setIsEditOpen(false)} />
     </Box>
   );
 };
 
 export default CompaniesDetails;
-// ...existing code...

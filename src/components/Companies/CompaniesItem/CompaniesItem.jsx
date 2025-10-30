@@ -11,6 +11,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const getInitials = (name = '') =>
   name
@@ -21,6 +22,7 @@ const getInitials = (name = '') =>
     .join('');
 
 const CompaniesItem = ({ company }) => {
+  const location = useLocation();
   if (!company) return null;
 
   const {
@@ -46,7 +48,9 @@ const CompaniesItem = ({ company }) => {
         }
         title={
           <Box display="flex" alignItems="center" gap={1}>
-            <Typography variant="h6">{company_name}</Typography>
+            <NavLink to={`/companies/${company.id.toString()}`} state={{ from: location }}>
+              <Typography variant="h6">{company_name}</Typography>
+            </NavLink>
             <Chip
               label={company_status || 'unknown'}
               size="small"
@@ -71,27 +75,27 @@ const CompaniesItem = ({ company }) => {
           {company_email && (
             <Box display="flex" alignItems="center" gap={1}>
               <EmailIcon fontSize="small" color="action" />
-              {/* <Link href={`mailto:${company_email}`} underline="hover"> */}
-              <Typography variant="body2">{company_email}</Typography>
-              {/* </Link> */}
+              <Link href={`mailto:${company_email}`} underline="hover">
+                <Typography variant="body2">{company_email}</Typography>
+              </Link>
             </Box>
           )}
 
           {company_phone && (
             <Box display="flex" alignItems="center" gap={1}>
               <PhoneIcon fontSize="small" color="action" />
-              {/* <Link href={`tel:${company_phone}`} underline="hover"> */}
-              <Typography variant="body2">{company_phone}</Typography>
-              {/* </Link> */}
+              <Link href={`tel:${company_phone}`} underline="hover">
+                <Typography variant="body2">{company_phone}</Typography>
+              </Link>
             </Box>
           )}
 
           {company_website && (
             <Box display="flex" alignItems="center" gap={1}>
               <LanguageIcon fontSize="small" color="action" />
-              {/* <Link href={company_website} target="_blank" rel="noopener noreferrer" underline="hover"> */}
-              <Typography variant="body2">{company_website}</Typography>
-              {/* </Link> */}
+              <Link href={company_website} target="_blank" rel="noopener noreferrer" underline="hover">
+                <Typography variant="body2">{company_website}</Typography>
+              </Link>
             </Box>
           )}
 

@@ -2,12 +2,25 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as companiesAPI from '../../api/companiesApi';
 import { showNotification } from '../notification/slice';
 
-export const fetchMyCompanies = createAsyncThunk(
-  'companies/my',
+export const fetchOwnedCompanies = createAsyncThunk(
+  'companies/owned',
   async ({ page = 1, limit = 20 } = {}, { rejectWithValue }) => {
     try {
       const offset = (page - 1) * limit;
-      const res = await companiesAPI.getMyCompanies({ limit, offset });
+      const res = await companiesAPI.getMyOwnedCompanies({ limit, offset });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || 'Failed to load companies');
+    }
+  }
+);
+
+export const fetchJoinedCompanies = createAsyncThunk(
+  'companies/joined',
+  async ({ page = 1, limit = 20 } = {}, { rejectWithValue }) => {
+    try {
+      const offset = (page - 1) * limit;
+      const res = await companiesAPI.getMyJoinedCompanies({ limit, offset });
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || 'Failed to load companies');
@@ -17,9 +30,8 @@ export const fetchMyCompanies = createAsyncThunk(
 
 export const fetchAllCompanies = createAsyncThunk(
   'companies/all',
-  async ({ page = 1, limit = 20 } = {}, { rejectWithValue }) => {
+  async ({ limit, offset } = {}, { rejectWithValue }) => {
     try {
-      const offset = (page - 1) * limit;
       const res = await companiesAPI.getAllCompanies({ limit, offset });
       return res.data;
     } catch (err) {
