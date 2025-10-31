@@ -1,4 +1,4 @@
-import CompaniesDetails from '../components/Companies/CompaniesDetails/CompaniesDetails';
+import CompaniesDetails from '../features/companies/components/CompaniesDetails/CompaniesDetails';
 
 const CompanyProfile = () => {
   return (

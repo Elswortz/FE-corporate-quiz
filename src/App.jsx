@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router-dom';
-import { PrivateRoute, RestrictedRoute } from './utils';
+import { PrivateRoute, RestrictedRoute } from './features/auth/components/RoutesRestriction';
 import { useDispatch } from 'react-redux';
-import { setAuthTokens } from './store/auth/slice';
-import { fetchUserProfile, checkAuth } from './store/auth/operations';
+import { setAuthTokens } from './features/auth/store/authSlice';
+import { fetchUserProfile, checkAuth } from './features/auth/store/authThunks';
 
-import AppShell from './layouts/AppShell';
+import AppShell from './components/layouts/AppShell/AppShell';
 
 import About from './pages/About';
 import Users from './pages/Users';
@@ -14,9 +14,10 @@ import Companies from './pages/Companies';
 import CompanyProfile from './pages/CompanyProfile';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
-import AuthSuccess from './components/AuthSuccess/AuthSuccess';
-import NotificationProvider from './components/NotificationProvider/NotificationProvider';
-import ResetPassword from './components/ResetPassword/ResetPassword';
+
+import AuthSuccess from './features/auth/components/AuthSuccess/AuthSuccess';
+import NotificationProvider from './features/notifications/components/NotificationProvider/NotificationProvider';
+import ResetPassword from './features/auth/components/ResetPassword/ResetPassword';
 
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';

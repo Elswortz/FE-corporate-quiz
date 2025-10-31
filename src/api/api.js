@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { store } from '../store/store';
-import { refresh } from './authApi';
-import { setAuthTokens, logOut } from '../store/auth/slice';
+import { refresh } from '../features/auth/api/authApi';
+import { setAuthTokens, logOut } from '../features/auth/store/authSlice';
 
 export const api = axios.create({
   baseURL: 'http://localhost:8000',

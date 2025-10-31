@@ -4,8 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store/store.js';
 
-import './i18n.js';
-
+import './locales/i18n.js';
 import './index.css';
 
 import App from './App.jsx';
