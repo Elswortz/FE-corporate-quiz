@@ -18,9 +18,13 @@ const companiesState = {
     error: null,
   },
   selected: { data: null, isLoading: false, error: null },
-  create: { isLoading: false, error: null },
-  update: { isLoading: false, error: null },
-  delete: { isLoading: false, error: null },
+  operations: {
+    createCompany: { isLoading: false, error: null },
+    updateCompany: { isLoading: false, error: null },
+    deleteCompany: { isLoading: false, error: null },
+    changeCompanyStatus: { isLoading: false, error: null },
+    changeCompanyLogo: { isLoading: false, error: null },
+  },
 };
 
 export default companiesState;

@@ -1,17 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllCompanies, fetchOwnedCompanies, fetchJoinedCompanies } from '../../store/companiesThunks';
+import { fetchCompanies } from '../../store/companiesThunks';
 
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 
 import CompaniesItem from '../CompaniesItem/CompaniesItem';
 import Pagination from '../../../../components/ui/Pagination/Pagination';
-
-const fetchMap = {
-  all: fetchAllCompanies,
-  owned: fetchOwnedCompanies,
-  joined: fetchJoinedCompanies,
-};
 
 const CompaniesList = ({ type = 'all' }) => {
   const dispatch = useDispatch();
@@ -23,13 +17,11 @@ const CompaniesList = ({ type = 'all' }) => {
   const currentPage = Math.floor(offset / limit) + 1;
   const totalPages = Math.ceil(total / limit);
 
-  const fetchAction = fetchMap[type];
-
   useEffect(() => {
     if (!data.length) {
-      dispatch(fetchAction({ limit, offset: 0 }));
+      dispatch(fetchCompanies({ type, limit, offset: 0 }));
     }
-  }, [dispatch, data.length, limit, fetchAction]);
+  }, [dispatch, data.length, limit, type]);
 
   const handlePageChange = newPage => {
     const newOffset = (newPage - 1) * limit;

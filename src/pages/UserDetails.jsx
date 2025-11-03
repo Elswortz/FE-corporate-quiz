@@ -8,7 +8,7 @@ import { deepPurple } from '@mui/material/colors';
 const UserDetails = () => {
   const { userId } = useParams();
   const dispatch = useDispatch();
-  const { selected, isLoading, error } = useSelector(state => state.users);
+  const { data: selected, isLoading, error } = useSelector(state => state.users.selected);
   const location = useLocation();
   const backLinkHref = location.state?.from ?? '/users';
 

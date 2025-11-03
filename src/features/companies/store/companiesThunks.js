@@ -2,40 +2,28 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as companiesAPI from '../api/companiesApi';
 import { showNotification } from '../../notifications/store/notificationsSlice';
 
-export const fetchOwnedCompanies = createAsyncThunk(
-  'companies/owned',
-  async ({ page = 1, limit = 20 } = {}, { rejectWithValue }) => {
+export const fetchCompanies = createAsyncThunk(
+  'companies/fetch',
+  async ({ type = 'all', page = 1, limit = 20 } = {}, { rejectWithValue }) => {
     try {
       const offset = (page - 1) * limit;
-      const res = await companiesAPI.getMyOwnedCompanies({ limit, offset });
-      return res.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || 'Failed to load companies');
-    }
-  }
-);
 
-export const fetchJoinedCompanies = createAsyncThunk(
-  'companies/joined',
-  async ({ page = 1, limit = 20 } = {}, { rejectWithValue }) => {
-    try {
-      const offset = (page - 1) * limit;
-      const res = await companiesAPI.getMyJoinedCompanies({ limit, offset });
-      return res.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data || 'Failed to load companies');
-    }
-  }
-);
+      let res;
+      switch (type) {
+        case 'owned':
+          res = await companiesAPI.getMyOwnedCompanies({ limit, offset });
+          break;
+        case 'joined':
+          res = await companiesAPI.getMyJoinedCompanies({ limit, offset });
+          break;
+        default:
+          res = await companiesAPI.getAllCompanies({ limit, offset });
+          break;
+      }
 
-export const fetchAllCompanies = createAsyncThunk(
-  'companies/all',
-  async ({ limit, offset } = {}, { rejectWithValue }) => {
-    try {
-      const res = await companiesAPI.getAllCompanies({ limit, offset });
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response?.data || 'Failed to load all companies');
+      return rejectWithValue(err.response?.data?.message || 'Failed to load companies');
     }
   }
 );
@@ -81,3 +69,32 @@ export const deleteCompany = createAsyncThunk('companies/delete', async (company
     return rejectWithValue(err.response?.data || 'Failed to delete company');
   }
 });
+
+export const changeCompanyStatus = createAsyncThunk(
+  'companies/changeStatus',
+  async ({ companyId, status }, { rejectWithValue, dispatch }) => {
+    try {
+      const res = await companiesAPI.changeCompanyStatus(companyId, status);
+      dispatch(showNotification({ type: 'info', message: `Your company status is ${res.data.company_status} now` }));
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to change company status');
+    }
+  }
+);
+
+export const changeCompanyLogo = createAsyncThunk(
+  'companies/changeLogo',
+  async (logoData, { dispatch, rejectWithValue }) => {
+    try {
+      const res = await companiesAPI.changeCompanyLogo(logoData);
+      dispatch(showNotification({ message: 'Company logo updated successfully', severity: 'success' }));
+      return res.data;
+    } catch (err) {
+      dispatch(
+        showNotification({ message: err.response?.data?.message || 'Failed to update company logo', severity: 'error' })
+      );
+      return rejectWithValue(err.response?.data?.message || 'Failed to update company logo');
+    }
+  }
+);

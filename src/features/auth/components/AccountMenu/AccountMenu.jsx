@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Menu, MenuItem, IconButton, Typography, Box, Divider } from '@mui/material';
-import { useAuth } from '../../hooks/useAuth';
-
+// import { useAuth } from '../../hooks/useAuth';
 import { logOut } from '../../store/authSlice';
 
 const AccountMenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { data } = useSelector(state => state.auth.user);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -35,13 +34,13 @@ const AccountMenu = () => {
   return (
     <Box display="flex" alignItems="center">
       <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 2 }}>
-        <Avatar sx={{ bgcolor: 'secondary.main', width: 36, height: 36 }} src={user?.avatar_url || undefined}>
-          {user?.first_name?.[0] || '?'}
+        <Avatar sx={{ bgcolor: 'secondary.main', width: 36, height: 36 }} src={data?.avatar_url || undefined}>
+          {data?.first_name?.[0] || '?'}
         </Avatar>
       </IconButton>
 
       <Typography variant="body1" sx={{ ml: 1, color: 'white' }}>
-        {user ? `${user.first_name || ''} ${user.last_name || ''}` : 'Loading...'}
+        {data ? `${data.first_name || ''} ${data.last_name || ''}` : 'Loading...'}
       </Typography>
 
       <Menu

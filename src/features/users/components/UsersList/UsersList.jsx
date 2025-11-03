@@ -10,17 +10,22 @@ import Pagination from '../../../../components/ui/Pagination/Pagination';
 
 const UsersList = () => {
   const dispatch = useDispatch();
-  const { list, isLoading, pagination } = useSelector(state => state.users);
+  const { data: users, isLoading, meta } = useSelector(state => state.users.all);
+  const { limit, offset, total } = meta;
+
+  const currentPage = Math.floor(offset / limit) + 1;
+  const totalPages = Math.ceil(total / limit);
   const location = useLocation();
 
   useEffect(() => {
-    if (!list.length) {
-      dispatch(fetchUsers({ page: pagination.page }));
+    if (!users.length) {
+      dispatch(fetchUsers({ limit, offset: 0 }));
     }
-  }, [dispatch, pagination.page, list.length]);
+  }, [dispatch, limit, users.length]);
 
   const handlePageChange = newPage => {
-    dispatch(setPage(newPage));
+    const newOffset = (newPage - 1) * limit;
+    dispatch(fetchAction({ limit, offset: newOffset }));
   };
 
   return (
@@ -42,11 +47,11 @@ const UsersList = () => {
         </Box>
       ) : (
         <>
-          {list.length === 0 ? (
+          {users.length === 0 ? (
             <Typography variant="body1">No users found.</Typography>
           ) : (
             <Grid container spacing={2}>
-              {list.map(user => (
+              {users.map(user => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={user.id}>
                   <NavLink to={user.id.toString()} state={{ from: location }}>
                     <UsersItem user={user} />
@@ -56,14 +61,9 @@ const UsersList = () => {
             </Grid>
           )}
 
-          {list.length > 0 && (
+          {users.length > 0 && (
             <Box sx={{ mt: 3 }}>
-              <Pagination
-                page={pagination.page}
-                total={pagination.total}
-                limit={pagination.limit}
-                onPageChange={handlePageChange}
-              />
+              <Pagination page={currentPage} total={totalPages} limit={limit} onPageChange={handlePageChange} />
             </Box>
           )}
         </>

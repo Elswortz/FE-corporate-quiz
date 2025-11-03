@@ -1,7 +1,7 @@
 import { api } from '../../../api/api.js';
 import * as authAPI from '../api/authApi.js';
 import * as profileAPI from '../api/profileApi.js';
-import { setAuthTokens, logOut } from './authSlice.js';
+import { logOut } from './authSlice.js';
 import { jwtDecode } from 'jwt-decode';
 import { showNotification } from '../../notifications/store/notificationsSlice.js';
 
@@ -14,11 +14,11 @@ export const logIn = createAsyncThunk('auth/login', async (credentials, { dispat
     const { access_token, refresh_token } = response.data;
 
     api.defaults.headers.common.Authorization = `Bearer ${access_token}`;
+    await dispatch(fetchUserProfile());
 
-    const profile = await authAPI.getUserProfile();
-    return { access_token, refresh_token, user: profile.data };
+    return { access_token, refresh_token };
   } catch (err) {
-    dispatch(showNotification({ message: 'Login failed', severity: 'error' }));
+    dispatch(showNotification({ message: err.response?.data?.message || 'Login failed', severity: 'error' }));
     return rejectWithValue(err.response?.data?.message || 'Login failed');
   }
 });
@@ -28,25 +28,7 @@ export const fetchUserProfile = createAsyncThunk('auth/fetchUserProfile', async 
     const res = await authAPI.getUserProfile();
     return res.data;
   } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data || 'Failed to fetch profile');
-  }
-});
-
-export const googleLogIn = createAsyncThunk('auth/googleLogin', async (_, thunkAPI) => {
-  try {
-    const response = await authAPI.googleLogin();
-    return response.data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Login with Google failed');
-  }
-});
-
-export const azureLogIn = createAsyncThunk('auth/azureLogin', async (_, thunkAPI) => {
-  try {
-    const response = await authAPI.azureLogin();
-    return response.data;
-  } catch (err) {
-    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Login with Azure failed');
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Failed to fetch profile');
   }
 });
 
@@ -76,7 +58,7 @@ export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) 
     return res.data;
   } catch (err) {
     thunkAPI.dispatch(logOut());
-    return thunkAPI.rejectWithValue('Session expired. Please login again.');
+    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Session expired. Please login again.');
   }
 });
 
@@ -86,8 +68,8 @@ export const updateUser = createAsyncThunk('auth/updateUser', async (data, { dis
     dispatch(showNotification({ message: 'User updated successfully', severity: 'success' }));
     return res.data;
   } catch (err) {
-    dispatch(showNotification({ message: 'Failed to update user', severity: 'error' }));
-    return rejectWithValue(err.response?.data || 'Failed to update user');
+    dispatch(showNotification({ message: err.response?.data?.message || 'Failed to update user', severity: 'error' }));
+    return rejectWithValue(err.response?.data?.message || 'Failed to update user');
   }
 });
 
@@ -97,8 +79,8 @@ export const removeUser = createAsyncThunk('auth/removeUser', async (_, { dispat
     dispatch(showNotification({ message: 'User deleted successfully', severity: 'success' }));
     return true;
   } catch (err) {
-    dispatch(showNotification({ message: 'Failed to delete user', severity: 'error' }));
-    return rejectWithValue(err.response?.data || 'Failed to delete user');
+    dispatch(showNotification({ message: err.response?.data?.message || 'Failed to delete user', severity: 'error' }));
+    return rejectWithValue(err.response?.data?.message || 'Failed to delete user');
   }
 });
 
@@ -110,8 +92,10 @@ export const updateUserAvatar = createAsyncThunk(
       dispatch(showNotification({ message: 'User avatar updated successfully', severity: 'success' }));
       return res.data;
     } catch (err) {
-      dispatch(showNotification({ message: 'Failed to update avatar', severity: 'error' }));
-      return rejectWithValue(err.response?.data || 'Failed to update avatar');
+      dispatch(
+        showNotification({ message: err.response?.data?.message || 'Failed to update avatar', severity: 'error' })
+      );
+      return rejectWithValue(err.response?.data?.message || 'Failed to update avatar');
     }
   }
 );

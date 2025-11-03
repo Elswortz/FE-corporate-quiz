@@ -1,18 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-  logIn,
-  fetchUserProfile,
-  checkAuth,
-  googleLogIn,
-  azureLogIn,
-  updateUser,
-  removeUser,
-  updateUserAvatar,
-} from './authThunks';
+import { logIn, fetchUserProfile, checkAuth, updateUser, removeUser, updateUserAvatar } from './authThunks';
 import authState from './authState';
 
 const resetAuthState = state => {
-  state.user = null;
+  state.user.data = null;
+  state.user.isLoading = false;
+  state.user.error = null;
+  state.user.operations.updateUser.isLoading = false;
+  state.user.operations.updateUser.error = null;
+  state.user.operations.removeUser.isLoading = false;
+  state.user.operations.removeUser.error = null;
+  state.user.operations.updateUserAvatar.isLoading = false;
+  state.user.operations.updateUserAvatar.error = null;
   state.accessToken = null;
   state.refreshToken = null;
   state.isAuthenticated = false;
@@ -23,8 +22,7 @@ const resetAuthState = state => {
 };
 
 const handleAuthSuccess = (state, action) => {
-  const { access_token: accessToken, refresh_token: refreshToken, user } = action.payload;
-  state.user = user;
+  const { access_token: accessToken, refresh_token: refreshToken } = action.payload;
   state.accessToken = accessToken;
   state.refreshToken = refreshToken;
   state.isAuthenticated = true;
@@ -63,12 +61,6 @@ const authSlice = createSlice({
       .addCase(logIn.pending, handleAuthPending)
       .addCase(logIn.fulfilled, handleAuthSuccess)
       .addCase(logIn.rejected, handleAuthRejected)
-      .addCase(googleLogIn.pending, handleAuthPending)
-      .addCase(googleLogIn.fulfilled, handleAuthSuccess)
-      .addCase(googleLogIn.rejected, handleAuthRejected)
-      .addCase(azureLogIn.pending, handleAuthPending)
-      .addCase(azureLogIn.fulfilled, handleAuthSuccess)
-      .addCase(azureLogIn.rejected, handleAuthRejected)
       .addCase(checkAuth.pending, handleAuthPending)
       .addCase(checkAuth.fulfilled, (state, action) => {
         const { access_token, refresh_token } = action.payload;
@@ -79,27 +71,51 @@ const authSlice = createSlice({
         localStorage.setItem('refreshToken', refresh_token);
       })
       .addCase(checkAuth.rejected, resetAuthState)
-      .addCase(fetchUserProfile.pending, handleAuthPending)
+      .addCase(fetchUserProfile.pending, (state, action) => {
+        state.user.isLoading = true;
+        state.user.error = false;
+      })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isLoading = false;
+        state.user.data = action.payload;
+        state.user.isLoading = false;
       })
-      .addCase(fetchUserProfile.rejected, handleAuthRejected)
-      .addCase(updateUser.pending, handleAuthPending)
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.user.error = action.payload;
+        state.user.isLoading = false;
+      })
+      .addCase(updateUser.pending, (state, action) => {
+        state.user.operations.updateUser.isLoading = true;
+        state.user.operations.updateUser.error = null;
+      })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isLoading = false;
+        state.user.data = action.payload;
+        state.user.operations.updateUser.isLoading = false;
       })
-      .addCase(updateUser.rejected, handleAuthRejected)
-      .addCase(removeUser.pending, handleAuthPending)
+      .addCase(updateUser.rejected, (state, action) => {
+        state.user.operations.updateUser.error = action.payload;
+        state.user.operations.updateUser.isLoading = false;
+      })
+      .addCase(removeUser.pending, (state, action) => {
+        state.user.operations.removeUser.isLoading = true;
+        state.user.operations.removeUser.error = null;
+      })
       .addCase(removeUser.fulfilled, resetAuthState)
-      .addCase(removeUser.rejected, handleAuthRejected)
-      .addCase(updateUserAvatar.pending, handleAuthPending)
-      .addCase(updateUserAvatar.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isLoading = false;
+      .addCase(removeUser.rejected, (state, action) => {
+        state.user.operations.removeUser.isLoading = false;
+        state.user.operations.removeUser.error = action.payload;
       })
-      .addCase(updateUserAvatar.rejected, handleAuthRejected),
+      .addCase(updateUserAvatar.pending, (state, action) => {
+        state.user.operations.updateUserAvatar.isLoading = true;
+        state.user.operations.updateUserAvatar.error = null;
+      })
+      .addCase(updateUserAvatar.fulfilled, (state, action) => {
+        state.user.data = action.payload;
+        state.user.operations.updateUserAvatar.isLoading = false;
+      })
+      .addCase(updateUserAvatar.rejected, (state, action) => {
+        state.user.operations.updateUserAvatar.isLoading = false;
+        state.user.operations.updateUserAvatar.error = action.payload;
+      }),
 });
 
 export const { logOut, setAuthTokens } = authSlice.actions;

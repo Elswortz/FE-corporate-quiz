@@ -28,10 +28,11 @@ const passwordSchema = Yup.object().shape({
 
 const UserInfo = () => {
   const dispatch = useDispatch();
-  const { user, isLoading } = useSelector(state => state.auth);
+  const { data } = useSelector(state => state.auth.user);
+  const { isLoading } = useSelector(state => state.auth.user.operations.updateUser);
 
-  const [firstName, setFirstName] = useState(user?.first_name || '');
-  const [lastName, setLastName] = useState(user?.last_name || '');
+  const [firstName, setFirstName] = useState(data?.first_name || '');
+  const [lastName, setLastName] = useState(data?.last_name || '');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
@@ -44,11 +45,11 @@ const UserInfo = () => {
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
   useEffect(() => {
-    if (user) {
-      setFirstName(user.first_name || '');
-      setLastName(user.last_name || '');
+    if (data) {
+      setFirstName(data.first_name || '');
+      setLastName(data.last_name || '');
     }
-  }, [user]);
+  }, [data]);
 
   const handleSave = () => {
     dispatch(updateUser({ first_name: firstName, last_name: lastName }));
@@ -98,7 +99,7 @@ const UserInfo = () => {
     }
   };
 
-  if (!user) {
+  if (!data) {
     return (
       <Box display="flex" justifyContent="center" mt={10}>
         <CircularProgress />
@@ -124,8 +125,8 @@ const UserInfo = () => {
 
       <Stack direction="row" alignItems="center" spacing={3}>
         <Box>
-          <Avatar src={user?.avatar_url || ''} sx={{ width: 100, height: 100, bgcolor: deepPurple[500] }}>
-            {!user?.avatar_url && (user?.first_name?.[0] || '?')}
+          <Avatar src={data?.avatar_url || ''} sx={{ width: 100, height: 100, bgcolor: deepPurple[500] }}>
+            {!data?.avatar_url && (data?.first_name?.[0] || '?')}
           </Avatar>
           <Button variant="outlined" component="label" size="small" sx={{ mt: 1 }}>
             Change Avatar
@@ -134,7 +135,7 @@ const UserInfo = () => {
         </Box>
         <Box flex={1}>
           <Typography variant="body1" color="text.secondary">
-            ID: {user?.id}
+            ID: {data?.id}
           </Typography>
           <TextField
             label="First Name"
@@ -150,7 +151,7 @@ const UserInfo = () => {
             fullWidth
             sx={{ mt: 2 }}
           />
-          <TextField label="Email" value={user?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
+          <TextField label="Email" value={data?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
         </Box>
       </Stack>
       <Box mt={4} display="flex" justifyContent="space-between">

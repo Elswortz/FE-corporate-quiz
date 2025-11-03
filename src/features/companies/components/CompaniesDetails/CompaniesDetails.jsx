@@ -1,7 +1,7 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { fetchCompanyById, deleteCompany } from '../../store/companiesThunks';
+import { fetchCompanyById, deleteCompany, changeCompanyStatus } from '../../store/companiesThunks';
 import { useNavigate } from 'react-router-dom';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
 
@@ -30,6 +30,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const CompaniesDetails = () => {
   const { companyId } = useParams();
@@ -38,7 +40,7 @@ const CompaniesDetails = () => {
   const location = useLocation();
 
   const { data, isLoading, error } = useSelector(state => state.companies.selected);
-  const { user } = useSelector(state => state.auth);
+  const { data: user } = useSelector(state => state.auth.user);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -49,6 +51,13 @@ const CompaniesDetails = () => {
     if (company?.owner?.id === userId) return 'owner';
     const member = company?.members?.find(m => m.id === userId);
     return member?.role || null;
+  };
+
+  const handleToggleStatus = () => {
+    const newStatus = data.company_status === 'hidden' ? 'visible' : 'hidden';
+    dispatch(changeCompanyStatus({ companyId: data.id, status: newStatus })).then(() => {
+      dispatch(fetchCompanyById(data.id));
+    });
   };
 
   const role = getUserRoleInCompany(data, user?.id);
@@ -147,6 +156,15 @@ const CompaniesDetails = () => {
           action={
             isOwner ? (
               <Box display="flex" gap={1}>
+                <Button
+                  onClick={handleToggleStatus}
+                  startIcon={data.company_status === 'hidden' ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  size="small"
+                  variant="outlined"
+                >
+                  {data.company_status === 'hidden' ? 'Show' : 'Hide'}
+                </Button>
+
                 <Button onClick={() => setIsEditOpen(true)} startIcon={<EditIcon />} size="small" variant="outlined">
                   Редактировать
                 </Button>

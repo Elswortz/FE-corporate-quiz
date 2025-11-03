@@ -6,40 +6,36 @@ const usersSlice = createSlice({
   name: 'users',
   initialState: usersState,
   reducers: {
-    setPage(state, action) {
-      state.pagination.page = action.payload;
-    },
+    // setPage(state, action) {
+    //   state.pagination.page = action.payload;
+    // },
   },
   extraReducers: builder =>
     builder
       .addCase(fetchUsers.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+        state.all.isLoading = true;
+        state.all.error = null;
       })
       .addCase(fetchUsers.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.list = payload.items;
-        state.pagination.total = payload.meta.total || 0;
-        state.pagination.limit = payload.meta.limit || 1;
-        state.pagination.offset = payload.meta.offset || 0;
-        state.pagination.hasNext = payload.meta.has_next || false;
-        state.pagination.hasPrevious = payload.meta.has_previous || false;
+        state.all.isLoading = false;
+        state.all.data = payload.items;
+        state.all.meta = payload.meta;
       })
       .addCase(fetchUsers.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+        state.all.isLoading = false;
+        state.all.error = payload;
       })
       .addCase(fetchUserById.pending, state => {
-        state.isLoading = true;
-        state.error = null;
+        state.selected.isLoading = true;
+        state.selected.error = null;
       })
       .addCase(fetchUserById.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.selected = payload;
+        state.selected.isLoading = false;
+        state.selected.data = payload;
       })
       .addCase(fetchUserById.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.error = payload;
+        state.selected.isLoading = false;
+        state.selected.error = payload;
       }),
 });
 

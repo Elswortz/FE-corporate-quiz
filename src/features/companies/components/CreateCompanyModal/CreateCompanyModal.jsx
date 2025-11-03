@@ -40,7 +40,7 @@ const emptyForm = {
 };
 
 const CreateCompanyModal = ({ open, onClose }) => {
-  const { isLoading } = useSelector(state => state.companies.create);
+  const { isLoading } = useSelector(state => state.companies.operations.createCompany);
   const dispatch = useDispatch();
   const [form, setForm] = useState(emptyForm);
   const [errors, setErrors] = useState({});
