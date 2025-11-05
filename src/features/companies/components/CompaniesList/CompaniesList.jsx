@@ -18,14 +18,24 @@ const CompaniesList = ({ type = 'all' }) => {
   const totalPages = Math.ceil(total / limit);
 
   useEffect(() => {
-    if (!data.length) {
+    if (!data.length) dispatch(fetchCompanies({ type, limit, offset: 0 }));
+
+    const interval = setInterval(() => {
       dispatch(fetchCompanies({ type, limit, offset: 0 }));
-    }
-  }, [dispatch, data.length, limit, type]);
+    }, 3 * 60 * 1000);
+
+    const handleFocus = () => dispatch(fetchCompanies({ type, limit, offset: 0 }));
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [dispatch, data.length, type, limit]);
 
   const handlePageChange = newPage => {
     const newOffset = (newPage - 1) * limit;
-    dispatch(fetchAction({ limit, offset: newOffset }));
+    dispatch(fetchCompanies({ limit, offset: newOffset }));
   };
 
   const titles = {

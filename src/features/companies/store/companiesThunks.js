@@ -85,9 +85,9 @@ export const changeCompanyStatus = createAsyncThunk(
 
 export const changeCompanyLogo = createAsyncThunk(
   'companies/changeLogo',
-  async (logoData, { dispatch, rejectWithValue }) => {
+  async ({ companyId, logoFile }, { dispatch, rejectWithValue }) => {
     try {
-      const res = await companiesAPI.changeCompanyLogo(logoData);
+      const res = await companiesAPI.changeCompanyLogo(companyId, logoFile);
       dispatch(showNotification({ message: 'Company logo updated successfully', severity: 'success' }));
       return res.data;
     } catch (err) {
