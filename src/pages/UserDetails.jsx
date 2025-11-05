@@ -1,23 +1,14 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchUserById } from '../store/user/operations';
-import {
-  Box,
-  Card,
-  CardContent,
-  Avatar,
-  Typography,
-  CircularProgress,
-  Divider,
-  Paper,
-} from '@mui/material';
+import { fetchUserById } from '../features/users/store/usersThunks';
+import { Box, Card, CardContent, Avatar, Typography, CircularProgress, Divider, Paper } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 
 const UserDetails = () => {
   const { userId } = useParams();
   const dispatch = useDispatch();
-  const { selected, isLoading, error } = useSelector(state => state.users);
+  const { data: selected, isLoading, error } = useSelector(state => state.users.selected);
   const location = useLocation();
   const backLinkHref = location.state?.from ?? '/users';
 
