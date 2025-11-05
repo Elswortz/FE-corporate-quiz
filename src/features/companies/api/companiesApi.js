@@ -17,8 +17,8 @@ export const deleteCompany = company_id => api.delete(`companies/${company_id}`)
 export const changeCompanyStatus = (company_id, status) =>
   api.patch(`companies/${company_id}?company_status=${status}`);
 
-export const changeCompanyLogo = (company_id, logoData) =>
-  api.post(`companies/${company_id}/logo`, logoData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const changeCompanyLogo = (company_id, logoFile) =>
+  api.post(`companies/${company_id}/logo`, logoFile, { headers: { 'Content-Type': 'multipart/form-data' } });
 
 export const getCompanyMembers = company_id => api.get(`companies/${company_id}/members`);
 

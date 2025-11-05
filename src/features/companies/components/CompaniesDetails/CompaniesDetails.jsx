@@ -1,7 +1,8 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { fetchCompanyById, deleteCompany, changeCompanyStatus } from '../../store/companiesThunks';
+import { fetchCompanyById, deleteCompany, changeCompanyStatus, changeCompanyLogo } from '../../store/companiesThunks';
+import { clearCurrentCompany } from '../../store/companiesSlice';
 import { useNavigate } from 'react-router-dom';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
 
@@ -40,6 +41,7 @@ const CompaniesDetails = () => {
   const location = useLocation();
 
   const { data, isLoading, error } = useSelector(state => state.companies.selected);
+  const { isLoading: SatusLoading } = useSelector(state => state.companies.operations.changeCompanyStatus);
   const { data: user } = useSelector(state => state.auth.user);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,11 +55,21 @@ const CompaniesDetails = () => {
     return member?.role || null;
   };
 
-  const handleToggleStatus = () => {
+  const handleToggleStatus = async () => {
     const newStatus = data.company_status === 'hidden' ? 'visible' : 'hidden';
-    dispatch(changeCompanyStatus({ companyId: data.id, status: newStatus })).then(() => {
-      dispatch(fetchCompanyById(data.id));
-    });
+    await dispatch(changeCompanyStatus({ companyId: data.id, status: newStatus })).unwrap();
+    await dispatch(fetchCompanyById(data.id)).unwrap();
+  };
+
+  const handleChangeLogo = async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('logo_file', file);
+
+    await dispatch(changeCompanyLogo({ companyId: data.id, logoFile: formData })).unwrap();
+    await dispatch(fetchCompanyById(data.id)).unwrap();
   };
 
   const role = getUserRoleInCompany(data, user?.id);
@@ -66,11 +78,16 @@ const CompaniesDetails = () => {
   // const isMember = role === 'member';
 
   useEffect(() => {
-    if (companyId) dispatch(fetchCompanyById(companyId));
-  }, [dispatch, companyId, role]);
+    if (companyId) {
+      dispatch(fetchCompanyById(companyId));
+    }
+    return () => {
+      dispatch(clearCurrentCompany());
+    };
+  }, [dispatch, companyId]);
 
-  const handleDelete = () => {
-    dispatch(deleteCompany(data.id));
+  const handleDelete = async () => {
+    await dispatch(deleteCompany(data.id)).unwrap();
     setIsDialogOpen(false);
     navigate(backLinkHref);
   };
@@ -120,17 +137,58 @@ const CompaniesDetails = () => {
       <Card variant="outlined">
         <CardHeader
           avatar={
-            company_logo_url ? (
-              <Avatar src={company_logo_url} alt={company_name} sx={{ width: 80, height: 80 }} />
-            ) : (
-              <Avatar sx={{ width: 80, height: 80 }}>
-                {company_name
-                  ?.split(' ')
-                  .map(s => s[0])
-                  .slice(0, 2)
-                  .join('')}
+            <Box position="relative" width={80} height={80}>
+              <input
+                type="file"
+                accept="image/*"
+                id="logo-upload"
+                style={{ display: 'none' }}
+                onChange={handleChangeLogo}
+              />
+              <Avatar
+                src={company_logo_url}
+                alt={company_name}
+                sx={{
+                  width: 80,
+                  height: 80,
+                  fontSize: 24,
+                  cursor: isOwner ? 'pointer' : 'default',
+                }}
+                onClick={() => {
+                  if (isOwner) document.getElementById('logo-upload').click();
+                }}
+              >
+                {!company_logo_url &&
+                  company_name
+                    ?.split(' ')
+                    .map(s => s[0])
+                    .slice(0, 2)
+                    .join('')}
               </Avatar>
-            )
+              {isOwner && (
+                <Box
+                  onClick={() => document.getElementById('logo-upload').click()}
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    bgcolor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 0,
+                    cursor: 'pointer',
+                    transition: 'opacity 0.2s ease-in-out',
+                    '&:hover': { opacity: 1 },
+                  }}
+                >
+                  <EditIcon sx={{ color: 'white', fontSize: 26 }} />
+                </Box>
+              )}
+            </Box>
           }
           title={
             <Box display="flex" alignItems="center" gap={2} flexWrap="wrap">
@@ -159,6 +217,7 @@ const CompaniesDetails = () => {
                 <Button
                   onClick={handleToggleStatus}
                   startIcon={data.company_status === 'hidden' ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  disabled={SatusLoading}
                   size="small"
                   variant="outlined"
                 >
@@ -166,7 +225,7 @@ const CompaniesDetails = () => {
                 </Button>
 
                 <Button onClick={() => setIsEditOpen(true)} startIcon={<EditIcon />} size="small" variant="outlined">
-                  Редактировать
+                  Edit
                 </Button>
 
                 <Button
@@ -176,7 +235,7 @@ const CompaniesDetails = () => {
                   variant="contained"
                   color="error"
                 >
-                  Удалить
+                  Delete
                 </Button>
               </Box>
             ) : null
