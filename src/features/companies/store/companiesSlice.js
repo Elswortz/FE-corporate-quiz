@@ -123,7 +123,7 @@ const companiesSlice = createSlice({
         state.operations.deleteCompany.error = payload;
       })
       // --- changeCompanyStatus ---
-      .addCase(changeCompanyStatus.pending, (state, { payload }) => {
+      .addCase(changeCompanyStatus.pending, state => {
         state.operations.changeCompanyStatus.isLoading = true;
         state.operations.changeCompanyStatus.error = null;
       })
@@ -136,7 +136,7 @@ const companiesSlice = createSlice({
         state.operations.changeCompanyStatus.error = payload;
       })
       // --- changeCompanyLogo ---
-      .addCase(changeCompanyLogo.pending, (state, { payload }) => {
+      .addCase(changeCompanyLogo.pending, state => {
         state.operations.changeCompanyLogo.isLoading = true;
         state.operations.changeCompanyLogo.error = null;
       })

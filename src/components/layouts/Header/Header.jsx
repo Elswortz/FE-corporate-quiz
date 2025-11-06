@@ -5,6 +5,7 @@ import AuthNav from '../../../features/auth/components/AuthNav/AuthNav';
 import AccountMenu from '../../../features/auth/components/AccountMenu/AccountMenu';
 import { useAuth } from '../../../features/auth/hooks/useAuth';
 import { AppBar, Toolbar, Box } from '@mui/material';
+import NotificationsBell from '../../../features/actions/components/NotificationBell/NotificationBell';
 
 function Header() {
   const { isLoggedIn } = useAuth();
@@ -18,6 +19,7 @@ function Header() {
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
           <LangSelector />
+          <NotificationsBell />
           {isLoggedIn ? <AccountMenu /> : <AuthNav />}
         </Box>
       </Toolbar>
