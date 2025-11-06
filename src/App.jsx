@@ -14,6 +14,9 @@ import Companies from './pages/Companies';
 import CompanyProfile from './pages/CompanyProfile';
 import Registration from './pages/Registration';
 import Login from './pages/Login';
+import Members from './pages/Members';
+import Quizzes from './pages/Quizzes';
+import Invitations from './pages/Invitations';
 
 import AuthSuccess from './features/auth/components/AuthSuccess/AuthSuccess';
 import NotificationProvider from './features/notifications/components/NotificationProvider/NotificationProvider';
@@ -56,7 +59,11 @@ function App() {
           <Route path="users/:userId" element={<UserDetails />} />
           <Route path="users/profile" element={<PrivateRoute component={UserProfile} />} />
           <Route path="companies" element={<Companies />} />
-          <Route path="companies/:companyId" element={<CompanyProfile />} />
+          <Route path="companies/:companyId" element={<CompanyProfile />}>
+            <Route path="members" element={<Members />} />
+            <Route path="quizzes" element={<Quizzes />} />
+            <Route path="invitations" element={<Invitations />} />
+          </Route>
           <Route path="registration" element={<RestrictedRoute component={Registration} />} />
           <Route path="login" element={<RestrictedRoute component={Login} />} />
           <Route path="login/success" element={<AuthSuccess />} />

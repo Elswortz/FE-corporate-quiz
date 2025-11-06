@@ -22,6 +22,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Tabs,
+  Tab,
 } from '@mui/material';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -46,6 +48,12 @@ const CompaniesDetails = () => {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const currentPath = location.pathname;
+  const basePath = `/companies/${companyId}`;
+  let tabValue = 0;
+  if (currentPath.endsWith('/quizzes')) tabValue = 1;
+  if (currentPath.endsWith('/invitations')) tabValue = 2;
 
   const backLinkHref = location.state?.from ?? '/companies';
 
@@ -295,6 +303,14 @@ const CompaniesDetails = () => {
           </Grid>
         </CardContent>
       </Card>
+
+      <Box mt={4}>
+        <Tabs value={tabValue} textColor="primary" indicatorColor="primary">
+          <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
+          <Tab label="Quizzes" component={NavLink} to={`${basePath}/quizzes`} />
+          <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />
+        </Tabs>
+      </Box>
 
       <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
         <DialogTitle>Confirm Company Deletion</DialogTitle>
