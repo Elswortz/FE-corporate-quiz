@@ -18,7 +18,7 @@ const actionsSlice = createSlice({
       })
       .addCase(fetchMyInvitations.fulfilled, (state, { payload }) => {
         state.myInvitations.isLoading = false;
-        state.myInvitations.data = payload;
+        state.myInvitations.data = payload.filter(i => i.status === 'pending');
         state.myInvitations.lastFetched = Date.now();
       })
       .addCase(fetchMyInvitations.rejected, (state, { payload }) => {

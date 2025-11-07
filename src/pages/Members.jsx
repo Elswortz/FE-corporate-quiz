@@ -1,78 +1,67 @@
-import { useState } from 'react';
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { Box, List, ListItem, ListItemAvatar, ListItemText, Avatar, Typography, Divider, Button } from '@mui/material';
+import { Person } from '@mui/icons-material';
+import { useSelector, useDispatch } from 'react-redux';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
-import { inviteUser } from '../features/actions/api/actionsApi';
-import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { removeCompanyMember } from '../features/companies/store/companiesThunks';
+import getUserRoleInCompany from '../utils/getUserRoleInCompany';
 
 const Members = () => {
-  const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-
   const dispatch = useDispatch();
-  const { companyId } = useParams();
+  const selectedCompany = useSelector(state => state.companies.selected?.data);
+  const { data: user } = useSelector(state => state.auth.user);
+  const members = selectedCompany?.members || [];
 
-  const handleOpen = () => {
-    setEmail('');
-    setError('');
-    setOpen(true);
-  };
+  const role = getUserRoleInCompany(selectedCompany, user?.id);
+  const isOwner = role === 'owner';
+  // const isAdmin = role === 'admin';
+  // const isMember = role === 'member';
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleSend = async () => {
-    setIsLoading(true);
+  const handleRemove = async member => {
+    if (!window.confirm(`Исключить ${member.first_name} ${member.last_name || ''}?`)) return;
     try {
-      await inviteUser({ company_id: companyId, invite_user_email: email });
-      dispatch(showNotification({ message: `User with email ${email} invited`, severity: 'success' }));
+      await dispatch(removeCompanyMember({ companyId: selectedCompany.id, userId: member.id })).unwrap();
+      dispatch(showNotification({ message: `${member.email} исключён из компании`, severity: 'success' }));
+      // Можно добавить обновление данных компании после удаления
     } catch (err) {
-      setError(err.response?.data?.message);
       dispatch(
         showNotification({
-          message: err.response?.data?.message || `User with email ${email} not found`,
+          message: err.response?.data?.message || 'Ошибка при исключении участника',
           severity: 'error',
         })
       );
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <Box sx={{ maxWidth: 1100, mx: 'auto', p: { xs: 2, md: 4 } }}>
-        <Button variant="contained" color="primary" onClick={handleOpen}>
-          Invite
-        </Button>
-
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          <DialogTitle>Invite member</DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              label="Email"
-              type="email"
-              fullWidth
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              error={!!error}
-              helperText={error}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button variant="contained" onClick={handleSend}>
-              {isLoading ? 'Loading...' : 'Send'}
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-    </>
+    <Box sx={{ maxWidth: 1100, mx: 'auto', p: { xs: 2, md: 4 } }}>
+      {members?.length ? (
+        <List>
+          {members.map(member => (
+            <div key={member.id}>
+              <ListItem
+                secondaryAction={
+                  isOwner ? (
+                    <Button variant="outlined" color="error" size="small" onClick={() => handleRemove(member)}>
+                      Exclude
+                    </Button>
+                  ) : null
+                }
+              >
+                <ListItemAvatar>
+                  <Avatar>
+                    <Person />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={`${member.first_name} ${member.last_name}`} secondary={member.email} />
+              </ListItem>
+              <Divider />
+            </div>
+          ))}
+        </List>
+      ) : (
+        <Typography color="text.secondary">No members yet</Typography>
+      )}
+    </Box>
   );
 };
 

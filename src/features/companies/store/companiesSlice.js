@@ -8,6 +8,7 @@ import {
   deleteCompany,
   changeCompanyStatus,
   changeCompanyLogo,
+  removeCompanyMember,
 } from './companiesThunks';
 
 const updateCompanyEverywhere = (state, updated) => {
@@ -147,6 +148,19 @@ const companiesSlice = createSlice({
       .addCase(changeCompanyLogo.rejected, (state, { payload }) => {
         state.operations.changeCompanyLogo.isLoading = false;
         state.operations.changeCompanyLogo.error = payload;
+      })
+      // --- removeCompanyMember ---
+      .addCase(removeCompanyMember.pending, state => {
+        state.operations.removeCompanyMember.isLoading = true;
+        state.operations.removeCompanyMember.error = null;
+      })
+      .addCase(removeCompanyMember.fulfilled, (state, { payload }) => {
+        state.operations.removeCompanyMember.isLoading = false;
+        state.selected.data.members = state.selected.data.members.filter(m => m.id !== payload);
+      })
+      .addCase(removeCompanyMember.rejected, (state, { payload }) => {
+        state.operations.removeCompanyMember.isLoading = false;
+        state.operations.removeCompanyMember.error = payload;
       }),
 });
 

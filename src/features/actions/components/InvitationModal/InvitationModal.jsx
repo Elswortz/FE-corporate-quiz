@@ -39,12 +39,12 @@ const InvitationModal = ({ invite, onClose, onAccepted }) => {
         <Box display="flex" gap={2} alignItems="center" mb={2}>
           <Avatar src={invite.inviter?.avatar_url}>{invite.inviter?.name?.[0]}</Avatar>
           <div>
-            <Typography variant="subtitle1">{invite.company_name}</Typography>
-            <Typography variant="body2">Invited by {invite.inviter?.name}</Typography>
+            <Typography variant="subtitle1">{invite.company_id}</Typography>
+            <Typography variant="body2">Invited by {invite.invited_by_id}</Typography>
           </div>
         </Box>
 
-        <Typography variant="body2">{invite.message || 'No message'}</Typography>
+        <Typography variant="body2">{`Status: ${invite.status}`}</Typography>
         {/* можно вывести дату, роль, дополнительные поля */}
       </DialogContent>
 

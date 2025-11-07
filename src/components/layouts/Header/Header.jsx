@@ -19,7 +19,7 @@ function Header() {
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
           <LangSelector />
-          <NotificationsBell />
+          {isLoggedIn && <NotificationsBell />}
           {isLoggedIn ? <AccountMenu /> : <AuthNav />}
         </Box>
       </Toolbar>

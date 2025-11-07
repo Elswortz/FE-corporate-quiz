@@ -1,3 +1,5 @@
+import { removeCompanyMember } from './companiesThunks';
+
 const companiesState = {
   all: {
     data: [],
@@ -24,6 +26,7 @@ const companiesState = {
     deleteCompany: { isLoading: false, error: null },
     changeCompanyStatus: { isLoading: false, error: null },
     changeCompanyLogo: { isLoading: false, error: null },
+    removeCompanyMember: { isLoading: false, error: null },
   },
 };
 

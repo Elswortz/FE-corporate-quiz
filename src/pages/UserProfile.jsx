@@ -18,6 +18,7 @@ const UserProfile = () => {
         }}
       >
         <CompaniesList type="owned" />
+        <CompaniesList type="joined" />
       </Box>
     </>
   );

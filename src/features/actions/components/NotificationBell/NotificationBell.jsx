@@ -66,7 +66,7 @@ const NotificationsBell = () => {
               <ListItemAvatar>
                 <Avatar src={invite.inviter?.avatar_url}>{invite.inviter?.name?.[0]}</Avatar>
               </ListItemAvatar>
-              <ListItemText primary={invite.company_name} secondary={`From: ${invite.inviter?.name}`} />
+              <ListItemText primary={invite.company_id} secondary={`From: ${invite.invited_by_id}`} />
             </MenuItem>
           ))
         )}
