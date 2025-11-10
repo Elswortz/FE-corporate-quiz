@@ -15,91 +15,80 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deepPurple } from '@mui/material/colors';
 import { updateUser, updateUserAvatar, removeUser } from '../../store/authThunks';
-import { changePassword } from '../../api/profileApi';
-import * as Yup from 'yup';
+import { selectUser, selectUpdateUserLoading } from '../../store/authSelectors';
+import { showNotification } from '../../../notifications/store/notificationsSlice';
 
-const passwordSchema = Yup.object().shape({
-  oldPassword: Yup.string().required('Введите старый пароль'),
-  newPassword: Yup.string().min(6, 'Новый пароль должен быть не менее 6 символов').required('Введите новый пароль'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('newPassword')], 'Пароли должны совпадать')
-    .required('Подтвердите новый пароль'),
-});
+import ChangePassModal from '../ChangePassModal/ChangePassModal';
 
 const UserInfo = () => {
   const dispatch = useDispatch();
-  const { data } = useSelector(state => state.auth.user);
-  const { isLoading } = useSelector(state => state.auth.user.operations.updateUser);
 
-  const [firstName, setFirstName] = useState(data?.first_name || '');
-  const [lastName, setLastName] = useState(data?.last_name || '');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const user = useSelector(selectUser);
+  const editLoading = useSelector(selectUpdateUserLoading);
 
-  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
-  const [passwordForm, setPasswordForm] = useState({
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
-  const [passwordErrors, setPasswordErrors] = useState({});
-  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [firstName, setFirstName] = useState(user?.first_name || '');
+  const [lastName, setLastName] = useState(user?.last_name || '');
+
+  const [isConfirmDelOpen, setIsConfirmDelOpen] = useState(false);
+  const [isPassChangeOpen, setIsPassChangeOpen] = useState(false);
 
   useEffect(() => {
-    if (data) {
-      setFirstName(data.first_name || '');
-      setLastName(data.last_name || '');
+    if (user) {
+      setFirstName(user.first_name || '');
+      setLastName(user.last_name || '');
     }
-  }, [data]);
+  }, [user]);
 
-  const handleSave = () => {
-    dispatch(updateUser({ first_name: firstName, last_name: lastName }));
+  const handleSave = async () => {
+    try {
+      await dispatch(updateUser({ first_name: firstName, last_name: lastName })).unwrap();
+      dispatch(showNotification({ message: 'User information has been updated successfully', severity: 'success' }));
+    } catch (error) {
+      dispatch(
+        showNotification({
+          message: error || 'Failed to update user information',
+          severity: 'error',
+        })
+      );
+    }
   };
 
-  const handleAvatarChange = e => {
+  const handleAvatarChange = async e => {
     const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
     formData.append('avatar_file', file);
 
-    dispatch(updateUserAvatar(formData));
-  };
-
-  const handleDelete = () => {
-    dispatch(removeUser());
-    setIsDialogOpen(false);
-  };
-
-  const handlePasswordChange = e => {
-    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
-    setPasswordErrors({ ...passwordErrors, [e.target.name]: undefined });
-  };
-
-  const handlePasswordSubmit = async e => {
-    e.preventDefault();
     try {
-      await passwordSchema.validate(passwordForm, { abortEarly: false });
-      setPasswordErrors({});
-      setPasswordSuccess('');
-
-      const { oldPassword, newPassword } = passwordForm;
-      await changePassword({ old_password: oldPassword, new_password: newPassword });
-      setPasswordSuccess('Пароль успешно изменён.');
-      setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
+      await dispatch(updateUserAvatar(formData)).unwrap();
+      dispatch(showNotification({ message: 'Avatar successfully updated', severity: 'success' }));
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        const newErrors = {};
-        error.inner.forEach(err => {
-          newErrors[err.path] = err.message;
-        });
-        setPasswordErrors(newErrors);
-      } else {
-        setPasswordErrors({ oldPassword: 'Неверный старый пароль или ошибка сервера.' });
-      }
+      dispatch(
+        showNotification({
+          message: error || 'Failed to update user avatar',
+          severity: 'error',
+        })
+      );
     }
   };
 
-  if (!data) {
+  const handleDelete = async () => {
+    try {
+      await dispatch(removeUser()).unwrap();
+      dispatch(showNotification({ message: 'The account has been successfully deleted.', severity: 'info' }));
+      setIsConfirmDelOpen(false);
+    } catch (error) {
+      dispatch(
+        showNotification({
+          message: error || 'Failed to delete account',
+          severity: 'error',
+        })
+      );
+    }
+  };
+
+  if (!user) {
     return (
       <Box display="flex" justifyContent="center" mt={10}>
         <CircularProgress />
@@ -125,8 +114,8 @@ const UserInfo = () => {
 
       <Stack direction="row" alignItems="center" spacing={3}>
         <Box>
-          <Avatar src={data?.avatar_url || ''} sx={{ width: 100, height: 100, bgcolor: deepPurple[500] }}>
-            {!data?.avatar_url && (data?.first_name?.[0] || '?')}
+          <Avatar src={user?.avatar_url || ''} sx={{ width: 100, height: 100, bgcolor: deepPurple[500] }}>
+            {!user?.avatar_url && (user?.first_name?.[0] || '?')}
           </Avatar>
           <Button variant="outlined" component="label" size="small" sx={{ mt: 1 }}>
             Change Avatar
@@ -135,7 +124,7 @@ const UserInfo = () => {
         </Box>
         <Box flex={1}>
           <Typography variant="body1" color="text.secondary">
-            ID: {data?.id}
+            ID: {user?.id}
           </Typography>
           <TextField
             label="First Name"
@@ -151,83 +140,35 @@ const UserInfo = () => {
             fullWidth
             sx={{ mt: 2 }}
           />
-          <TextField label="Email" value={data?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
+          <TextField label="Email" value={user?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
         </Box>
       </Stack>
       <Box mt={4} display="flex" justifyContent="space-between">
-        <Button variant="contained" color="primary" onClick={handleSave} disabled={isLoading}>
-          {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
+        <Button variant="contained" color="primary" onClick={handleSave} disabled={editLoading}>
+          {editLoading ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
         </Button>
-        <Button variant="outlined" color="secondary" onClick={() => setIsPasswordDialogOpen(true)}>
+        <Button variant="outlined" color="secondary" onClick={() => setIsPassChangeOpen(true)}>
           Change Password
         </Button>
-        <Button variant="outlined" color="error" onClick={() => setIsDialogOpen(true)}>
+        <Button variant="outlined" color="error" onClick={() => setIsConfirmDelOpen(true)}>
           Delete Account
         </Button>
       </Box>
 
-      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
+      <Dialog open={isConfirmDelOpen} onClose={() => setIsConfirmDelOpen(false)}>
         <DialogTitle>Confirm Account Deletion</DialogTitle>
         <DialogContent>
           <Typography>Are you sure you want to delete your account? This action cannot be undone.</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+          <Button onClick={() => setIsConfirmDelOpen(false)}>Cancel</Button>
           <Button color="error" onClick={handleDelete}>
             Delete
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isPasswordDialogOpen} onClose={() => setIsPasswordDialogOpen(false)}>
-        <DialogTitle>Change Password</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Old Password"
-            name="oldPassword"
-            type="password"
-            value={passwordForm.oldPassword}
-            onChange={handlePasswordChange}
-            error={!!passwordErrors.oldPassword}
-            helperText={passwordErrors.oldPassword}
-            fullWidth
-            sx={{ mt: 1 }}
-          />
-          <TextField
-            label="New Password"
-            name="newPassword"
-            type="password"
-            value={passwordForm.newPassword}
-            onChange={handlePasswordChange}
-            error={!!passwordErrors.newPassword}
-            helperText={passwordErrors.newPassword}
-            fullWidth
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            label="Confirm Password"
-            name="confirmPassword"
-            type="password"
-            value={passwordForm.confirmPassword}
-            onChange={handlePasswordChange}
-            error={!!passwordErrors.confirmPassword}
-            helperText={passwordErrors.confirmPassword}
-            fullWidth
-            sx={{ mt: 2 }}
-          />
-          {passwordSuccess && (
-            <Typography color="success.main" sx={{ mt: 2 }}>
-              {passwordSuccess}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsPasswordDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handlePasswordSubmit}>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ChangePassModal open={isPassChangeOpen} onClose={() => setIsPassChangeOpen(false)} />
     </Box>
   );
 };

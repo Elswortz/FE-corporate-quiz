@@ -1,16 +1,11 @@
 import { useState } from 'react';
 import { Box, TextField, Button, Typography, Snackbar, Alert } from '@mui/material';
-import * as Yup from 'yup';
 import AlterLogin from '../AlterLogin/AlterLogin';
 import { useTranslation } from 'react-i18next';
 import { createUser } from '../../api/authApi';
-
-const schema = Yup.object().shape({
-  firstName: Yup.string().required('Введите имя'),
-  lastName: Yup.string().required('Введите фамилию'),
-  email: Yup.string().email('Некорректный e-mail').required('Введите e-mail'),
-  password: Yup.string().min(6, 'Пароль должен быть не менее 6 символов').required('Введите пароль'),
-});
+import { registrationSchema } from '../../../../utils/schemas';
+import { showNotification } from '../../../notifications/store/notificationsSlice';
+import { useDispatch } from 'react-redux';
 
 const RegistrationForm = () => {
   const [form, setForm] = useState({
@@ -20,8 +15,8 @@ const RegistrationForm = () => {
     password: '',
   });
   const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const dispatch = useDispatch();
   const { t } = useTranslation('auth');
 
   const handleChange = e => {
@@ -32,7 +27,7 @@ const RegistrationForm = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await schema.validate(form, { abortEarly: false });
+      await registrationSchema.validate(form, { abortEarly: false });
       setErrors({});
 
       await createUser({
@@ -42,8 +37,7 @@ const RegistrationForm = () => {
         password: form.password,
       });
 
-      setSuccessMessage('Регистрация прошла успешно!');
-      setOpenSnackbar(true);
+      dispatch(showNotification({ message: 'Registration successful', severity: 'success' }));
 
       setForm({
         firstName: '',
@@ -51,16 +45,17 @@ const RegistrationForm = () => {
         email: '',
         password: '',
       });
-    } catch (error) {
-      if (error.name === 'ValidationError') {
+    } catch (err) {
+      if (err.name === 'ValidationError') {
         const newErrors = {};
-        error.inner.forEach(err => {
+        err.inner.forEach(err => {
           newErrors[err.path] = err.message;
         });
         setErrors(newErrors);
       } else {
-        setSuccessMessage('Ошибка при регистрации. Попробуйте снова.');
-        setOpenSnackbar(true);
+        dispatch(
+          showNotification({ message: err.response?.data?.message || 'Registration failed', severity: 'error' })
+        );
       }
     }
   };
@@ -124,21 +119,6 @@ const RegistrationForm = () => {
         {t('buttons.registerBtn')}
       </Button>
       <AlterLogin />
-
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={4000}
-        onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={() => setOpenSnackbar(false)}
-          severity={successMessage.includes('ошибка') ? 'error' : 'success'}
-          sx={{ width: '100%' }}
-        >
-          {successMessage}
-        </Alert>
-      </Snackbar>
     </Box>
   );
 };

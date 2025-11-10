@@ -2,29 +2,12 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { logIn } from '../../store/authThunks';
-import { resetPassword } from '../../api/profileApi';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Link,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
-import * as Yup from 'yup';
+import { loginSchema } from '../../../../utils/schemas';
+import { showNotification } from '../../../notifications/store/notificationsSlice';
+import { Box, TextField, Button, Typography, Link } from '@mui/material';
+
 import AlterLogin from '../AlterLogin/AlterLogin';
-
-const schema = Yup.object().shape({
-  email: Yup.string().email('Некорректный e-mail').required('Введите e-mail'),
-  password: Yup.string().min(6, 'Пароль должен быть не менее 6 символов').required('Введите пароль'),
-});
-
-const forgotSchema = Yup.object().shape({
-  email: Yup.string().email('Некорректный e-mail').required('Введите e-mail'),
-});
+import ForgotPassModal from '../ForgotPassModal/ForgotPassModal';
 
 const LoginForm = () => {
   const [form, setForm] = useState({
@@ -32,11 +15,7 @@ const LoginForm = () => {
     password: '',
   });
   const [errors, setErrors] = useState({});
-
   const [forgotOpen, setForgotOpen] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotError, setForgotError] = useState('');
-  const [forgotSuccess, setForgotSuccess] = useState('');
 
   const dispatch = useDispatch();
   const { t } = useTranslation('auth');
@@ -48,37 +27,22 @@ const LoginForm = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    const { email, password } = form;
     try {
-      await schema.validate(form, { abortEarly: false });
+      await loginSchema.validate(form, { abortEarly: false });
       setErrors({});
-
-      const body = {
-        email: form.email,
-        password: form.password,
-      };
-
-      dispatch(logIn(body));
-    } catch (validationError) {
-      const newErrors = {};
-      validationError.inner.forEach(err => {
-        newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
-    }
-  };
-
-  const handleForgotSubmit = async e => {
-    e.preventDefault();
-    try {
-      await forgotSchema.validate({ email: forgotEmail });
-      setForgotError('');
-      setForgotSuccess('');
-
-      await resetPassword(forgotEmail);
-
-      setForgotSuccess('Письмо для сброса отправлено на вашу почту.');
+      await dispatch(logIn({ email, password })).unwrap();
+      dispatch(showNotification({ message: 'Login successful', severity: 'success' }));
     } catch (err) {
-      setForgotError(err.message);
+      if (err.name === 'ValidationError' && err.inner) {
+        const newErrors = {};
+        err.inner.forEach(err => {
+          newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
+      } else {
+        dispatch(showNotification({ message: err, severity: 'error' }));
+      }
     }
   };
 
@@ -129,38 +93,12 @@ const LoginForm = () => {
           sx={{ textAlign: 'center', mt: 1 }}
           onClick={() => setForgotOpen(true)}
         >
-          Забыли пароль? Сбросить пароль
+          Forgot your password? Reset password
         </Link>
         <AlterLogin />
       </Box>
-      <Dialog open={forgotOpen} onClose={() => setForgotOpen(false)}>
-        <DialogTitle>Сброс пароля</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" sx={{ mb: 2 }}>
-            Введите ваш e-mail, и мы отправим письмо для сброса пароля.
-          </Typography>
-          <TextField
-            fullWidth
-            label="E-mail"
-            type="email"
-            value={forgotEmail}
-            onChange={e => setForgotEmail(e.target.value)}
-            error={!!forgotError}
-            helperText={forgotError}
-          />
-          {forgotSuccess && (
-            <Typography color="success.main" sx={{ mt: 1 }}>
-              {forgotSuccess}
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setForgotOpen(false)}>Отмена</Button>
-          <Button onClick={handleForgotSubmit} variant="contained">
-            Отправить
-          </Button>
-        </DialogActions>
-      </Dialog>
+
+      <ForgotPassModal open={forgotOpen} onClose={() => setForgotOpen(false)} />
     </>
   );
 };

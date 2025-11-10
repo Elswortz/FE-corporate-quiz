@@ -10,7 +10,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 export const logIn = createAsyncThunk('auth/login', async (credentials, { dispatch, rejectWithValue }) => {
   try {
     const response = await authAPI.login(credentials);
-    dispatch(showNotification({ message: 'Login successful', severity: 'success' }));
     const { access_token, refresh_token } = response.data;
 
     api.defaults.headers.common.Authorization = `Bearer ${access_token}`;
@@ -18,7 +17,6 @@ export const logIn = createAsyncThunk('auth/login', async (credentials, { dispat
 
     return { access_token, refresh_token };
   } catch (err) {
-    dispatch(showNotification({ message: err.response?.data?.message || 'Login failed', severity: 'error' }));
     return rejectWithValue(err.response?.data?.message || 'Login failed');
   }
 });

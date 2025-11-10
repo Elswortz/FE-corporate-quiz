@@ -28,7 +28,7 @@ const AuthSuccess = () => {
       navigate('/login');
     }
   }, [dispatch, navigate, location]);
-  return <div>Авторизация через Google успешна. Перенаправляем...</div>;
+  return <div>SSO Authorization successful. Redirecting...</div>;
 };
 
 export default AuthSuccess;

@@ -30,7 +30,9 @@ export const declineInvitation = createAsyncThunk(
   async (invitationId, { dispatch, rejectWithValue }) => {
     try {
       const res = await actionsApi.declineInvitation(invitationId);
-      dispatch(fetchMyInvitations());
+
+      // dispatch(fetchMyInvitations());
+
       return { invitationId, data: res.data };
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to decline invitation');

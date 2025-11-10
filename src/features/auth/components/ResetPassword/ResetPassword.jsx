@@ -2,21 +2,17 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { confirmResetPassword } from '../../api/profileApi';
-import * as Yup from 'yup';
-
-const schema = Yup.object().shape({
-  password: Yup.string().min(6, 'Пароль должен быть не менее 6 символов').required('Введите новый пароль'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
-    .required('Подтвердите пароль'),
-});
+import { resetPasswordSchema } from '../../../../utils/schemas';
+import { useDispatch } from 'react-redux';
+import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 const ResetPassword = () => {
   const [form, setForm] = useState({ password: '', confirmPassword: '' });
   const [errors, setErrors] = useState({});
-  const [success, setSuccess] = useState('');
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const uid = searchParams.get('uid');
   const token = searchParams.get('token');
@@ -29,26 +25,35 @@ const ResetPassword = () => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      await schema.validate(form, { abortEarly: false });
+      await resetPasswordSchema.validate(form, { abortEarly: false });
       setErrors({});
 
       await confirmResetPassword(token, uid, form.password);
 
-      setSuccess('Пароль успешно сброшен! Можете войти.');
+      dispatch(
+        showNotification({ message: 'Your password has been successfully reset! You can log in', severity: 'success' })
+      );
+
       setTimeout(() => navigate('/login'), 2000);
-    } catch (validationError) {
-      const newErrors = {};
-      validationError.inner?.forEach(err => {
-        newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
+    } catch (err) {
+      if (err.name === 'ValidationError' && err.inner) {
+        const newErrors = {};
+        err.inner?.forEach(err => {
+          newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
+      } else {
+        dispatch(
+          showNotification({ message: err.response?.data?.message || 'Reset password failed', severity: 'error' })
+        );
+      }
     }
   };
 
   if (!uid || !token) {
     return (
       <Typography color="error" align="center" sx={{ mt: 4 }}>
-        Недействительная или повреждённая ссылка сброса.
+        Invalid or corrupted reset link
       </Typography>
     );
   }
@@ -67,7 +72,7 @@ const ResetPassword = () => {
       }}
     >
       <Typography variant="h5" align="center">
-        Сброс пароля
+        Password reset
       </Typography>
 
       <TextField
@@ -93,12 +98,6 @@ const ResetPassword = () => {
       <Button type="submit" variant="contained">
         Сбросить пароль
       </Button>
-
-      {success && (
-        <Typography color="success.main" align="center">
-          {success}
-        </Typography>
-      )}
     </Box>
   );
 };
