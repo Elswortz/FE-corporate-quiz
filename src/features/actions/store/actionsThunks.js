@@ -25,11 +25,11 @@ export const acceptInvitation = createAsyncThunk(
   }
 );
 
-export const declineInvitation = createAsyncThunk(
-  'actions/declineInvitation',
+export const cancelInvitation = createAsyncThunk(
+  'actions/cancelInvitation',
   async (invitationId, { dispatch, rejectWithValue }) => {
     try {
-      const res = await actionsApi.declineInvitation(invitationId);
+      const res = await actionsApi.cancelInvitation(invitationId);
 
       // dispatch(fetchMyInvitations());
 

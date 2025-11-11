@@ -1,5 +1,3 @@
-import { removeCompanyMember } from './companiesThunks';
-
 const companiesState = {
   all: {
     data: [],
@@ -19,7 +17,12 @@ const companiesState = {
     isLoading: false,
     error: null,
   },
-  selected: { data: null, isLoading: false, error: null },
+  selected: {
+    data: null,
+    isLoading: false,
+    error: null,
+    relations: { invitations: { data: [], isLoading: false, error: null } },
+  },
   operations: {
     createCompany: { isLoading: false, error: null },
     updateCompany: { isLoading: false, error: null },
@@ -28,6 +31,7 @@ const companiesState = {
     changeCompanyLogo: { isLoading: false, error: null },
     removeCompanyMember: { isLoading: false, error: null },
   },
+  isGlobalLoading: false,
 };
 
 export default companiesState;

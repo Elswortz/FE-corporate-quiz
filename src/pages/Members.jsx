@@ -1,5 +1,4 @@
 import { Box, List, ListItem, ListItemAvatar, ListItemText, Avatar, Typography, Divider, Button } from '@mui/material';
-import { Person } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
 import { removeCompanyMember } from '../features/companies/store/companiesThunks';
@@ -48,9 +47,7 @@ const Members = () => {
                 }
               >
                 <ListItemAvatar>
-                  <Avatar>
-                    <Person />
-                  </Avatar>
+                  <Avatar src={member.avatar_url}></Avatar>
                 </ListItemAvatar>
                 <ListItemText primary={`${member.first_name} ${member.last_name}`} secondary={member.email} />
               </ListItem>

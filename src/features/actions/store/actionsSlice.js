@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchMyInvitations, acceptInvitation, declineInvitation } from './actionsThunks';
+import { fetchMyInvitations, acceptInvitation, cancelInvitation } from './actionsThunks';
 import { actionsState } from './actionsState';
 
 const actionsSlice = createSlice({
@@ -39,17 +39,17 @@ const actionsSlice = createSlice({
         state.operations.accept.error = payload;
       })
 
-      .addCase(declineInvitation.pending, state => {
-        state.operations.decline.isLoading = true;
-        state.operations.decline.error = null;
+      .addCase(cancelInvitation.pending, state => {
+        state.operations.cancel.isLoading = true;
+        state.operations.cancel.error = null;
       })
-      .addCase(declineInvitation.fulfilled, (state, { payload }) => {
-        state.operations.decline.isLoading = false;
+      .addCase(cancelInvitation.fulfilled, (state, { payload }) => {
+        state.operations.cancel.isLoading = false;
         state.myInvitations.data = state.myInvitations.data.filter(i => i.id !== payload.invitationId);
       })
-      .addCase(declineInvitation.rejected, (state, { payload }) => {
-        state.operations.decline.isLoading = false;
-        state.operations.decline.error = payload;
+      .addCase(cancelInvitation.rejected, (state, { payload }) => {
+        state.operations.cancel.isLoading = false;
+        state.operations.cancel.error = payload;
       });
   },
 });

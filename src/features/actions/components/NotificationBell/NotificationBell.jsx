@@ -8,6 +8,7 @@ import {
   ListItemAvatar,
   Avatar,
   CircularProgress,
+  Typography,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useDispatch, useSelector } from 'react-redux';
@@ -64,24 +65,22 @@ const NotificationsBell = () => {
           invitations.map(invite => (
             <MenuItem key={invite.id} onClick={() => handleItemClick(invite)}>
               <ListItemAvatar>
-                <Avatar src={invite.inviter?.avatar_url}>{invite.inviter?.name?.[0]}</Avatar>
+                <Avatar src={invite.company.company_logo_url}></Avatar>
               </ListItemAvatar>
-              <ListItemText primary={invite.company_id} secondary={`From: ${invite.invited_by_id}`} />
+              <ListItemText
+                primary={
+                  <Typography variant="subtitle1">
+                    <strong>{invite.company.company_name}</strong> company invitation
+                  </Typography>
+                }
+                secondary={`From: ${invite.invited_by.first_name} ${invite.invited_by.last_name}`}
+              />
             </MenuItem>
           ))
         )}
       </Menu>
 
-      {selectedInvite && (
-        <InvitationModal
-          invite={selectedInvite}
-          onClose={() => setSelectedInvite(null)}
-          onAccepted={() => {
-            // можно показать нотификацию, и/или обновить companies
-            dispatch(fetchMyInvitations());
-          }}
-        />
-      )}
+      {selectedInvite && <InvitationModal invite={selectedInvite} onClose={() => setSelectedInvite(null)} />}
     </>
   );
 };

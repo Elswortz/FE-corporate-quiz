@@ -7,6 +7,6 @@ export const actionsState = {
   },
   operations: {
     accept: { isLoading: false, error: null },
-    decline: { isLoading: false, error: null },
+    cancel: { isLoading: false, error: null },
   },
 };
