@@ -1,17 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { logIn, fetchUserProfile, checkAuth, updateUser, removeUser, updateUserAvatar } from './authThunks';
+import { logIn, checkAuth } from './authThunks';
 import authState from './authState';
 
 const resetAuthState = state => {
-  state.user.data = null;
-  state.user.isLoading = false;
-  state.user.error = null;
-  state.user.operations.updateUser.isLoading = false;
-  state.user.operations.updateUser.error = null;
-  state.user.operations.removeUser.isLoading = false;
-  state.user.operations.removeUser.error = null;
-  state.user.operations.updateUserAvatar.isLoading = false;
-  state.user.operations.updateUserAvatar.error = null;
   state.accessToken = null;
   state.refreshToken = null;
   state.isAuthenticated = false;
@@ -70,52 +61,7 @@ const authSlice = createSlice({
         localStorage.setItem('accessToken', access_token);
         localStorage.setItem('refreshToken', refresh_token);
       })
-      .addCase(checkAuth.rejected, resetAuthState)
-      .addCase(fetchUserProfile.pending, (state, action) => {
-        state.user.isLoading = true;
-        state.user.error = false;
-      })
-      .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.user.data = action.payload;
-        state.user.isLoading = false;
-      })
-      .addCase(fetchUserProfile.rejected, (state, action) => {
-        state.user.error = action.payload;
-        state.user.isLoading = false;
-      })
-      .addCase(updateUser.pending, (state, action) => {
-        state.user.operations.updateUser.isLoading = true;
-        state.user.operations.updateUser.error = null;
-      })
-      .addCase(updateUser.fulfilled, (state, action) => {
-        state.user.data = action.payload;
-        state.user.operations.updateUser.isLoading = false;
-      })
-      .addCase(updateUser.rejected, (state, action) => {
-        state.user.operations.updateUser.error = action.payload;
-        state.user.operations.updateUser.isLoading = false;
-      })
-      .addCase(removeUser.pending, (state, action) => {
-        state.user.operations.removeUser.isLoading = true;
-        state.user.operations.removeUser.error = null;
-      })
-      .addCase(removeUser.fulfilled, resetAuthState)
-      .addCase(removeUser.rejected, (state, action) => {
-        state.user.operations.removeUser.isLoading = false;
-        state.user.operations.removeUser.error = action.payload;
-      })
-      .addCase(updateUserAvatar.pending, (state, action) => {
-        state.user.operations.updateUserAvatar.isLoading = true;
-        state.user.operations.updateUserAvatar.error = null;
-      })
-      .addCase(updateUserAvatar.fulfilled, (state, action) => {
-        state.user.data = action.payload;
-        state.user.operations.updateUserAvatar.isLoading = false;
-      })
-      .addCase(updateUserAvatar.rejected, (state, action) => {
-        state.user.operations.updateUserAvatar.isLoading = false;
-        state.user.operations.updateUserAvatar.error = action.payload;
-      }),
+      .addCase(checkAuth.rejected, resetAuthState),
 });
 
 export const { logOut, setAuthTokens } = authSlice.actions;

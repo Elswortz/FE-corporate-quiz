@@ -3,11 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
 import { removeCompanyMember } from '../features/companies/store/companiesThunks';
 import getUserRoleInCompany from '../utils/getUserRoleInCompany';
+import { selectProfileData } from '../features/users/store/usersSelectors';
 
 const Members = () => {
   const dispatch = useDispatch();
   const selectedCompany = useSelector(state => state.companies.selected?.data);
-  const { data: user } = useSelector(state => state.auth.user);
+  const user = useSelector(selectProfileData);
   const members = selectedCompany?.members || [];
 
   const role = getUserRoleInCompany(selectedCompany, user?.id);

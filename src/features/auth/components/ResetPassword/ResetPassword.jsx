@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, Typography } from '@mui/material';
-import { confirmResetPassword } from '../../api/profileApi';
+import { confirmResetPassword } from '../../api/authApi';
 import { resetPasswordSchema } from '../../../../utils/schemas';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '../../../notifications/store/notificationsSlice';

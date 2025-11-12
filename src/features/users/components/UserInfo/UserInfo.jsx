@@ -14,16 +14,16 @@ import {
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deepPurple } from '@mui/material/colors';
-import { updateUser, updateUserAvatar, removeUser } from '../../store/authThunks';
-import { selectUser, selectUpdateUserLoading } from '../../store/authSelectors';
+import { updateUser, updateUserAvatar, removeUser } from '../../store/usersThunks';
+import { selectProfileData, selectUpdateUserLoading } from '../../store/usersSelectors';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
-import ChangePassModal from '../ChangePassModal/ChangePassModal';
+import ChangePassModal from '../../../auth/components/ChangePassModal/ChangePassModal';
 
 const UserInfo = () => {
   const dispatch = useDispatch();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectProfileData);
   const editLoading = useSelector(selectUpdateUserLoading);
 
   const [firstName, setFirstName] = useState(user?.first_name || '');

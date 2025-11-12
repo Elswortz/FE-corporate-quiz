@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Menu, MenuItem, IconButton, Typography, Box, Divider } from '@mui/material';
-import { logOut } from '../../store/authSlice';
-import { selectUser } from '../../store/authSelectors';
+import { logOut } from '../../../auth/store/authSlice';
+import { selectProfileData } from '../../store/usersSelectors';
 
 const AccountMenu = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector(selectUser);
+  const user = useSelector(selectProfileData);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

@@ -8,6 +8,9 @@ export const azureLogin = () => api.get('auth/azure/login');
 
 export const googleLogin = () => api.get('auth/google/login');
 
-export const createUser = credentials => api.post('users', credentials);
+export const changePassword = passwords => api.patch('/auth/change-password', passwords);
 
-export const getUserProfile = () => api.get('users/profile');
+export const resetPassword = email => api.post(`auth/reset-password?email=${email}`);
+
+export const confirmResetPassword = (token, uid, password) =>
+  api.post(`auth/confirm-reset-password?token=${token}&uid=${uid}`, { new_password: password });

@@ -2,10 +2,10 @@ import Logo from '../../ui/Logo/Logo';
 import NavMenu from '../../ui/NavMenu/NavMenu';
 import LangSelector from '../../ui/LangSelector/LangSelector';
 import AuthNav from '../../../features/auth/components/AuthNav/AuthNav';
-import AccountMenu from '../../../features/auth/components/AccountMenu/AccountMenu';
+import AccountMenu from '../../../features/users/components/AccountMenu/AccountMenu';
 import { useAuth } from '../../../features/auth/hooks/useAuth';
 import { AppBar, Toolbar, Box } from '@mui/material';
-import NotificationsBell from '../../../features/actions/components/NotificationBell/NotificationBell';
+import NotificationsBell from '../../../features/users/components/NotificationBell/NotificationBell';
 
 function Header() {
   const { isLoggedIn } = useAuth();

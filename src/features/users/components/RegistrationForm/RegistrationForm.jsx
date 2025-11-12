@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Box, TextField, Button, Typography, Snackbar, Alert } from '@mui/material';
-import AlterLogin from '../AlterLogin/AlterLogin';
+import { Box, TextField, Button, Typography } from '@mui/material';
+import AlterLogin from '../../../auth/components/AlterLogin/AlterLogin';
 import { useTranslation } from 'react-i18next';
-import { createUser } from '../../api/authApi';
+import { createUser } from '../../api/usersApi';
 import { registrationSchema } from '../../../../utils/schemas';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 import { useDispatch } from 'react-redux';

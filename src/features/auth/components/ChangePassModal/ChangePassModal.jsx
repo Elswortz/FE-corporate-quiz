@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { changePasswordSchema } from '../../../../utils/schemas';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
-import { changePassword } from '../../api/profileApi';
+import { changePassword } from '../../api/authApi';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 
 const ChangePassModal = ({ open, onClose }) => {

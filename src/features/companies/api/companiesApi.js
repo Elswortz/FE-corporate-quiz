@@ -28,3 +28,13 @@ export const changeCompanyMemberRole = (company_id, user_id, role) =>
   api.patch(`companies/${company_id}/members/${user_id}/role?new_role=${role}`);
 
 export const getCompanyAdmins = company_id => api.get(`companies/${company_id}/admins`);
+
+export const inviteUser = data => api.post('company-actions/invite', data);
+
+export const declineInvitation = invitationId => api.post(`company-actions/decline-invitation/${invitationId}`);
+
+export const getCompanyInvitations = companyId => api.get(`company-actions/${companyId}/company-invitations`);
+
+export const requestMembership = companyId => api.post(`company-actions/${companyId}/membership-request`);
+
+export const leaveCompany = companyId => api.post(`company-actions/${companyId}/membership-leave`);

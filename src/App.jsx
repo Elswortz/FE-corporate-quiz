@@ -2,7 +2,8 @@ import { Route, Routes } from 'react-router-dom';
 import { PrivateRoute, RestrictedRoute } from './features/auth/components/RoutesRestriction';
 import { useDispatch } from 'react-redux';
 import { setAuthTokens } from './features/auth/store/authSlice';
-import { fetchUserProfile, checkAuth } from './features/auth/store/authThunks';
+import { checkAuth } from './features/auth/store/authThunks';
+import { fetchUserProfile } from './features/users/store/usersThunks';
 
 import AppShell from './components/layouts/AppShell/AppShell';
 

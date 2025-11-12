@@ -13,20 +13,16 @@ import {
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchMyInvitations } from '../../store/actionsThunks';
-import {
-  selectMyInvitations,
-  selectMyInvitationsCount,
-  selectMyInvitationsLoading,
-} from '../../store/actionsSelectors';
+import { fetchMyInvitations } from '../../store/usersThunks';
+import { selectInvitations, selectInvitationsCount, selectInvitationsLoading } from '../../store/usersSelectors';
 
 import InvitationModal from '../InvitationModal/InvitationModal';
 
 const NotificationsBell = () => {
   const dispatch = useDispatch();
-  const invitations = useSelector(selectMyInvitations);
-  const count = useSelector(selectMyInvitationsCount);
-  const isLoading = useSelector(selectMyInvitationsLoading);
+  const invitations = useSelector(selectInvitations);
+  const count = useSelector(selectInvitationsCount);
+  const isLoading = useSelector(selectInvitationsLoading);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedInvite, setSelectedInvite] = useState(null);

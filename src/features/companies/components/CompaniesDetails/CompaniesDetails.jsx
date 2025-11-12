@@ -6,6 +6,7 @@ import { clearCurrentCompany } from '../../store/companiesSlice';
 import { useNavigate } from 'react-router-dom';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
 import getUserRoleInCompany from '../../../../utils/getUserRoleInCompany.js';
+import { selectProfileData } from '../../../users/store/usersSelectors.js';
 
 import {
   Box,
@@ -45,7 +46,7 @@ const CompaniesDetails = () => {
 
   const { data, isLoading, error } = useSelector(state => state.companies.selected);
   const { isLoading: SatusLoading } = useSelector(state => state.companies.operations.changeCompanyStatus);
-  const { data: user } = useSelector(state => state.auth.user);
+  const user = useSelector(selectProfileData);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);

@@ -11,8 +11,8 @@ import {
   Stack,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAcceptLoading, selectCancelLoading } from '../../store/actionsSelectors';
-import { acceptInvitation, cancelInvitation } from '../../store/actionsThunks';
+import { selectAcceptLoading, selectCancelLoading } from '../../store/usersSelectors';
+import { acceptInvitation, cancelInvitation } from '../../store/usersThunks';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 const InvitationModal = ({ invite, onClose }) => {

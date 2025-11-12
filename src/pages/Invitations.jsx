@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
-import { inviteUser } from '../features/actions/api/actionsApi';
+import { inviteUser } from '../features/companies/api/companiesApi';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 

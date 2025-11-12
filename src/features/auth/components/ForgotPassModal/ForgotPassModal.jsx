@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { forgotPasswordSchema } from '../../../../utils/schemas';
 import { useDispatch } from 'react-redux';
-import { resetPassword } from '../../api/profileApi';
+import { resetPassword } from '../../api/authApi';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, TextField, Button } from '@mui/material';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { setAuthTokens } from '../../store/authSlice';
-import { fetchUserProfile } from '../../store/authThunks';
+import { fetchUserProfile } from '../../../users/store/usersThunks';
 import { useDispatch } from 'react-redux';
 
 const AuthSuccess = () => {

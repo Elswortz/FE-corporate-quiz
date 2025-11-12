@@ -1,14 +1,5 @@
-export const selectUser = state => state.auth.user.data;
-export const selectUserLoading = state => state.auth.user.isLoading;
-export const selectUserError = state => state.auth.user.error;
 export const selectAccessToken = state => state.auth.accessToken;
 export const selectRefreshToken = state => state.auth.refreshToken;
 export const selectIsAuthenticated = state => state.auth.isAuthenticated;
 export const selectAuthIsLoading = state => state.auth.isLoading;
 export const selectAuthError = state => state.auth.error;
-export const selectUpdateUserLoading = state => state.auth.user.operations.updateUser.isLoading;
-export const selectUpdateUserError = state => state.auth.user.operations.updateUser.error;
-export const selectRemoveUserLoading = state => state.auth.user.operations.removeUser.isLoading;
-export const selectRemoveUserError = state => state.auth.user.operations.removeUser.error;
-export const selectUpdateUserAvatarLoading = state => state.auth.user.operations.UpdateUserAvatar.isLoading;
-export const selectUpdateUserAvatarError = state => state.auth.user.operations.UpdateUserAvatar.error;

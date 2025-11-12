@@ -1,4 +1,4 @@
-import UserInfo from '../features/auth/components/UserInfo/UserInfo';
+import UserInfo from '../features/users/components/UserInfo/UserInfo';
 import CompaniesList from '../features/companies/components/CompaniesList/CompaniesList';
 import { Box } from '@mui/material';
 
