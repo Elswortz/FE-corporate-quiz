@@ -1,51 +1,52 @@
-import { api } from '../../../api/api.js';
 import * as authAPI from '../api/authApi.js';
-import { logOut } from './authSlice.js';
 import { jwtDecode } from 'jwt-decode';
 import { fetchUserProfile } from '../../users/store/usersThunks.js';
-
+import { logOut, setTokens } from './authSlice.js';
+import { tokenService } from '../../../api/tokenService.js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const logIn = createAsyncThunk('auth/login', async (credentials, { dispatch, rejectWithValue }) => {
   try {
     const response = await authAPI.login(credentials);
-    const { access_token, refresh_token } = response.data;
+    const { access_token: accessToken, refresh_token: refreshToken } = response.data;
 
-    api.defaults.headers.common.Authorization = `Bearer ${access_token}`;
+    dispatch(setTokens({ accessToken, refreshToken }));
+    tokenService.setTokens({ accessToken, refreshToken });
+
     await dispatch(fetchUserProfile());
-
-    return { access_token, refresh_token };
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Login failed');
   }
 });
 
-export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, thunkAPI) => {
+export const checkAuth = createAsyncThunk('auth/checkAuth', async (_, { dispatch, rejectWithValue, getState }) => {
   try {
-    const state = thunkAPI.getState();
-    const { accessToken, refreshToken } = state.auth;
+    const state = getState();
+    const { accessToken: currentAccessToken, refreshToken: currentRefreshToken } = state.auth;
 
-    if (!refreshToken) {
-      thunkAPI.dispatch(logOut());
-      return thunkAPI.rejectWithValue('No refresh token available');
+    if (!currentRefreshToken) {
+      dispatch(logOut());
+      return rejectWithValue('No refresh token available');
     }
 
-    if (accessToken) {
-      const { exp } = jwtDecode(accessToken);
+    if (currentAccessToken) {
+      const { exp } = jwtDecode(currentAccessToken);
       const now = Date.now() / 1000;
-
       if (exp > now + 10) {
-        return thunkAPI.fulfillWithValue({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
+        await dispatch(fetchUserProfile());
+        return;
       }
     }
 
-    const res = await authAPI.refresh(refreshToken);
-    return res.data;
+    const response = await authAPI.refresh(currentRefreshToken);
+    const { access_token: accessToken, refresh_token: refreshToken } = response.data;
+
+    dispatch(setTokens({ accessToken, refreshToken }));
+    tokenService.setTokens({ accessToken, refreshToken });
+
+    await dispatch(fetchUserProfile());
   } catch (err) {
-    thunkAPI.dispatch(logOut());
-    return thunkAPI.rejectWithValue(err.response?.data?.message || 'Session expired. Please login again.');
+    dispatch(logOut());
+    return rejectWithValue(err.response?.data?.message || 'Session expired. Please login again.');
   }
 });

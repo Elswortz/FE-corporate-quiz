@@ -1,9 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { PrivateRoute, RestrictedRoute } from './features/auth/components/RoutesRestriction';
 import { useDispatch } from 'react-redux';
-import { setAuthTokens } from './features/auth/store/authSlice';
 import { checkAuth } from './features/auth/store/authThunks';
-import { fetchUserProfile } from './features/users/store/usersThunks';
 
 import AppShell from './components/layouts/AppShell/AppShell';
 
@@ -35,20 +33,7 @@ function App() {
   }, [i18n]);
 
   useEffect(() => {
-    (async () => {
-      const accessToken = localStorage.getItem('accessToken');
-      const refreshToken = localStorage.getItem('refreshToken');
-
-      if (accessToken && refreshToken) {
-        dispatch(setAuthTokens({ accessToken, refreshToken }));
-        try {
-          await dispatch(checkAuth()).unwrap();
-          await dispatch(fetchUserProfile()).unwrap();
-        } catch {
-          console.log('Session expired, logging out');
-        }
-      }
-    })();
+    dispatch(checkAuth());
   }, [dispatch]);
 
   return (

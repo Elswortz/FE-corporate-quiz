@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { setAuthTokens } from '../../store/authSlice';
+import { setTokens } from '../../store/authSlice';
 import { fetchUserProfile } from '../../../users/store/usersThunks';
 import { useDispatch } from 'react-redux';
 
@@ -15,7 +15,7 @@ const AuthSuccess = () => {
     const refreshToken = params.get('refresh_token');
 
     if (accessToken && refreshToken) {
-      dispatch(setAuthTokens({ accessToken, refreshToken }));
+      dispatch(setTokens({ accessToken, refreshToken }));
       dispatch(fetchUserProfile())
         .unwrap()
         .then(() => {

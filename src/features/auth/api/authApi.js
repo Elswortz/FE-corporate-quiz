@@ -1,4 +1,4 @@
-import { api, refreshApi } from '../../../api/api';
+import { api } from '../../../api/apiClient';
 
 export const login = credentials => api.post('auth/login', credentials);
 
