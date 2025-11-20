@@ -11,14 +11,14 @@ import {
   Stack,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAcceptLoading, selectCancelLoading } from '../../store/usersSelectors';
-import { acceptInvitation, cancelInvitation } from '../../store/usersThunks';
+import { selectAcceptLoading, selectRejectLoading } from '../../store/usersSelectors';
+import { acceptInvitation, rejectInvitation } from '../../store/usersActionsThunks';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 const InvitationModal = ({ invite, onClose }) => {
   const dispatch = useDispatch();
   const acceptLoading = useSelector(selectAcceptLoading);
-  const cancelLoading = useSelector(selectCancelLoading);
+  const rejectLoading = useSelector(selectRejectLoading);
 
   const handleAccept = async () => {
     try {
@@ -35,12 +35,12 @@ const InvitationModal = ({ invite, onClose }) => {
     }
   };
 
-  const handleCancel = async () => {
+  const handleReject = async () => {
     try {
-      await dispatch(cancelInvitation(invite.id)).unwrap();
+      await dispatch(rejectInvitation(invite.id)).unwrap();
       dispatch(
         showNotification({
-          message: `Invitation to ${invite.company.company_name} canceled`,
+          message: `Invitation to ${invite.company.company_name} rejected`,
           severity: 'info',
         })
       );
@@ -77,8 +77,8 @@ const InvitationModal = ({ invite, onClose }) => {
       </DialogContent>
 
       <DialogActions sx={{ justifyContent: 'center', pb: 2 }}>
-        <Button onClick={handleCancel} disabled={cancelLoading}>
-          {cancelLoading ? 'Processing...' : 'Cancel'}
+        <Button onClick={handleReject} disabled={rejectLoading}>
+          {rejectLoading ? 'Processing...' : 'Reject'}
         </Button>
         <Button onClick={handleAccept} variant="contained" disabled={acceptLoading}>
           {acceptLoading ? 'Processing...' : 'Accept'}

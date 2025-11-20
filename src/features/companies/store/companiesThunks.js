@@ -110,3 +110,15 @@ export const removeCompanyMember = createAsyncThunk(
     }
   }
 );
+
+export const fetchCompanyInvitations = createAsyncThunk(
+  'companies/fetchInvitations',
+  async (companyId, { rejectWithValue }) => {
+    try {
+      const res = await companiesAPI.getCompanyInvitations(companyId);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to load invitations');
+    }
+  }
+);

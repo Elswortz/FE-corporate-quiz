@@ -55,39 +55,3 @@ export const updateUserAvatar = createAsyncThunk('users/updateAvatar', async (fo
     return rejectWithValue(err.response?.data?.message || 'Failed to update avatar');
   }
 });
-
-export const fetchMyInvitations = createAsyncThunk(
-  'users/actions/fetchMyInvitations',
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await usersAPI.getMyInvitations();
-      return res.data;
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to load invitations');
-    }
-  }
-);
-
-export const acceptInvitation = createAsyncThunk(
-  'users/actions/acceptInvitation',
-  async (invitationId, { rejectWithValue }) => {
-    try {
-      const res = await usersAPI.acceptInvitation(invitationId);
-      return { invitationId, data: res.data };
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to accept invitation');
-    }
-  }
-);
-
-export const cancelInvitation = createAsyncThunk(
-  'users/actions/cancelInvitation',
-  async (invitationId, { rejectWithValue }) => {
-    try {
-      const res = await usersAPI.cancelInvitation(invitationId);
-      return { invitationId, data: res.data };
-    } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to decline invitation');
-    }
-  }
-);

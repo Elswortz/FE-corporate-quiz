@@ -13,7 +13,7 @@ import {
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchMyInvitations } from '../../store/usersThunks';
+import { fetchMyInvitations } from '../../store/usersActionsThunks';
 import { selectInvitations, selectInvitationsCount, selectInvitationsLoading } from '../../store/usersSelectors';
 
 import InvitationModal from '../InvitationModal/InvitationModal';

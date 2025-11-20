@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { setTokens } from '../../store/authSlice';
 import { fetchUserProfile } from '../../../users/store/usersThunks';
+import { tokenService } from '../../../../api/tokenService';
 import { useDispatch } from 'react-redux';
 
 const AuthSuccess = () => {
@@ -16,6 +17,7 @@ const AuthSuccess = () => {
 
     if (accessToken && refreshToken) {
       dispatch(setTokens({ accessToken, refreshToken }));
+      tokenService.setTokens({ accessToken, refreshToken });
       dispatch(fetchUserProfile())
         .unwrap()
         .then(() => {

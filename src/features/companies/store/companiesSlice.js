@@ -9,6 +9,7 @@ import {
   changeCompanyStatus,
   changeCompanyLogo,
   removeCompanyMember,
+  fetchCompanyInvitations,
 } from './companiesThunks';
 
 const updateCompanyEverywhere = (state, updated) => {
@@ -85,82 +86,95 @@ const companiesSlice = createSlice({
       })
       // --- createCompany ---
       .addCase(createCompany.pending, state => {
-        state.operations.createCompany.isLoading = true;
-        state.operations.createCompany.error = null;
+        state.operations.create.isLoading = true;
+        state.operations.create.error = null;
       })
       .addCase(createCompany.fulfilled, (state, { payload }) => {
-        state.operations.createCompany.isLoading = false;
+        state.operations.create.isLoading = false;
         state.owned.data.push(payload);
         if (payload.company_status === 'visible') state.all.data.push(payload);
       })
       .addCase(createCompany.rejected, (state, { payload }) => {
-        state.operations.createCompany.isLoading = false;
-        state.operations.createCompany.error = payload;
+        state.operations.create.isLoading = false;
+        state.operations.create.error = payload;
       })
       // --- updateCompany ---
       .addCase(updateCompany.pending, state => {
-        state.operations.updateCompany.isLoading = true;
-        state.operations.updateCompany.error = null;
+        state.operations.update.isLoading = true;
+        state.operations.update.error = null;
       })
       .addCase(updateCompany.fulfilled, (state, { payload }) => {
-        state.operations.updateCompany.isLoading = false;
+        state.operations.update.isLoading = false;
         updateCompanyEverywhere(state, payload);
       })
       .addCase(updateCompany.rejected, (state, { payload }) => {
-        state.operations.updateCompany.isLoading = false;
-        state.operations.updateCompany.error = payload;
+        state.operations.update.isLoading = false;
+        state.operations.update.error = payload;
       })
       // --- deleteCompany ---
       .addCase(deleteCompany.pending, state => {
-        state.operations.deleteCompany.isLoading = true;
-        state.operations.deleteCompany.error = null;
+        state.operations.delete.isLoading = true;
+        state.operations.delete.error = null;
       })
       .addCase(deleteCompany.fulfilled, (state, { payload }) => {
-        state.operations.deleteCompany.isLoading = false;
+        state.operations.delete.isLoading = false;
         removeCompanyEverywhere(state, payload);
       })
       .addCase(deleteCompany.rejected, (state, { payload }) => {
-        state.operations.deleteCompany.isLoading = false;
-        state.operations.deleteCompany.error = payload;
+        state.operations.delete.isLoading = false;
+        state.operations.delete.error = payload;
       })
       // --- changeCompanyStatus ---
       .addCase(changeCompanyStatus.pending, state => {
-        state.operations.changeCompanyStatus.isLoading = true;
-        state.operations.changeCompanyStatus.error = null;
+        state.operations.changeStatus.isLoading;
+        state.operations.changeStatus.error = null;
       })
       .addCase(changeCompanyStatus.fulfilled, (state, { payload }) => {
-        state.operations.changeCompanyStatus.isLoading = false;
+        state.operations.changeStatus.isLoading = false;
         updateCompanyEverywhere(state, payload);
       })
       .addCase(changeCompanyStatus.rejected, (state, { payload }) => {
-        state.operations.changeCompanyStatus.isLoading = false;
-        state.operations.changeCompanyStatus.error = payload;
+        state.operations.changeStatus.isLoading = false;
+        state.operations.changeStatus.error = payload;
       })
       // --- changeCompanyLogo ---
       .addCase(changeCompanyLogo.pending, state => {
-        state.operations.changeCompanyLogo.isLoading = true;
-        state.operations.changeCompanyLogo.error = null;
+        state.operations.changeLogo.isLoading = true;
+        state.operations.changeLogo.error = null;
       })
       .addCase(changeCompanyLogo.fulfilled, (state, { payload }) => {
-        state.operations.changeCompanyLogo.isLoading = false;
+        state.operations.changeLogo.isLoading = false;
         updateCompanyEverywhere(state, payload);
       })
       .addCase(changeCompanyLogo.rejected, (state, { payload }) => {
-        state.operations.changeCompanyLogo.isLoading = false;
-        state.operations.changeCompanyLogo.error = payload;
+        state.operations.changeLogo.isLoading = false;
+        state.operations.changeLogo.error = payload;
       })
       // --- removeCompanyMember ---
       .addCase(removeCompanyMember.pending, state => {
-        state.operations.removeCompanyMember.isLoading = true;
-        state.operations.removeCompanyMember.error = null;
+        state.operations.removeMember.isLoading = true;
+        state.operations.removeMember.error = null;
       })
       .addCase(removeCompanyMember.fulfilled, (state, { payload }) => {
-        state.operations.removeCompanyMember.isLoading = false;
+        state.operations.removeMember.isLoading = false;
         state.selected.data.members = state.selected.data.members.filter(m => m.id !== payload);
       })
       .addCase(removeCompanyMember.rejected, (state, { payload }) => {
-        state.operations.removeCompanyMember.isLoading = false;
-        state.operations.removeCompanyMember.error = payload;
+        state.operations.removeMember.isLoading = false;
+        state.operations.removeMember.error = payload;
+      })
+      // --- fetchCompanyInvitations ---
+      .addCase(fetchCompanyInvitations.pending, state => {
+        state.selected.invitations.isLoading = true;
+        state.selected.invitations.error = null;
+      })
+      .addCase(fetchCompanyInvitations.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = payload;
+        state.selected.invitations.isLoading = false;
+      })
+      .addCase(fetchCompanyInvitations.rejected, (state, { payload }) => {
+        state.selected.invitations.error = payload;
+        state.selected.invitations.isLoading = false;
       }),
 });
 

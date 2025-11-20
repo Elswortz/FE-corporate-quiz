@@ -5,6 +5,8 @@ import { inviteUser } from '../features/companies/api/companiesApi';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
+import InvitationsList from '../features/companies/components/InvitationsList/InvitationsList';
+
 const Invitations = () => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
@@ -49,6 +51,8 @@ const Invitations = () => {
         <Button variant="contained" color="primary" onClick={handleOpen}>
           Invite
         </Button>
+
+        <InvitationsList />
 
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
           <DialogTitle>Invite member</DialogTitle>

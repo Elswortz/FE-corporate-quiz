@@ -14,9 +14,3 @@ export const updateAvatar = formData =>
 export const createUser = credentials => api.post('users', credentials);
 
 export const getUserProfile = () => api.get('users/profile');
-
-export const getMyInvitations = () => api.get('company-actions/invitations');
-
-export const acceptInvitation = invitationId => api.post(`company-actions/accept-invitation/${invitationId}`);
-
-export const cancelInvitation = invitationId => api.post(`company-actions/cancel-invitation/${invitationId}`);

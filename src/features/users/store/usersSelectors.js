@@ -9,6 +9,8 @@ export const selectInvitationsError = state => state.users.profile.invitations.e
 
 export const selectAcceptLoading = state => state.users.profile.invitations.operations.accept.isLoading;
 export const selectAcceptError = state => state.users.profile.invitations.operations.accept.error;
+export const selectRejectLoading = state => state.users.profile.invitations.operations.reject.isLoading;
+export const selectRejectError = state => state.users.profile.invitations.operations.reject.error;
 export const selectCancelLoading = state => state.users.profile.invitations.operations.cancel.isLoading;
 export const selectCancelError = state => state.users.profile.invitations.operations.cancel.error;
 

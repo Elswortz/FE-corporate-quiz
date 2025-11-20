@@ -9,6 +9,7 @@ const usersState = {
       error: null,
       operations: {
         accept: { isLoading: false, error: null },
+        reject: { isLoading: false, error: null },
         cancel: { isLoading: false, error: null },
       },
     },

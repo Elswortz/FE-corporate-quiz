@@ -45,7 +45,7 @@ const CompaniesDetails = () => {
   const location = useLocation();
 
   const { data, isLoading, error } = useSelector(state => state.companies.selected);
-  const { isLoading: SatusLoading } = useSelector(state => state.companies.operations.changeCompanyStatus);
+  const { isLoading: SatusLoading } = useSelector(state => state.companies.operations.changeStatus);
   const user = useSelector(selectProfileData);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
