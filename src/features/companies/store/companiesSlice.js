@@ -9,8 +9,8 @@ import {
   changeCompanyStatus,
   changeCompanyLogo,
   removeCompanyMember,
-  fetchCompanyInvitations,
 } from './companiesThunks';
+import { fetchCompanyInvitations } from './companiesActionsThunks';
 
 const updateCompanyEverywhere = (state, updated) => {
   ['owned', 'joined'].forEach(type => {

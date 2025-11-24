@@ -8,7 +8,7 @@ import {
   updateUserAvatar,
   removeUser,
 } from '../store/usersThunks';
-import { fetchMyInvitations, acceptInvitation, rejectInvitation, cancelInvitation } from './usersActionsThunks';
+import { fetchMyInvitations, acceptInvitation, rejectInvitation } from './usersActionsThunks';
 import { logOut } from '../../auth/store/authSlice';
 
 const resetUserProfile = state => {
@@ -63,7 +63,7 @@ const usersSlice = createSlice({
         state.selected.isLoading = false;
         state.selected.error = payload;
       })
-      .addCase(fetchUserProfile.pending, (state, action) => {
+      .addCase(fetchUserProfile.pending, state => {
         state.profile.isLoading = true;
         state.profile.error = false;
       })
@@ -75,7 +75,7 @@ const usersSlice = createSlice({
         state.profile.error = action.payload;
         state.profile.isLoading = false;
       })
-      .addCase(updateUser.pending, (state, action) => {
+      .addCase(updateUser.pending, state => {
         state.profile.operations.update.isLoading = true;
         state.profile.operations.update.error = null;
       })
@@ -87,7 +87,7 @@ const usersSlice = createSlice({
         state.profile.operations.update.error = action.payload;
         state.profile.operations.update.isLoading = false;
       })
-      .addCase(removeUser.pending, (state, action) => {
+      .addCase(removeUser.pending, state => {
         state.profile.operations.remove.isLoading = true;
         state.profile.operations.remove.error = null;
       })
@@ -96,7 +96,7 @@ const usersSlice = createSlice({
         state.profile.operations.remove.isLoading = false;
         state.profile.operations.remove.error = action.payload;
       })
-      .addCase(updateUserAvatar.pending, (state, action) => {
+      .addCase(updateUserAvatar.pending, state => {
         state.profile.operations.updateAvatar.isLoading = true;
         state.profile.operations.updateAvatar.error = null;
       })

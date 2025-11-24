@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchCompanyInvitations } from '../../store/companiesThunks';
+import {fetchCompanyInvitations} from '../../store/companiesActionsThunks';
 import { useParams } from 'react-router-dom';
 import {
   selectCompanyInvitations,
@@ -40,11 +40,11 @@ const InvitationsList = () => {
   const isLoading = useSelector(selectInvitationsLoading);
   const error = useSelector(selectInvitationsError);
 
-  const handleAccept = invitationId => {
+  const handleAccept = () => {
     // TODO: dispatch accept invitation thunk when available
   };
 
-  const handleDecline = invitationId => {
+  const handleDecline = () => {
     // TODO: dispatch decline/cancel invitation thunk when available
   };
 
