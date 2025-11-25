@@ -1,12 +1,15 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import {fetchCompanyInvitations} from '../../store/companiesActionsThunks';
+import { fetchCompanyInvitations, cancelInvitation } from '../../store/companiesActionsThunks';
 import { useParams } from 'react-router-dom';
+
 import {
   selectCompanyInvitations,
   selectInvitationsLoading,
   selectInvitationsError,
 } from '../../store/companiesSelectors';
+
+import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 import {
   Box,
@@ -40,12 +43,17 @@ const InvitationsList = () => {
   const isLoading = useSelector(selectInvitationsLoading);
   const error = useSelector(selectInvitationsError);
 
-  const handleAccept = () => {
-    // TODO: dispatch accept invitation thunk when available
-  };
-
-  const handleDecline = () => {
-    // TODO: dispatch decline/cancel invitation thunk when available
+  // const handleAccept = () => {};
+  // const handleDecline = () => {};
+  const handleCancel = async invitationId => {
+    try {
+      await dispatch(cancelInvitation(invitationId)).unwrap();
+      dispatch(showNotification({ message: 'Invitation succsessfuly canceled', severity: 'info' }));
+    } catch (err) {
+      dispatch(
+        showNotification({ message: err.response?.data?.message || 'Failed to cancel invitation', severity: 'error' })
+      );
+    }
   };
 
   if (isLoading) {
@@ -85,7 +93,7 @@ const InvitationsList = () => {
         const userName = `${user?.first_name || ''} ${user?.last_name || ''}`.trim();
 
         return (
-          <Box key={inv.id}>
+          <Box key={inv.id} component="div">
             <ListItem alignItems="flex-start" disableGutters>
               <ListItemAvatar>
                 {avatarUrl ? (
@@ -94,41 +102,42 @@ const InvitationsList = () => {
                   <Avatar>{getInitials(user?.first_name, user?.last_name) || <PersonIcon />}</Avatar>
                 )}
               </ListItemAvatar>
-
               <ListItemText
                 primary={
-                  <Box display="flex" alignItems="center" gap={1} flexWrap="wrap">
-                    <Typography variant="subtitle1">{userName || user?.email}</Typography>
-                    <Chip label={inv.status} size="small" color={inv.status === 'pending' ? 'default' : 'primary'} />
+                  <Box display="flex" alignItems="center" gap={1} flexWrap="wrap" component="span">
+                    <Typography variant="subtitle1" component="span">
+                      {userName || user?.email}
+                    </Typography>
+
+                    <Chip
+                      label={inv.invitation_type === 'company_invite' ? 'Invite' : 'Request'}
+                      size="small"
+                      color={inv.invitation_type === 'company_invite' ? 'secondary' : 'success'}
+                    />
                   </Box>
                 }
                 secondary={
-                  <Box mt={0.5}>
-                    <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                  <Box mt={0.5} component="span">
+                    <Box display="flex" alignItems="center" gap={1} mb={0.5} component="span">
                       <EmailIcon fontSize="small" color="action" />
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" component="span" color="text.secondary">
                         {user?.email}
                       </Typography>
                     </Box>
 
                     {invitedByName && (
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography variant="caption" component="span" color="text.secondary">
                         Invited by: {invitedByName}
                       </Typography>
                     )}
                   </Box>
                 }
               />
-
-              <Stack direction="row" spacing={1}>
-                {inv.status === 'pending' && (
+              <Stack direction="row" spacing={1} component="span">
+                {inv.status === 'pending' && inv.invitation_type === 'company_invite' && (
                   <>
-                    <Button size="small" variant="contained" onClick={() => handleAccept(inv.id)}>
-                      Accept
-                    </Button>
-
-                    <Button size="small" variant="outlined" color="inherit" onClick={() => handleDecline(inv.id)}>
-                      Decline
+                    <Button variant="outlined" color="error" size="small" onClick={() => handleCancel(inv.id)}>
+                      Cancel
                     </Button>
                   </>
                 )}

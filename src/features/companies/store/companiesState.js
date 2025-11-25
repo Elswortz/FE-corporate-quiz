@@ -21,7 +21,16 @@ const companiesState = {
     data: null,
     isLoading: false,
     error: null,
-    invitations: { data: [], isLoading: false, error: null },
+    invitations: {
+      data: [],
+      isLoading: false,
+      error: null,
+      operations: {
+        accept: { isLoading: false, error: null },
+        reject: { isLoading: false, error: null },
+        cancel: { isLoading: false, error: null },
+      },
+    },
   },
   operations: {
     create: { isLoading: false, error: null },

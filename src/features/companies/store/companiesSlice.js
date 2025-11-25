@@ -10,7 +10,7 @@ import {
   changeCompanyLogo,
   removeCompanyMember,
 } from './companiesThunks';
-import { fetchCompanyInvitations } from './companiesActionsThunks';
+import { fetchCompanyInvitations, cancelInvitation } from './companiesActionsThunks';
 
 const updateCompanyEverywhere = (state, updated) => {
   ['owned', 'joined'].forEach(type => {
@@ -175,6 +175,18 @@ const companiesSlice = createSlice({
       .addCase(fetchCompanyInvitations.rejected, (state, { payload }) => {
         state.selected.invitations.error = payload;
         state.selected.invitations.isLoading = false;
+      })
+      .addCase(cancelInvitation.pending, state => {
+        state.selected.invitations.operations.cancel.isLoading = true;
+        state.selected.invitations.operations.cancel.error = null;
+      })
+      .addCase(cancelInvitation.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
+        state.selected.invitations.isLoading = false;
+      })
+      .addCase(cancelInvitation.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.cancel.error = payload;
+        state.selected.invitations.operations.cancel.isLoading = false;
       }),
 });
 

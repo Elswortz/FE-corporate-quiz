@@ -12,3 +12,15 @@ export const fetchCompanyInvitations = createAsyncThunk(
     }
   }
 );
+
+export const cancelInvitation = createAsyncThunk(
+  'companies/actions/cancelInvitation',
+  async (invitationId, { rejectWithValue }) => {
+    try {
+      await companiesActionsApi.cancelInvitation(invitationId);
+      return invitationId;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to cancel invitation');
+    }
+  }
+);
