@@ -169,7 +169,7 @@ const companiesSlice = createSlice({
         state.selected.invitations.error = null;
       })
       .addCase(fetchCompanyInvitations.fulfilled, (state, { payload }) => {
-        state.selected.invitations.data = payload;
+        state.selected.invitations.data = payload.filter(i => i.status === 'pending');
         state.selected.invitations.isLoading = false;
       })
       .addCase(fetchCompanyInvitations.rejected, (state, { payload }) => {

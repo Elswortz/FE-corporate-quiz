@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { fetchCompanyById, deleteCompany, changeCompanyStatus, changeCompanyLogo } from '../../store/companiesThunks';
 import { clearCurrentCompany } from '../../store/companiesSlice';
 import { useNavigate } from 'react-router-dom';
+import { selectProfileData } from '../../../users/store/usersSelectors.js';
+
+import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.jsx';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
 import getUserRoleInCompany from '../../../../utils/getUserRoleInCompany.js';
-import { selectProfileData } from '../../../users/store/usersSelectors.js';
 
 import {
   Box,
@@ -20,10 +22,6 @@ import {
   Chip,
   Link as MuiLink,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Tabs,
   Tab,
 } from '@mui/material';
@@ -308,18 +306,15 @@ const CompaniesDetails = () => {
         </Tabs>
       </Box>
 
-      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)}>
-        <DialogTitle>Confirm Company Deletion</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to delete your company? This action cannot be undone.</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-          <Button color="error" onClick={handleDelete}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmModal
+        isOpen={isDialogOpen}
+        title={'Confirm Company Deletion'}
+        description={'Are you sure you want to delete your company? This action cannot be undone.'}
+        confirmText={'Delete'}
+        confirmColor={'error'}
+        onConfirm={handleDelete}
+        onCancel={() => setIsDialogOpen(false)}
+      />
 
       <EditCompanyModal open={isEditOpen} onClose={() => setIsEditOpen(false)} />
     </Box>

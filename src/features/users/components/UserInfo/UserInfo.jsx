@@ -1,16 +1,4 @@
-import {
-  Box,
-  Avatar,
-  Typography,
-  TextField,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress,
-  Stack,
-} from '@mui/material';
+import { Box, Avatar, Typography, TextField, Button, CircularProgress, Stack } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deepPurple } from '@mui/material/colors';
@@ -19,6 +7,7 @@ import { selectProfileData, selectUpdateUserLoading } from '../../store/usersSel
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 import ChangePassModal from '../../../auth/components/ChangePassModal/ChangePassModal';
+import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
 
 const UserInfo = () => {
   const dispatch = useDispatch();
@@ -155,18 +144,15 @@ const UserInfo = () => {
         </Button>
       </Box>
 
-      <Dialog open={isConfirmDelOpen} onClose={() => setIsConfirmDelOpen(false)}>
-        <DialogTitle>Confirm Account Deletion</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to delete your account? This action cannot be undone.</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsConfirmDelOpen(false)}>Cancel</Button>
-          <Button color="error" onClick={handleDelete}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ConfirmModal
+        isOpen={isConfirmDelOpen}
+        title={'Confirm Account Deletion'}
+        description={'Are you sure you want to delete your account? This action cannot be undone.'}
+        confirmText={'Delete'}
+        confirmColor={'error'}
+        onConfirm={handleDelete}
+        onCancel={() => setIsConfirmDelOpen(false)}
+      />
 
       <ChangePassModal open={isPassChangeOpen} onClose={() => setIsPassChangeOpen(false)} />
     </Box>
