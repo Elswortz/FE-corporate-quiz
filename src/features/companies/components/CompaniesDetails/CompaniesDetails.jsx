@@ -3,8 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { fetchCompanyById, deleteCompany, changeCompanyStatus, changeCompanyLogo } from '../../store/companiesThunks';
 import { clearCurrentCompany } from '../../store/companiesSlice';
+import { requestMembership } from '../../../users/store/usersActionsThunks.js';
 import { useNavigate } from 'react-router-dom';
 import { selectProfileData } from '../../../users/store/usersSelectors.js';
+import { showNotification } from '../../../notifications/store/notificationsSlice.js';
 
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.jsx';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
@@ -74,10 +76,20 @@ const CompaniesDetails = () => {
     await dispatch(fetchCompanyById(data.id)).unwrap();
   };
 
+  const handleRequest = async () => {
+    try {
+      await dispatch(requestMembership(companyId)).unwrap();
+      showNotification({ message: 'Request to join successfully sent', severity: 'success' });
+    } catch (err) {
+      showNotification({ message: err.response?.data?.message || 'Failed request to join company', severity: 'error' });
+    }
+  };
+
   const role = getUserRoleInCompany(data, user?.id);
   const isOwner = role === 'owner';
   // const isAdmin = role === 'admin';
   // const isMember = role === 'member';
+  const isUser = user && role !== 'owner' && role !== 'admin' && role !== 'member';
 
   useEffect(() => {
     if (companyId) {
@@ -214,33 +226,41 @@ const CompaniesDetails = () => {
           }
           sx={{ pb: 0 }}
           action={
-            isOwner ? (
-              <Box display="flex" gap={1}>
-                <Button
-                  onClick={handleToggleStatus}
-                  startIcon={data.company_status === 'hidden' ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                  disabled={SatusLoading}
-                  size="small"
-                  variant="outlined"
-                >
-                  {data.company_status === 'hidden' ? 'Show' : 'Hide'}
-                </Button>
+            <>
+              {isOwner && (
+                <Box display="flex" gap={1}>
+                  <Button
+                    onClick={handleToggleStatus}
+                    startIcon={data.company_status === 'hidden' ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                    disabled={SatusLoading}
+                    size="small"
+                    variant="outlined"
+                  >
+                    {data.company_status === 'hidden' ? 'Show' : 'Hide'}
+                  </Button>
 
-                <Button onClick={() => setIsEditOpen(true)} startIcon={<EditIcon />} size="small" variant="outlined">
-                  Edit
-                </Button>
+                  <Button onClick={() => setIsEditOpen(true)} startIcon={<EditIcon />} size="small" variant="outlined">
+                    Edit
+                  </Button>
 
-                <Button
-                  onClick={() => setIsDialogOpen(true)}
-                  startIcon={<DeleteIcon />}
-                  size="small"
-                  variant="contained"
-                  color="error"
-                >
-                  Delete
+                  <Button
+                    onClick={() => setIsDialogOpen(true)}
+                    startIcon={<DeleteIcon />}
+                    size="small"
+                    variant="contained"
+                    color="error"
+                  >
+                    Delete
+                  </Button>
+                </Box>
+              )}
+
+              {isUser && (
+                <Button onClick={handleRequest} size="small" variant="contained" color="primary">
+                  Request to join
                 </Button>
-              </Box>
-            ) : null
+              )}
+            </>
           }
         />
 
