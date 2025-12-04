@@ -10,7 +10,13 @@ import {
   changeCompanyLogo,
   removeCompanyMember,
 } from './companiesThunks';
-import { fetchCompanyInvitations, cancelInvitation } from './companiesActionsThunks';
+import {
+  fetchCompanyInvitations,
+  cancelInvitation,
+  acceptRequest,
+  rejectRequest,
+  inviteUser,
+} from './companiesActionsThunks';
 
 const updateCompanyEverywhere = (state, updated) => {
   ['owned', 'joined'].forEach(type => {
@@ -176,6 +182,46 @@ const companiesSlice = createSlice({
         state.selected.invitations.error = payload;
         state.selected.invitations.isLoading = false;
       })
+      // --- inviteUser ---
+      .addCase(inviteUser.pending, state => {
+        state.selected.invitations.operations.invite.error = null;
+        state.selected.invitations.operations.invite.isLoading = true;
+      })
+      .addCase(inviteUser.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data.push(payload);
+        state.selected.invitations.operations.invite.isLoading = false;
+      })
+      .addCase(inviteUser.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.invite.error = payload;
+        state.selected.invitations.operations.invite.isLoading = false;
+      })
+      // --- acceptRequest ---
+      .addCase(acceptRequest.pending, state => {
+        state.selected.invitations.operations.accept.isLoading = true;
+        state.selected.invitations.operations.accept.error = null;
+      })
+      .addCase(acceptRequest.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
+        state.selected.invitations.operations.accept.isLoading = false;
+      })
+      .addCase(acceptRequest.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.accept.isLoading = false;
+        state.selected.invitations.operations.accept.error = payload;
+      })
+      // --- rejectRequest ---
+      .addCase(rejectRequest.pending, state => {
+        state.selected.invitations.operations.reject.isLoading = true;
+        state.selected.invitations.operations.reject.error = null;
+      })
+      .addCase(rejectRequest.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
+        state.selected.invitations.operations.reject.isLoading = false;
+      })
+      .addCase(rejectRequest.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.reject.isLoading = false;
+        state.selected.invitations.operations.reject.error = payload;
+      })
+      // --- cancelInvitation ---
       .addCase(cancelInvitation.pending, state => {
         state.selected.invitations.operations.cancel.isLoading = true;
         state.selected.invitations.operations.cancel.error = null;

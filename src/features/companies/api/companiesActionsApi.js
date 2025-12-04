@@ -2,9 +2,9 @@ import { api } from '../../../api/apiClient';
 
 export const inviteUser = data => api.post('company-actions/invite', data);
 
-export const acceptRequest = invitationId => api.post(`company-actions/${invitationId}/accept`);
+export const acceptRequest = requestId => api.post(`company-actions/${requestId}/accept`);
 
-export const rejectRequest = invitationId => api.post(`company-actions/${invitationId}/reject`);
+export const rejectRequest = requestId => api.post(`company-actions/${requestId}/reject`);
 
 export const cancelInvitation = invitationId => api.post(`company-actions/${invitationId}/cancel`);
 

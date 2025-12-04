@@ -33,8 +33,11 @@ const InvitationsList = () => {
   const isLoading = useSelector(selectInvitationsLoading);
   const error = useSelector(selectInvitationsError);
 
-  // const handleAccept = () => {};
-  // const handleDecline = () => {};
+  const handleAccept = () => {
+    try {
+    } catch (err) {}
+  };
+  // const handleReject = () => {};
   const handleCancel = async () => {
     try {
       await dispatch(cancelInvitation(selectedInvitationId)).unwrap();
