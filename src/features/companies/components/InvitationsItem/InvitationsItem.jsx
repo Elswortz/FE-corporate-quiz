@@ -2,7 +2,7 @@ import { ListItem, ListItemAvatar, ListItemText, Box, Typography, Chip, Stack, B
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 
-const InvitationsItem = ({ inv, onCancel }) => {
+const InvitationsItem = ({ inv, onAccept, onReject, onCancel }) => {
   const user = inv.invited_user;
   const invitedBy = inv.invited_by;
   const avatarUrl = user?.avatar_url;
@@ -41,9 +41,12 @@ const InvitationsItem = ({ inv, onCancel }) => {
               <Typography variant="body2" component="span" color="text.secondary">
                 {user?.email}
               </Typography>
+              <Typography variant="body2" component="span" color="text.secondary">
+                {inv.status}
+              </Typography>
             </Box>
 
-            {invitedByName && (
+            {inv.invitation_type === 'company_invite' && (
               <Typography variant="caption" component="span" color="text.secondary">
                 Invited by: {invitedByName}
               </Typography>
@@ -52,13 +55,36 @@ const InvitationsItem = ({ inv, onCancel }) => {
         }
       />
       <Stack direction="row" spacing={1} component="span">
-        {inv.status === 'pending' && inv.invitation_type === 'company_invite' && (
-          <>
+        <>
+          {inv.invitation_type === 'company_invite' && (
             <Button variant="outlined" color="error" size="small" onClick={onCancel}>
               Cancel
             </Button>
-          </>
-        )}
+          )}
+          {inv.invitation_type === 'user_request' && (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                onClick={() => {
+                  onAccept(inv.id);
+                }}
+              >
+                Accept
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => {
+                  onReject(inv.id);
+                }}
+              >
+                Reject
+              </Button>
+            </>
+          )}
+        </>
       </Stack>
     </ListItem>
   );

@@ -1,6 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { fetchCompanyInvitations, cancelInvitation } from '../../store/companiesActionsThunks';
+import {
+  fetchCompanyInvitations,
+  cancelInvitation,
+  acceptRequest,
+  rejectRequest,
+} from '../../store/companiesActionsThunks';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -33,11 +38,34 @@ const InvitationsList = () => {
   const isLoading = useSelector(selectInvitationsLoading);
   const error = useSelector(selectInvitationsError);
 
-  const handleAccept = () => {
+  const handleAccept = async requestId => {
     try {
-    } catch (err) {}
+      await dispatch(acceptRequest(requestId)).unwrap();
+      dispatch(showNotification({ message: 'Request successfuly accepted', severity: 'success' }));
+    } catch (err) {
+      dispatch(
+        showNotification({
+          message: err.response?.data?.message || 'Failed to accept request',
+          severity: 'error',
+        })
+      );
+    }
   };
-  // const handleReject = () => {};
+
+  const handleReject = async requestId => {
+    try {
+      await dispatch(rejectRequest(requestId)).unwrap();
+      dispatch(showNotification({ message: 'Request successfuly rejected', severity: 'success' }));
+    } catch (err) {
+      dispatch(
+        showNotification({
+          message: err.response?.data?.message || 'Failed to reject request',
+          severity: 'error',
+        })
+      );
+    }
+  };
+
   const handleCancel = async () => {
     try {
       await dispatch(cancelInvitation(selectedInvitationId)).unwrap();
@@ -90,6 +118,8 @@ const InvitationsList = () => {
             <Box key={inv.id} component="div">
               <InvitationsItem
                 inv={inv}
+                onAccept={handleAccept}
+                onReject={handleReject}
                 onCancel={() => {
                   setSelectedInvitationId(inv.id);
                   setIsConfirmDelOpen(true);
