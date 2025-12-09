@@ -1,10 +1,11 @@
 import { Box, Avatar, Typography, TextField, Button, CircularProgress, Stack } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deepPurple } from '@mui/material/colors';
 import { updateUser, updateUserAvatar, removeUser } from '../../store/usersThunks';
-import { selectProfileData, selectUpdateUserLoading } from '../../store/usersSelectors';
+import { selectProfileData, selectUpdateUserLoading, selectUpdateUserAvatarLoading } from '../../store/usersSelectors';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
+
+import PersonIcon from '@mui/icons-material/Person';
 
 import ChangePassModal from '../../../auth/components/ChangePassModal/ChangePassModal';
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
@@ -14,6 +15,7 @@ const UserInfo = () => {
 
   const user = useSelector(selectProfileData);
   const editLoading = useSelector(selectUpdateUserLoading);
+  const changeAvatarLoading = useSelector(selectUpdateUserAvatarLoading);
 
   const [firstName, setFirstName] = useState(user?.first_name || '');
   const [lastName, setLastName] = useState(user?.last_name || '');
@@ -103,9 +105,39 @@ const UserInfo = () => {
 
       <Stack direction="row" alignItems="center" spacing={3}>
         <Box>
-          <Avatar src={user?.avatar_url || ''} sx={{ width: 100, height: 100, bgcolor: deepPurple[500] }}>
-            {!user?.avatar_url && (user?.first_name?.[0] || '?')}
-          </Avatar>
+          <Box sx={{ position: 'relative', width: 100, height: 100 }}>
+            <Avatar src={user?.avatar_url || ''} sx={{ width: 100, height: 100 }}>
+              {!user?.avatar_url && !changeAvatarLoading && <PersonIcon fontSize="inherit" />}
+            </Avatar>
+            {changeAvatarLoading && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                  borderRadius: '50%',
+                  zIndex: 1,
+                }}
+              />
+            )}
+            {changeAvatarLoading && (
+              <CircularProgress
+                size={36}
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-18px',
+                  marginLeft: '-18px',
+                  zIndex: 2,
+                  color: 'primary.main',
+                }}
+              />
+            )}
+          </Box>
           <Button variant="outlined" component="label" size="small" sx={{ mt: 1 }}>
             Change Avatar
             <input type="file" hidden accept="image/*" onChange={handleAvatarChange} />
@@ -133,8 +165,8 @@ const UserInfo = () => {
         </Box>
       </Stack>
       <Box mt={4} display="flex" justifyContent="space-between">
-        <Button variant="contained" color="primary" onClick={handleSave} disabled={editLoading}>
-          {editLoading ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
+        <Button variant="contained" color="primary" onClick={handleSave} loading={editLoading}>
+          Save Changes
         </Button>
         <Button variant="outlined" color="secondary" onClick={() => setIsPassChangeOpen(true)}>
           Change Password

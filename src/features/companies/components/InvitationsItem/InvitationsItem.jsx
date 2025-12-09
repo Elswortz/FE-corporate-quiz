@@ -41,9 +41,6 @@ const InvitationsItem = ({ inv, onAccept, onReject, onCancel }) => {
               <Typography variant="body2" component="span" color="text.secondary">
                 {user?.email}
               </Typography>
-              <Typography variant="body2" component="span" color="text.secondary">
-                {inv.status}
-              </Typography>
             </Box>
 
             {inv.invitation_type === 'company_invite' && (
