@@ -38,18 +38,8 @@ const CompaniesList = ({ type = 'all' }) => {
     dispatch(fetchCompanies({ limit, offset: newOffset }));
   };
 
-  const titles = {
-    all: 'List of all companies',
-    owned: 'Your owned companies',
-    joined: 'Companies you joined',
-  };
-
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        {titles[type]}
-      </Typography>
-
       {isLoading ? (
         <Box
           sx={{

@@ -2,7 +2,12 @@ import { Box, Avatar, Typography, TextField, Button, CircularProgress, Stack } f
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser, updateUserAvatar, removeUser } from '../../store/usersThunks';
-import { selectProfileData, selectUpdateUserLoading, selectUpdateUserAvatarLoading } from '../../store/usersSelectors';
+import {
+  selectProfileData,
+  selectUpdateUserLoading,
+  selectUpdateUserAvatarLoading,
+  selectRemoveUserLoading,
+} from '../../store/usersSelectors';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 import PersonIcon from '@mui/icons-material/Person';
@@ -15,6 +20,7 @@ const UserInfo = () => {
 
   const user = useSelector(selectProfileData);
   const editLoading = useSelector(selectUpdateUserLoading);
+  const removeLoading = useSelector(selectRemoveUserLoading);
   const changeAvatarLoading = useSelector(selectUpdateUserAvatarLoading);
 
   const [firstName, setFirstName] = useState(user?.first_name || '');
@@ -107,7 +113,7 @@ const UserInfo = () => {
         <Box>
           <Box sx={{ position: 'relative', width: 100, height: 100 }}>
             <Avatar src={user?.avatar_url || ''} sx={{ width: 100, height: 100 }}>
-              {!user?.avatar_url && !changeAvatarLoading && <PersonIcon fontSize="inherit" />}
+              {!user?.avatar_url && !changeAvatarLoading && <PersonIcon fontSize={'large'} />}
             </Avatar>
             {changeAvatarLoading && (
               <Box
@@ -139,7 +145,7 @@ const UserInfo = () => {
             )}
           </Box>
           <Button variant="outlined" component="label" size="small" sx={{ mt: 1 }}>
-            Change Avatar
+            Upload
             <input type="file" hidden accept="image/*" onChange={handleAvatarChange} />
           </Button>
         </Box>
@@ -184,6 +190,7 @@ const UserInfo = () => {
         confirmColor={'error'}
         onConfirm={handleDelete}
         onCancel={() => setIsConfirmDelOpen(false)}
+        isLoading={removeLoading}
       />
 
       <ChangePassModal open={isPassChangeOpen} onClose={() => setIsPassChangeOpen(false)} />

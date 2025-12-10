@@ -12,6 +12,7 @@ const ChangePassModal = ({ open, onClose }) => {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const handleChange = e => {
@@ -22,6 +23,7 @@ const ChangePassModal = ({ open, onClose }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       await changePasswordSchema.validate(form, { abortEarly: false });
       setErrors({});
 
@@ -42,6 +44,8 @@ const ChangePassModal = ({ open, onClose }) => {
           showNotification({ message: error.response?.data?.message || 'Failed to change password', severity: 'error' })
         );
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,7 +89,7 @@ const ChangePassModal = ({ open, onClose }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button variant="contained" onClick={handleSubmit} loading={isLoading}>
           Save
         </Button>
       </DialogActions>
