@@ -11,6 +11,7 @@ const usersState = {
         accept: { isLoading: false, error: null },
         reject: { isLoading: false, error: null },
         cancel: { isLoading: false, error: null },
+        request: { isLoading: false, error: null },
       },
     },
     operations: {

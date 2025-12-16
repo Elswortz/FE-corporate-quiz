@@ -41,8 +41,8 @@ export const cancelInvitation = createAsyncThunk(
   'users/actions/cancelInvitation',
   async (invitationId, { rejectWithValue }) => {
     try {
-      const res = await usersActionsApi.cancelInvitation(invitationId);
-      return { invitationId, data: res.data };
+      await usersActionsApi.cancelInvitation(invitationId);
+      return invitationId;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to cancel invitation');
     }
@@ -54,7 +54,7 @@ export const requestMembership = createAsyncThunk(
   async (companyId, { rejectWithValue }) => {
     try {
       const res = await usersActionsApi.requestMembership(companyId);
-      return { companyId, data: res.data };
+      return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to request membership');
     }

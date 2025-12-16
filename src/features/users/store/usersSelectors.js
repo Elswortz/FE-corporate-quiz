@@ -13,6 +13,8 @@ export const selectRejectLoading = state => state.users.profile.invitations.oper
 export const selectRejectError = state => state.users.profile.invitations.operations.reject.error;
 export const selectCancelLoading = state => state.users.profile.invitations.operations.cancel.isLoading;
 export const selectCancelError = state => state.users.profile.invitations.operations.cancel.error;
+export const selectRequestLoading = state => state.users.profile.invitations.operations.request.isLoading;
+export const selectRequestError = state => state.users.profile.invitations.operations.request.error;
 
 export const selectUpdateUserLoading = state => state.users.profile.operations.update.isLoading;
 export const selectUpdateUserError = state => state.users.profile.operations.update.error;
@@ -20,3 +22,13 @@ export const selectRemoveUserLoading = state => state.users.profile.operations.r
 export const selectRemoveUserError = state => state.users.profile.operations.remove.error;
 export const selectUpdateUserAvatarLoading = state => state.users.profile.operations.updateAvatar.isLoading;
 export const selectUpdateUserAvatarError = state => state.users.profile.operations.updateAvatar.error;
+
+export const selectPendingInvitationIdByCompany = companyId => state => {
+  if (!companyId) return null;
+
+  return (
+    state.users.profile.invitations.data.find(invitation => {
+      return invitation.status === 'pending' && String(invitation.company.id) === String(companyId);
+    })?.id ?? null
+  );
+};

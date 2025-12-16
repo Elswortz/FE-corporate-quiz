@@ -8,7 +8,13 @@ import {
   updateUserAvatar,
   removeUser,
 } from '../store/usersThunks';
-import { fetchMyInvitations, acceptInvitation, rejectInvitation } from './usersActionsThunks';
+import {
+  fetchMyInvitations,
+  acceptInvitation,
+  rejectInvitation,
+  cancelInvitation,
+  requestMembership,
+} from './usersActionsThunks';
 import { logOut } from '../../auth/store/authSlice';
 
 const resetUserProfile = state => {
@@ -144,6 +150,30 @@ const usersSlice = createSlice({
       .addCase(rejectInvitation.rejected, (state, { payload }) => {
         state.profile.invitations.operations.reject.isLoading = false;
         state.profile.invitations.operations.reject.error = payload;
+      })
+      .addCase(requestMembership.pending, state => {
+        state.profile.invitations.operations.request.isLoading = true;
+        state.profile.invitations.operations.request.error = null;
+      })
+      .addCase(requestMembership.fulfilled, (state, { payload }) => {
+        state.profile.invitations.operations.request.isLoading = false;
+        state.profile.invitations.data.push(payload);
+      })
+      .addCase(requestMembership.rejected, (state, { payload }) => {
+        state.profile.invitations.operations.request.isLoading = false;
+        state.profile.invitations.operations.request.error = payload;
+      })
+      .addCase(cancelInvitation.pending, state => {
+        state.profile.invitations.operations.cancel.isLoading = true;
+        state.profile.invitations.operations.cancel.error = null;
+      })
+      .addCase(cancelInvitation.fulfilled, (state, { payload }) => {
+        state.profile.invitations.operations.cancel.isLoading = false;
+        state.profile.invitations.data = state.profile.invitations.data.filter(i => i.id !== payload);
+      })
+      .addCase(cancelInvitation.rejected, (state, { payload }) => {
+        state.profile.invitations.operations.cancel.isLoading = false;
+        state.profile.invitations.operations.cancel.error = payload;
       }),
 });
 

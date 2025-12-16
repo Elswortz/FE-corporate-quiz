@@ -3,9 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { fetchCompanyById, deleteCompany, changeCompanyStatus, changeCompanyLogo } from '../../store/companiesThunks';
 import { clearCurrentCompany } from '../../store/companiesSlice';
-import { requestMembership } from '../../../users/store/usersActionsThunks.js';
+import { requestMembership, cancelInvitation, fetchMyInvitations } from '../../../users/store/usersActionsThunks.js';
 import { useNavigate } from 'react-router-dom';
-import { selectProfileData } from '../../../users/store/usersSelectors.js';
+import {
+  selectProfileData,
+  selectRequestLoading,
+  selectCancelLoading,
+  selectPendingInvitationIdByCompany,
+} from '../../../users/store/usersSelectors.js';
 import { showNotification } from '../../../notifications/store/notificationsSlice.js';
 
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.jsx';
@@ -46,6 +51,13 @@ const CompaniesDetails = () => {
 
   const { data, isLoading, error } = useSelector(state => state.companies.selected);
   const { isLoading: SatusLoading } = useSelector(state => state.companies.operations.changeStatus);
+
+  const pendingInvitationId = useSelector(selectPendingInvitationIdByCompany(companyId));
+  const hasPendingRequest = Boolean(pendingInvitationId);
+
+  const requestLoading = useSelector(selectRequestLoading);
+  const cancelLoading = useSelector(selectCancelLoading);
+
   const user = useSelector(selectProfileData);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -79,9 +91,22 @@ const CompaniesDetails = () => {
   const handleRequest = async () => {
     try {
       await dispatch(requestMembership(companyId)).unwrap();
+      await dispatch(fetchMyInvitations()).unwrap();
       showNotification({ message: 'Request to join successfully sent', severity: 'success' });
     } catch (err) {
       showNotification({ message: err.response?.data?.message || 'Failed request to join company', severity: 'error' });
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    if (!pendingInvitationId) return;
+    try {
+      await dispatch(cancelInvitation(pendingInvitationId)).unwrap();
+      await dispatch(fetchMyInvitations()).unwrap();
+
+      showNotification({ message: 'Request successfully canceled', severity: 'info' });
+    } catch (err) {
+      showNotification({ message: err.response?.data?.message || 'Failed to cancel request', severity: 'error' });
     }
   };
 
@@ -92,9 +117,11 @@ const CompaniesDetails = () => {
   const isUser = user && role !== 'owner' && role !== 'admin' && role !== 'member';
 
   useEffect(() => {
-    if (companyId) {
-      dispatch(fetchCompanyById(companyId));
-    }
+    if (!companyId) return;
+
+    dispatch(fetchCompanyById(companyId));
+    dispatch(fetchMyInvitations());
+
     return () => {
       dispatch(clearCurrentCompany());
     };
@@ -255,11 +282,28 @@ const CompaniesDetails = () => {
                 </Box>
               )}
 
-              {isUser && (
-                <Button onClick={handleRequest} size="small" variant="contained" color="primary">
-                  Request to join
-                </Button>
-              )}
+              {isUser &&
+                (hasPendingRequest ? (
+                  <Button
+                    onClick={handleCancelRequest}
+                    size="small"
+                    variant="outlined"
+                    color="warning"
+                    loading={cancelLoading}
+                  >
+                    Cancel request
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleRequest}
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    loading={requestLoading}
+                  >
+                    Request to join
+                  </Button>
+                ))}
             </>
           }
         />
