@@ -4,3 +4,6 @@ export const selectInvitationsError = state => state.companies.selected.invitati
 
 export const selectCancelLoading = state => state.companies.selected.invitations.operations.reject.isLoading;
 export const selectCancelError = state => state.companies.selected.invitations.operations.reject.error;
+
+export const selectLeaveLoading = state => state.companies.operations.leave.isLoading;
+export const selectLeaveError = state => state.companies.operations.leave.error;

@@ -111,3 +111,11 @@ export const removeCompanyMember = createAsyncThunk(
   }
 );
 
+export const leaveCompany = createAsyncThunk('companies/leaveCompany', async (companyId, { rejectWithValue }) => {
+  try {
+    await companiesAPI.leaveCompany(companyId);
+    return companyId;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to leave company');
+  }
+});

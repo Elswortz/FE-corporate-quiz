@@ -28,3 +28,5 @@ export const changeCompanyMemberRole = (company_id, user_id, role) =>
   api.patch(`companies/${company_id}/members/${user_id}/role?new_role=${role}`);
 
 export const getCompanyAdmins = company_id => api.get(`companies/${company_id}/admins`);
+
+export const leaveCompany = companyId => api.post(`user-actions/${companyId}/leave`);

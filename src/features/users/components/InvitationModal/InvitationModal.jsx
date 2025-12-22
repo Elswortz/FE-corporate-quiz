@@ -11,21 +11,29 @@ import {
   Stack,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectAcceptLoading, selectRejectLoading } from '../../store/usersSelectors';
-import { acceptInvitation, rejectInvitation } from '../../store/usersActionsThunks';
+import { selectAcceptLoading, selectRejectLoading, selectCancelLoading } from '../../store/usersSelectors';
+import { acceptInvitation, rejectInvitation, cancelInvitation } from '../../store/usersActionsThunks';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 const InvitationModal = ({ invite, onClose }) => {
   const dispatch = useDispatch();
   const acceptLoading = useSelector(selectAcceptLoading);
   const rejectLoading = useSelector(selectRejectLoading);
+  const cancelLoading = useSelector(selectCancelLoading);
+  const {
+    id,
+    status,
+    invitation_type: invType,
+    company: { company_name: companyName, company_logo_url: companyLogoUrl },
+    invited_by: { avatar_url: avatarUrl, first_name: byFirstName, last_name: byLastName },
+  } = invite;
 
   const handleAccept = async () => {
     try {
-      await dispatch(acceptInvitation(invite.id)).unwrap();
+      await dispatch(acceptInvitation(id)).unwrap();
       dispatch(
         showNotification({
-          message: `Invitation to ${invite.company.company_name} company accepted`,
+          message: `Invitation to ${companyName} company accepted`,
           severity: 'success',
         })
       );
@@ -37,10 +45,10 @@ const InvitationModal = ({ invite, onClose }) => {
 
   const handleReject = async () => {
     try {
-      await dispatch(rejectInvitation(invite.id)).unwrap();
+      await dispatch(rejectInvitation(id)).unwrap();
       dispatch(
         showNotification({
-          message: `Invitation to ${invite.company.company_name} rejected`,
+          message: `Invitation to ${companyName} rejected`,
           severity: 'info',
         })
       );
@@ -50,39 +58,62 @@ const InvitationModal = ({ invite, onClose }) => {
     }
   };
 
+  const handleCancel = async () => {
+    try {
+      await dispatch(cancelInvitation(id)).unwrap();
+      dispatch(
+        showNotification({
+          message: `Invitation succesfuly canceled`,
+          severity: 'info',
+        })
+      );
+      onClose();
+    } catch (error) {
+      dispatch(showNotification({ message: error || 'Failed to accept invitation', severity: 'error' }));
+    }
+  };
+
   return (
     <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>Company Invitation</DialogTitle>
+      <DialogTitle>{invType === 'company_invite' ? 'Company Invitation' : 'Company Request'}</DialogTitle>
       <DialogContent>
         <Stack spacing={3} alignItems="center" textAlign="center">
-          <Avatar src={invite.company.company_logo_url} sx={{ width: 72, height: 72 }} />
-          <Typography variant="h6">{invite.company.company_name}</Typography>
+          <Avatar src={companyLogoUrl} sx={{ width: 72, height: 72 }} />
+          <Typography variant="h6">{companyName}</Typography>
 
           <Divider flexItem />
 
           <Box display="flex" alignItems="center" gap={2}>
-            <Avatar src={invite.invited_by.avatar_url} />
+            <Avatar src={avatarUrl} />
             <Box>
-              <Typography variant="subtitle1">{`${invite.invited_by.first_name} ${invite.invited_by.last_name}`}</Typography>
+              <Typography variant="subtitle1">{`${byFirstName} ${byLastName}`}</Typography>
               <Typography variant="body2" color="text.secondary">
-                Invited you
+                {invType === 'company_invite' ? 'Invited you' : 'You requested to join'}
               </Typography>
             </Box>
           </Box>
 
           <Typography variant="caption" color="text.secondary">
-            Status: <b>{invite.status}</b>
+            Status: <b>{status}</b>
           </Typography>
         </Stack>
       </DialogContent>
 
       <DialogActions sx={{ justifyContent: 'center', pb: 2 }}>
-        <Button onClick={handleReject} disabled={rejectLoading}>
-          {rejectLoading ? 'Processing...' : 'Reject'}
-        </Button>
-        <Button onClick={handleAccept} variant="contained" disabled={acceptLoading}>
-          {acceptLoading ? 'Processing...' : 'Accept'}
-        </Button>
+        {invType === 'company_invite' ? (
+          <>
+            <Button onClick={handleAccept} variant="contained" loading={acceptLoading}>
+              Accept
+            </Button>
+            <Button onClick={handleReject} variant="outlined" loading={rejectLoading}>
+              Reject
+            </Button>
+          </>
+        ) : (
+          <Button onClick={handleCancel} variant="outlined" color="error" loading={cancelLoading}>
+            Cancel
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

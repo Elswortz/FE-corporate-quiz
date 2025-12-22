@@ -63,14 +63,25 @@ const NotificationsBell = () => {
               <ListItemAvatar>
                 <Avatar src={invite.company.company_logo_url}></Avatar>
               </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Typography variant="subtitle1">
-                    <strong>{invite.company.company_name}</strong> company invitation
-                  </Typography>
-                }
-                secondary={`From: ${invite.invited_by.first_name} ${invite.invited_by.last_name}`}
-              />
+              {invite.invitation_type === 'company_invite' ? (
+                <ListItemText
+                  primary={
+                    <Typography variant="subtitle1">
+                      <strong>{invite.company.company_name}</strong> company invitation
+                    </Typography>
+                  }
+                  secondary={`From: ${invite.invited_by.first_name} ${invite.invited_by.last_name}`}
+                />
+              ) : (
+                <ListItemText
+                  primary={
+                    <Typography variant="subtitle1">
+                      Requested to join <strong>{invite.company.company_name}</strong>
+                    </Typography>
+                  }
+                  secondary={`Awaiting response`}
+                />
+              )}
             </MenuItem>
           ))
         )}

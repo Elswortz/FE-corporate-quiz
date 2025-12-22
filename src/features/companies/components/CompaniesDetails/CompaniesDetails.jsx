@@ -1,7 +1,13 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { fetchCompanyById, deleteCompany, changeCompanyStatus, changeCompanyLogo } from '../../store/companiesThunks';
+import {
+  fetchCompanyById,
+  deleteCompany,
+  changeCompanyStatus,
+  changeCompanyLogo,
+  leaveCompany,
+} from '../../store/companiesThunks';
 import { clearCurrentCompany } from '../../store/companiesSlice';
 import { requestMembership, cancelInvitation, fetchMyInvitations } from '../../../users/store/usersActionsThunks.js';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +17,7 @@ import {
   selectCancelLoading,
   selectPendingInvitationIdByCompany,
 } from '../../../users/store/usersSelectors.js';
+import { selectLeaveLoading } from '../../store/companiesSelectors.js';
 import { showNotification } from '../../../notifications/store/notificationsSlice.js';
 
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.jsx';
@@ -57,10 +64,12 @@ const CompaniesDetails = () => {
 
   const requestLoading = useSelector(selectRequestLoading);
   const cancelLoading = useSelector(selectCancelLoading);
+  const leaveLoading = useSelector(selectLeaveLoading);
 
   const user = useSelector(selectProfileData);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const currentPath = location.pathname;
@@ -92,9 +101,14 @@ const CompaniesDetails = () => {
     try {
       await dispatch(requestMembership(companyId)).unwrap();
       await dispatch(fetchMyInvitations()).unwrap();
-      showNotification({ message: 'Request to join successfully sent', severity: 'success' });
+      dispatch(showNotification({ message: 'Request to join successfully sent', severity: 'success' }));
     } catch (err) {
-      showNotification({ message: err.response?.data?.message || 'Failed request to join company', severity: 'error' });
+      dispatch(
+        showNotification({
+          message: err.response?.data?.message || 'Failed request to join company',
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -104,16 +118,31 @@ const CompaniesDetails = () => {
       await dispatch(cancelInvitation(pendingInvitationId)).unwrap();
       await dispatch(fetchMyInvitations()).unwrap();
 
-      showNotification({ message: 'Request successfully canceled', severity: 'info' });
+      dispatch(showNotification({ message: 'Request successfully canceled', severity: 'info' }));
     } catch (err) {
-      showNotification({ message: err.response?.data?.message || 'Failed to cancel request', severity: 'error' });
+      dispatch(
+        showNotification({ message: err.response?.data?.message || 'Failed to cancel request', severity: 'error' })
+      );
+    }
+  };
+
+  const handleLeave = async () => {
+    try {
+      await dispatch(leaveCompany(companyId)).unwrap();
+      await dispatch(fetchCompanyById(companyId)).unwrap();
+      setIsConfirmLeaveOpen(false);
+      dispatch(showNotification({ message: 'You have successfully left the company', severity: 'success' }));
+    } catch (err) {
+      dispatch(
+        showNotification({ message: err.response?.data?.message || 'Failed to leave the company', severity: 'error' })
+      );
     }
   };
 
   const role = getUserRoleInCompany(data, user?.id);
   const isOwner = role === 'owner';
   // const isAdmin = role === 'admin';
-  // const isMember = role === 'member';
+  const isMember = role === 'member';
   const isUser = user && role !== 'owner' && role !== 'admin' && role !== 'member';
 
   useEffect(() => {
@@ -129,7 +158,7 @@ const CompaniesDetails = () => {
 
   const handleDelete = async () => {
     await dispatch(deleteCompany(data.id)).unwrap();
-    setIsDialogOpen(false);
+    setIsConfirmDeleteOpen(false);
     navigate(backLinkHref);
   };
 
@@ -271,7 +300,7 @@ const CompaniesDetails = () => {
                   </Button>
 
                   <Button
-                    onClick={() => setIsDialogOpen(true)}
+                    onClick={() => setIsConfirmDeleteOpen(true)}
                     startIcon={<DeleteIcon />}
                     size="small"
                     variant="contained"
@@ -304,6 +333,12 @@ const CompaniesDetails = () => {
                     Request to join
                   </Button>
                 ))}
+
+              {isMember && (
+                <Button onClick={() => setIsConfirmLeaveOpen(true)} size="small" variant="contained" color="error">
+                  Leave
+                </Button>
+              )}
             </>
           }
         />
@@ -371,13 +406,24 @@ const CompaniesDetails = () => {
       </Box>
 
       <ConfirmModal
-        isOpen={isDialogOpen}
+        isOpen={isConfirmDeleteOpen}
         title={'Confirm Company Deletion'}
         description={'Are you sure you want to delete your company? This action cannot be undone.'}
         confirmText={'Delete'}
         confirmColor={'error'}
         onConfirm={handleDelete}
-        onCancel={() => setIsDialogOpen(false)}
+        onCancel={() => setIsConfirmDeleteOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={isConfirmLeaveOpen}
+        title={'Confirm Leave From Company'}
+        description={'Are you sure you want to leave this company? This action cannot be undone'}
+        confirmText={'Leave'}
+        confirmColor={'error'}
+        onConfirm={handleLeave}
+        onCancel={() => setIsConfirmLeaveOpen(false)}
+        loading={leaveLoading}
       />
 
       <EditCompanyModal open={isEditOpen} onClose={() => setIsEditOpen(false)} />

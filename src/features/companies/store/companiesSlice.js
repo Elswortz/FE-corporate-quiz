@@ -9,6 +9,7 @@ import {
   changeCompanyStatus,
   changeCompanyLogo,
   removeCompanyMember,
+  leaveCompany,
 } from './companiesThunks';
 import {
   fetchCompanyInvitations,
@@ -233,6 +234,19 @@ const companiesSlice = createSlice({
       .addCase(cancelInvitation.rejected, (state, { payload }) => {
         state.selected.invitations.operations.cancel.error = payload;
         state.selected.invitations.operations.cancel.isLoading = false;
+      })
+      // --- leaveCompany ---
+      .addCase(leaveCompany.pending, state => {
+        state.operations.leave.isLoading = true;
+        state.operations.leave.error = null;
+      })
+      .addCase(leaveCompany.fulfilled, (state, { payload }) => {
+        state.joined.data = state.joined.data.filter(c => c.id !== payload);
+        state.operations.leave.isLoading = false;
+      })
+      .addCase(leaveCompany.rejected, (state, { payload }) => {
+        state.operations.leave.error = payload;
+        state.operations.leave.isLoading = false;
       }),
 });
 

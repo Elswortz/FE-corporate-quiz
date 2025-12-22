@@ -40,6 +40,7 @@ const companiesState = {
     changeStatus: { isLoading: false, error: null },
     changeLogo: { isLoading: false, error: null },
     removeMember: { isLoading: false, error: null },
+    leave: { isLoading: false, error: null },
   },
   isGlobalLoading: false,
 };

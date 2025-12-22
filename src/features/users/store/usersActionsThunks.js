@@ -60,12 +60,3 @@ export const requestMembership = createAsyncThunk(
     }
   }
 );
-
-export const leaveCompany = createAsyncThunk('users/actions/leaveCompany', async (companyId, { rejectWithValue }) => {
-  try {
-    const res = await usersActionsApi.leaveCompany(companyId);
-    return { companyId, data: res.data };
-  } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to leave company');
-  }
-});
