@@ -17,14 +17,32 @@ const companiesState = {
     isLoading: false,
     error: null,
   },
-  selected: { data: null, isLoading: false, error: null },
-  operations: {
-    createCompany: { isLoading: false, error: null },
-    updateCompany: { isLoading: false, error: null },
-    deleteCompany: { isLoading: false, error: null },
-    changeCompanyStatus: { isLoading: false, error: null },
-    changeCompanyLogo: { isLoading: false, error: null },
+  selected: {
+    data: null,
+    isLoading: false,
+    error: null,
+    invitations: {
+      data: [],
+      isLoading: false,
+      error: null,
+      operations: {
+        invite: { isLoading: false, error: null },
+        accept: { isLoading: false, error: null },
+        reject: { isLoading: false, error: null },
+        cancel: { isLoading: false, error: null },
+      },
+    },
   },
+  operations: {
+    create: { isLoading: false, error: null },
+    update: { isLoading: false, error: null },
+    delete: { isLoading: false, error: null },
+    changeStatus: { isLoading: false, error: null },
+    changeLogo: { isLoading: false, error: null },
+    removeMember: { isLoading: false, error: null },
+    leave: { isLoading: false, error: null },
+  },
+  isGlobalLoading: false,
 };
 
 export default companiesState;

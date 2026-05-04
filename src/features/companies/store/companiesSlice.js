@@ -8,7 +8,16 @@ import {
   deleteCompany,
   changeCompanyStatus,
   changeCompanyLogo,
+  removeCompanyMember,
+  leaveCompany,
 } from './companiesThunks';
+import {
+  fetchCompanyInvitations,
+  cancelInvitation,
+  acceptRequest,
+  rejectRequest,
+  inviteUser,
+} from './companiesActionsThunks';
 
 const updateCompanyEverywhere = (state, updated) => {
   ['owned', 'joined'].forEach(type => {
@@ -84,69 +93,160 @@ const companiesSlice = createSlice({
       })
       // --- createCompany ---
       .addCase(createCompany.pending, state => {
-        state.operations.createCompany.isLoading = true;
-        state.operations.createCompany.error = null;
+        state.operations.create.isLoading = true;
+        state.operations.create.error = null;
       })
       .addCase(createCompany.fulfilled, (state, { payload }) => {
-        state.operations.createCompany.isLoading = false;
+        state.operations.create.isLoading = false;
         state.owned.data.push(payload);
         if (payload.company_status === 'visible') state.all.data.push(payload);
       })
       .addCase(createCompany.rejected, (state, { payload }) => {
-        state.operations.createCompany.isLoading = false;
-        state.operations.createCompany.error = payload;
+        state.operations.create.isLoading = false;
+        state.operations.create.error = payload;
       })
       // --- updateCompany ---
       .addCase(updateCompany.pending, state => {
-        state.operations.updateCompany.isLoading = true;
-        state.operations.updateCompany.error = null;
+        state.operations.update.isLoading = true;
+        state.operations.update.error = null;
       })
       .addCase(updateCompany.fulfilled, (state, { payload }) => {
-        state.operations.updateCompany.isLoading = false;
+        state.operations.update.isLoading = false;
         updateCompanyEverywhere(state, payload);
       })
       .addCase(updateCompany.rejected, (state, { payload }) => {
-        state.operations.updateCompany.isLoading = false;
-        state.operations.updateCompany.error = payload;
+        state.operations.update.isLoading = false;
+        state.operations.update.error = payload;
       })
       // --- deleteCompany ---
       .addCase(deleteCompany.pending, state => {
-        state.operations.deleteCompany.isLoading = true;
-        state.operations.deleteCompany.error = null;
+        state.operations.delete.isLoading = true;
+        state.operations.delete.error = null;
       })
       .addCase(deleteCompany.fulfilled, (state, { payload }) => {
-        state.operations.deleteCompany.isLoading = false;
+        state.operations.delete.isLoading = false;
         removeCompanyEverywhere(state, payload);
       })
       .addCase(deleteCompany.rejected, (state, { payload }) => {
-        state.operations.deleteCompany.isLoading = false;
-        state.operations.deleteCompany.error = payload;
+        state.operations.delete.isLoading = false;
+        state.operations.delete.error = payload;
       })
       // --- changeCompanyStatus ---
-      .addCase(changeCompanyStatus.pending, (state, { payload }) => {
-        state.operations.changeCompanyStatus.isLoading = true;
-        state.operations.changeCompanyStatus.error = null;
+      .addCase(changeCompanyStatus.pending, state => {
+        state.operations.changeStatus.isLoading;
+        state.operations.changeStatus.error = null;
       })
       .addCase(changeCompanyStatus.fulfilled, (state, { payload }) => {
-        state.operations.changeCompanyStatus.isLoading = false;
+        state.operations.changeStatus.isLoading = false;
         updateCompanyEverywhere(state, payload);
       })
       .addCase(changeCompanyStatus.rejected, (state, { payload }) => {
-        state.operations.changeCompanyStatus.isLoading = false;
-        state.operations.changeCompanyStatus.error = payload;
+        state.operations.changeStatus.isLoading = false;
+        state.operations.changeStatus.error = payload;
       })
       // --- changeCompanyLogo ---
-      .addCase(changeCompanyLogo.pending, (state, { payload }) => {
-        state.operations.changeCompanyLogo.isLoading = true;
-        state.operations.changeCompanyLogo.error = null;
+      .addCase(changeCompanyLogo.pending, state => {
+        state.operations.changeLogo.isLoading = true;
+        state.operations.changeLogo.error = null;
       })
       .addCase(changeCompanyLogo.fulfilled, (state, { payload }) => {
-        state.operations.changeCompanyLogo.isLoading = false;
+        state.operations.changeLogo.isLoading = false;
         updateCompanyEverywhere(state, payload);
       })
       .addCase(changeCompanyLogo.rejected, (state, { payload }) => {
-        state.operations.changeCompanyLogo.isLoading = false;
-        state.operations.changeCompanyLogo.error = payload;
+        state.operations.changeLogo.isLoading = false;
+        state.operations.changeLogo.error = payload;
+      })
+      // --- removeCompanyMember ---
+      .addCase(removeCompanyMember.pending, state => {
+        state.operations.removeMember.isLoading = true;
+        state.operations.removeMember.error = null;
+      })
+      .addCase(removeCompanyMember.fulfilled, (state, { payload }) => {
+        state.operations.removeMember.isLoading = false;
+        state.selected.data.members = state.selected.data.members.filter(m => m.id !== payload);
+      })
+      .addCase(removeCompanyMember.rejected, (state, { payload }) => {
+        state.operations.removeMember.isLoading = false;
+        state.operations.removeMember.error = payload;
+      })
+      // --- fetchCompanyInvitations ---
+      .addCase(fetchCompanyInvitations.pending, state => {
+        state.selected.invitations.isLoading = true;
+        state.selected.invitations.error = null;
+      })
+      .addCase(fetchCompanyInvitations.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = payload.filter(i => i.status === 'pending');
+        state.selected.invitations.isLoading = false;
+      })
+      .addCase(fetchCompanyInvitations.rejected, (state, { payload }) => {
+        state.selected.invitations.error = payload;
+        state.selected.invitations.isLoading = false;
+      })
+      // --- inviteUser ---
+      .addCase(inviteUser.pending, state => {
+        state.selected.invitations.operations.invite.error = null;
+        state.selected.invitations.operations.invite.isLoading = true;
+      })
+      .addCase(inviteUser.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data.push(payload);
+        state.selected.invitations.operations.invite.isLoading = false;
+      })
+      .addCase(inviteUser.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.invite.error = payload;
+        state.selected.invitations.operations.invite.isLoading = false;
+      })
+      // --- acceptRequest ---
+      .addCase(acceptRequest.pending, state => {
+        state.selected.invitations.operations.accept.isLoading = true;
+        state.selected.invitations.operations.accept.error = null;
+      })
+      .addCase(acceptRequest.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
+        state.selected.invitations.operations.accept.isLoading = false;
+      })
+      .addCase(acceptRequest.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.accept.isLoading = false;
+        state.selected.invitations.operations.accept.error = payload;
+      })
+      // --- rejectRequest ---
+      .addCase(rejectRequest.pending, state => {
+        state.selected.invitations.operations.reject.isLoading = true;
+        state.selected.invitations.operations.reject.error = null;
+      })
+      .addCase(rejectRequest.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
+        state.selected.invitations.operations.reject.isLoading = false;
+      })
+      .addCase(rejectRequest.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.reject.isLoading = false;
+        state.selected.invitations.operations.reject.error = payload;
+      })
+      // --- cancelInvitation ---
+      .addCase(cancelInvitation.pending, state => {
+        state.selected.invitations.operations.cancel.isLoading = true;
+        state.selected.invitations.operations.cancel.error = null;
+      })
+      .addCase(cancelInvitation.fulfilled, (state, { payload }) => {
+        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
+        state.selected.invitations.isLoading = false;
+      })
+      .addCase(cancelInvitation.rejected, (state, { payload }) => {
+        state.selected.invitations.operations.cancel.error = payload;
+        state.selected.invitations.operations.cancel.isLoading = false;
+      })
+      // --- leaveCompany ---
+      .addCase(leaveCompany.pending, state => {
+        state.operations.leave.isLoading = true;
+        state.operations.leave.error = null;
+      })
+      .addCase(leaveCompany.fulfilled, (state, { payload }) => {
+        state.joined.data = state.joined.data.filter(c => c.id !== payload);
+        state.operations.leave.isLoading = false;
+      })
+      .addCase(leaveCompany.rejected, (state, { payload }) => {
+        state.operations.leave.error = payload;
+        state.operations.leave.isLoading = false;
       }),
 });
 

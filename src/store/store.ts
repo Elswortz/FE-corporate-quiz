@@ -3,6 +3,7 @@ import { authReducer } from '../features/auth/store/authSlice.js';
 import { usersReducer } from '../features/users/store/usersSlice.js';
 import { companiesReducer } from '../features/companies/store/companiesSlice.js';
 import { notificationReducer } from '../features/notifications/store/notificationsSlice.js';
+import { setupInterceptors } from '../api/interceptors.js';
 
 export const store = configureStore({
   reducer: {
@@ -12,3 +13,5 @@ export const store = configureStore({
     notification: notificationReducer,
   },
 });
+
+setupInterceptors();

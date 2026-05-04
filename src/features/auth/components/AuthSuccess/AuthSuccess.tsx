@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { setAuthTokens } from '../../store/authSlice';
-import { fetchUserProfile } from '../../store/authThunks';
+import { setTokens } from '../../store/authSlice';
+import { fetchUserProfile } from '../../../users/store/usersThunks';
+import { tokenService } from '../../../../api/tokenService';
 import { useDispatch } from 'react-redux';
 
 const AuthSuccess = () => {
@@ -15,7 +16,8 @@ const AuthSuccess = () => {
     const refreshToken = params.get('refresh_token');
 
     if (accessToken && refreshToken) {
-      dispatch(setAuthTokens({ accessToken, refreshToken }));
+      dispatch(setTokens({ accessToken, refreshToken }));
+      tokenService.setTokens({ accessToken, refreshToken });
       dispatch(fetchUserProfile())
         .unwrap()
         .then(() => {
@@ -28,7 +30,7 @@ const AuthSuccess = () => {
       navigate('/login');
     }
   }, [dispatch, navigate, location]);
-  return <div>Авторизация через Google успешна. Перенаправляем...</div>;
+  return <div>SSO Authorization successful. Redirecting...</div>;
 };
 
 export default AuthSuccess;

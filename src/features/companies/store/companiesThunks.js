@@ -98,3 +98,24 @@ export const changeCompanyLogo = createAsyncThunk(
     }
   }
 );
+
+export const removeCompanyMember = createAsyncThunk(
+  'companies/removeMember',
+  async ({ companyId, userId }, { rejectWithValue }) => {
+    try {
+      await companiesAPI.removeCompanyMember(companyId, userId);
+      return userId;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to remove member');
+    }
+  }
+);
+
+export const leaveCompany = createAsyncThunk('companies/leaveCompany', async (companyId, { rejectWithValue }) => {
+  try {
+    await companiesAPI.leaveCompany(companyId);
+    return companyId;
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to leave company');
+  }
+});

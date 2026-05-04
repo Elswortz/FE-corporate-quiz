@@ -1,23 +1,27 @@
-import { useEffect } from 'react';
-
+import { useEffect, ReactNode } from 'react';
 import css from './Modal.module.css';
 
-function Modal({ children }) {
+type ModalProps = {
+  children: ReactNode;
+  onClose?: () => void;
+};
+
+function Modal({ children }: ModalProps) {
   useEffect(() => {
     window.addEventListener('keydown', onKeydownHandler);
 
     return () => window.removeEventListener('keydown', onKeydownHandler);
   }, []);
 
-  const onKeydownHandler = e => {
+  const onKeydownHandler = (e: KeyboardEvent) => {
     if (e.code === 'Escape') {
-      onEscapeKeydown();
+      // onClose?.();
     }
   };
 
-  const onBackdropClick = e => {
+  const onBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.currentTarget === e.target) {
-      onEscapeKeydown();
+      // onClose?.();
     }
   };
 

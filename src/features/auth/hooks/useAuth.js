@@ -1,10 +1,11 @@
 import { useSelector } from 'react-redux';
-import { selectisAuthenticated, selectUser, selectisLoading } from '../store/authSelectors';
+import { selectIsAuthenticated, selectAuthIsLoading } from '../store/authSelectors';
+import { selectProfileData } from '../../users/store/usersSelectors';
 
 export const useAuth = () => {
   return {
-    isLoggedIn: useSelector(selectisAuthenticated),
-    isLoading: useSelector(selectisLoading),
-    user: useSelector(selectUser),
+    isLoggedIn: useSelector(selectIsAuthenticated),
+    isLoading: useSelector(selectAuthIsLoading),
+    user: useSelector(selectProfileData),
   };
 };
