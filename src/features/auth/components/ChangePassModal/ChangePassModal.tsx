@@ -1,27 +1,46 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { changePasswordSchema } from '../../../../utils/schemas';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 import { changePassword } from '../../api/authApi';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 
-const ChangePassModal = ({ open, onClose }) => {
-  const [form, setForm] = useState({
+type FormState = {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
+
+type FormErrors = Partial<Record<keyof FormState, string>>;
+
+type Props = {
+  open: boolean;
+  onClose: () => void;
+};
+
+// type ValidationError = {
+//   name: string;
+//   inner?: { path: keyof FormState; message: string }[];
+// };
+
+const ChangePassModal = ({ open, onClose }: Props) => {
+  const [form, setForm] = useState<FormState>({
     oldPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const dispatch = useDispatch();
 
-  const handleChange = e => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: undefined });
   };
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
       setIsLoading(true);
       await changePasswordSchema.validate(form, { abortEarly: false });
@@ -32,11 +51,11 @@ const ChangePassModal = ({ open, onClose }) => {
       dispatch(showNotification({ message: 'Password changed successfuly', severity: 'success' }));
 
       setForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
-    } catch (error) {
+    } catch (error: any) {
       if (error.name === 'ValidationError') {
-        const newErrors = {};
-        error.inner.forEach(err => {
-          newErrors[err.path] = err.message;
+        const newErrors: FormErrors = {};
+        error.inner.forEach((err: any) => {
+          newErrors[err.path as keyof FormState] = err.message;
         });
         setErrors(newErrors);
       } else {

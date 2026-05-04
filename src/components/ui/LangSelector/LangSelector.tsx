@@ -1,7 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { Select, MenuItem, FormControl, Box } from '@mui/material';
+import { Select, MenuItem, FormControl, Box, SelectChangeEvent } from '@mui/material';
 
-const languages = {
+type LanguageCode = 'en' | 'ua';
+
+type LanguageConfig = {
+  flag: string;
+  label: string;
+};
+
+const languages: Record<LanguageCode, LanguageConfig> = {
   en: { flag: '🇬🇧', label: 'English' },
   ua: { flag: '🇺🇦', label: 'Українська' },
 };
@@ -9,17 +16,17 @@ const languages = {
 function LangSelector() {
   const { i18n } = useTranslation('header');
 
-  const handleChange = e => {
-    const newLang = e.target.value;
+  const handleChange = (e: SelectChangeEvent<LanguageCode>) => {
+    const newLang = e.target.value as LanguageCode;
     i18n.changeLanguage(newLang);
     localStorage.setItem('lang', newLang);
   };
 
   return (
-    <Box sx={{ marginRight: 8 }}>
+    <Box sx={{ mr: 8 }}>
       <FormControl variant="standard" sx={{ minWidth: 120 }}>
-        <Select
-          value={i18n.language}
+        <Select<LanguageCode>
+          value={(i18n.language as LanguageCode) || 'en'}
           onChange={handleChange}
           disableUnderline
           sx={{

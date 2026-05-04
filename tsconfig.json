@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    /* Базовые */
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+
+    /* Модули */
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+
+    /* JSX */
+    "jsx": "react-jsx",
+
+    /* Типы */
+    "types": ["vite/client"],
+
+    /* Проверки */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Совместимость */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+
+    /* Важно для Vite */
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": ["src"]
+}
