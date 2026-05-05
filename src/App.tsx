@@ -41,17 +41,45 @@ function App() {
       <Routes>
         <Route path="/" element={<AppShell />}>
           <Route index element={<About />} />
-          <Route path="users" element={<PrivateRoute component={Users} />} />
+          <Route
+            path="users"
+            element={
+              <PrivateRoute>
+                <Users />
+              </PrivateRoute>
+            }
+          />
           <Route path="users/:userId" element={<UserDetails />} />
-          <Route path="users/profile" element={<PrivateRoute component={UserProfile} />} />
+          <Route
+            path="users/profile"
+            element={
+              <PrivateRoute>
+                <UserProfile />
+              </PrivateRoute>
+            }
+          />
           <Route path="companies" element={<Companies />} />
           <Route path="companies/:companyId" element={<CompanyProfile />}>
             <Route path="members" element={<Members />} />
             <Route path="quizzes" element={<Quizzes />} />
             <Route path="invitations" element={<Invitations />} />
           </Route>
-          <Route path="registration" element={<RestrictedRoute component={Registration} />} />
-          <Route path="login" element={<RestrictedRoute component={Login} />} />
+          <Route
+            path="registration"
+            element={
+              <RestrictedRoute>
+                <Registration />
+              </RestrictedRoute>
+            }
+          />
+          <Route
+            path="login"
+            element={
+              <RestrictedRoute>
+                <Login />
+              </RestrictedRoute>
+            }
+          />
           <Route path="login/success" element={<AuthSuccess />} />
           <Route path="confirm-reset-password" element={<ResetPassword />} />
         </Route>

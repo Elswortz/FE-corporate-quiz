@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { authReducer } from '../features/auth/store/authSlice.js';
-import { usersReducer } from '../features/users/store/usersSlice.js';
-import { companiesReducer } from '../features/companies/store/companiesSlice.js';
-import { notificationReducer } from '../features/notifications/store/notificationsSlice.js';
-import { setupInterceptors } from '../api/interceptors.js';
+import { authReducer } from '../features/auth/store/authSlice.ts';
+import { usersReducer } from '../features/users/store/usersSlice.ts';
+import { companiesReducer } from '../features/companies/store/companiesSlice.ts';
+import { notificationReducer } from '../features/notifications/store/notificationsSlice.ts';
+import { setupInterceptors } from '../api/interceptors.ts';
 
 export const store = configureStore({
   reducer: {
@@ -13,5 +13,8 @@ export const store = configureStore({
     notification: notificationReducer,
   },
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 setupInterceptors();

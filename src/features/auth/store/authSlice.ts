@@ -1,8 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, Draft } from '@reduxjs/toolkit';
 import { logIn, checkAuth } from './authThunks';
 import { tokenService } from '../../../api/tokenService';
 
-const initialState = {
+type AuthState = {
+  accessToken: string | null;
+  refreshToken: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+};
+
+const initialState: AuthState = {
   accessToken: tokenService.getAccessToken(),
   refreshToken: tokenService.getRefreshToken(),
   isAuthenticated: !!tokenService.getAccessToken(),
@@ -10,7 +18,7 @@ const initialState = {
   error: null,
 };
 
-const resetAuth = state => {
+const resetAuth = (state: Draft<AuthState>) => {
   state.accessToken = null;
   state.refreshToken = null;
   state.isAuthenticated = false;
@@ -42,7 +50,7 @@ const authSlice = createSlice({
       })
       .addCase(logIn.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? null;
       })
       .addCase(checkAuth.pending, state => {
         state.isLoading = true;

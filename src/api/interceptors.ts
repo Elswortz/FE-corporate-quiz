@@ -2,7 +2,7 @@ import { tokenService } from './tokenService';
 import { store } from '../store/store';
 import { logOut } from '../features/auth/store/authSlice';
 import { api } from './apiClient';
-import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
+import { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 type Tokens = {
   accessToken: string;

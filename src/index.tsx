@@ -7,7 +7,7 @@ import { store } from './store/store.js';
 import './locales/i18n.js';
 import './index.css';
 
-import App from './App.jsx';
+import App from './App.js';
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>

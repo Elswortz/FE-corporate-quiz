@@ -7,8 +7,8 @@ import {
   changeCompanyStatus,
   changeCompanyLogo,
   leaveCompany,
-} from '../../store/companiesThunks';
-import { clearCurrentCompany } from '../../store/companiesSlice';
+} from '../../store/companiesThunks.js';
+import { clearCurrentCompany } from '../../store/companiesSlice.js';
 import { requestMembership, cancelInvitation, fetchMyInvitations } from '../../../users/store/usersActionsThunks.js';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -20,8 +20,8 @@ import {
 import { selectLeaveLoading } from '../../store/companiesSelectors.js';
 import { showNotification } from '../../../notifications/store/notificationsSlice.js';
 
-import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.jsx';
-import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
+import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.js';
+import EditCompanyModal from '../EditCompanyModal/EditCompanyModal.js';
 import getUserRoleInCompany from '../../../../utils/getUserRoleInCompany.js';
 
 import {

@@ -3,9 +3,9 @@ import NavMenu from '../../ui/NavMenu/NavMenu';
 import LangSelector from '../../ui/LangSelector/LangSelector';
 import AuthNav from '../../../features/auth/components/AuthNav/AuthNav';
 import AccountMenu from '../../../features/users/components/AccountMenu/AccountMenu';
+import NotificationsBell from '../../../features/users/components/NotificationBell/NotificationBell';
 import { useAuth } from '../../../features/auth/hooks/useAuth';
 import { AppBar, Toolbar, Box } from '@mui/material';
-import NotificationsBell from '../../../features/users/components/NotificationBell/NotificationBell';
 
 function Header() {
   const { isLoggedIn } = useAuth();

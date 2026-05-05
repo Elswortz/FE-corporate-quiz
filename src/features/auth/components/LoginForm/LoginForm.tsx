@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, SubmitEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { logIn } from '../../store/authThunks';
@@ -9,39 +9,73 @@ import { Box, TextField, Button, Typography, Link } from '@mui/material';
 import AlterLogin from '../AlterLogin/AlterLogin';
 import ForgotPassModal from '../ForgotPassModal/ForgotPassModal';
 
+type FormState = {
+  email: string;
+  password: string;
+};
+
+type FormErrors = Partial<Record<keyof FormState, string>>;
+
 const LoginForm = () => {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     email: '',
     password: '',
   });
-  const [errors, setErrors] = useState({});
-  const [forgotOpen, setForgotOpen] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [forgotOpen, setForgotOpen] = useState<boolean>(false);
 
   const dispatch = useDispatch();
   const { t } = useTranslation('auth');
 
-  const handleChange = e => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: undefined });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { email, password } = form;
+
     try {
       await loginSchema.validate(form, { abortEarly: false });
+
       setErrors({});
-      await dispatch(logIn({ email, password })).unwrap();
-      dispatch(showNotification({ message: 'Login successful', severity: 'success' }));
-    } catch (err) {
-      if (err.name === 'ValidationError' && err.inner) {
-        const newErrors = {};
-        err.inner.forEach(err => {
-          newErrors[err.path] = err.message;
+
+      await dispatch(logIn(form)).unwrap();
+
+      dispatch(
+        showNotification({
+          message: 'Login successful',
+          severity: 'success',
+        })
+      );
+    } catch (err: unknown) {
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'name' in err &&
+        err.name === 'ValidationError' &&
+        'inner' in err
+      ) {
+        const validationError = err as {
+          inner: Array<{ path?: string; message: string }>;
+        };
+
+        const newErrors: FormErrors = {};
+
+        validationError.inner.forEach(e => {
+          if (e.path) {
+            newErrors[e.path as keyof FormState] = e.message;
+          }
         });
+
         setErrors(newErrors);
       } else {
-        dispatch(showNotification({ message: err, severity: 'error' }));
+        dispatch(
+          showNotification({
+            message: String(err),
+            severity: 'error',
+          })
+        );
       }
     }
   };
