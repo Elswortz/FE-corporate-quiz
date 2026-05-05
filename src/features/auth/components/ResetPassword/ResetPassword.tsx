@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent, SubmitEvent } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { confirmResetPassword } from '../../api/authApi';
@@ -6,45 +6,76 @@ import { resetPasswordSchema } from '../../../../utils/schemas';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
-const ResetPassword = () => {
-  const [form, setForm] = useState({ password: '', confirmPassword: '' });
-  const [errors, setErrors] = useState({});
+type FormState = {
+  password: string;
+  confirmPassword: string;
+};
 
+type FormErrors = Partial<Record<keyof FormState, string>>;
+
+const ResetPassword = () => {
+  const [form, setForm] = useState<FormState>({ password: '', confirmPassword: '' });
+  const [errors, setErrors] = useState<FormErrors>({});
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const uid = searchParams.get('uid');
   const token = searchParams.get('token');
 
-  const handleChange = e => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: undefined });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await resetPasswordSchema.validate(form, { abortEarly: false });
       setErrors({});
 
-      await confirmResetPassword(token, uid, form.password);
+      if (uid && token) {
+        await confirmResetPassword({ token, uid }, { new_password: form.password });
+      }
 
       dispatch(
         showNotification({ message: 'Your password has been successfully reset! You can log in', severity: 'success' })
       );
 
       setTimeout(() => navigate('/login'), 2000);
-    } catch (err) {
-      if (err.name === 'ValidationError' && err.inner) {
-        const newErrors = {};
-        err.inner?.forEach(err => {
-          newErrors[err.path] = err.message;
+    } catch (err: unknown) {
+      // 👉 Yup ошибка
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'name' in err &&
+        err.name === 'ValidationError' &&
+        'inner' in err
+      ) {
+        const validationError = err as {
+          inner: Array<{ path?: string; message: string }>;
+        };
+
+        const newErrors: FormErrors = {};
+
+        validationError.inner.forEach(e => {
+          if (e.path) {
+            newErrors[e.path as keyof FormState] = e.message;
+          }
         });
+
         setErrors(newErrors);
       } else {
+        // 👉 API ошибка (например axios)
+        const errorMessage =
+          typeof err === 'object' && err !== null && 'response' in err && (err as any).response?.data?.message
+            ? (err as any).response.data.message
+            : 'Reset password failed';
+
         dispatch(
-          showNotification({ message: err.response?.data?.message || 'Reset password failed', severity: 'error' })
+          showNotification({
+            message: errorMessage,
+            severity: 'error',
+          })
         );
       }
     }

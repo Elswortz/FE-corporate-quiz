@@ -1,13 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import usersState from './usersState';
-import {
-  fetchUsers,
-  fetchUserById,
-  fetchUserProfile,
-  updateUser,
-  updateUserAvatar,
-  removeUser,
-} from '../store/usersThunks';
+import { fetchUsers, fetchUserById, fetchUserProfile, updateUser, updateUserAvatar, removeUser } from './usersThunks';
 import {
   fetchMyInvitations,
   acceptInvitation,

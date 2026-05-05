@@ -5,23 +5,27 @@ import { resetPassword } from '../../api/authApi';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, TextField, Button } from '@mui/material';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
-const ForgotPassModal = ({ open, onClose }) => {
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+type ForgotPassModalProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
+const ForgotPassModal = ({ open, onClose }: ForgotPassModalProps) => {
+  const [email, setEmail] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   const dispatch = useDispatch();
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
       await forgotPasswordSchema.validate({ email });
       setError('');
-      await resetPassword(email);
+      await resetPassword({ email });
       dispatch(
         showNotification({ message: `The reset email has been successfully sent to ${email}`, severity: 'success' })
       );
       setEmail('');
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.message);
       dispatch(showNotification({ message: err.response?.data?.message, severity: 'error' }));
     }

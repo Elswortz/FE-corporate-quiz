@@ -4,9 +4,10 @@ import { setTokens } from '../../store/authSlice';
 import { fetchUserProfile } from '../../../users/store/usersThunks';
 import { tokenService } from '../../../../api/tokenService';
 import { useDispatch } from 'react-redux';
+import type { AppDispatch } from '../../../../store/store';
 
 const AuthSuccess = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const location = useLocation();
 
