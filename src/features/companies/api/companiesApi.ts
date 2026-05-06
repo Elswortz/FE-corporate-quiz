@@ -1,32 +1,50 @@
 import { api } from '../../../api/apiClient';
+import {
+  CreateCompanyDto,
+  UpdateCompanyDto,
+  ChangeCompanyStatusDto,
+  RemoveCompanyMemberDto,
+  ChangeCompanyLogoDto,
+  ChangeCompanyMemberRoleDto,
+  Pagination,
+  CompanyId,
+} from '../types/companiesTypes';
 
-export const createCompany = data => api.post('companies', data);
+export const createCompany = (dto: CreateCompanyDto) => api.post('/companies', dto);
 
-export const getMyOwnedCompanies = ({ limit, offset }) => api.get('companies/owned', { params: { limit, offset } });
+export const getMyOwnedCompanies = (params?: Pagination) => api.get('/companies/owned', { params });
 
-export const getMyJoinedCompanies = ({ limit, offset }) => api.get('companies/joined', { params: { limit, offset } });
+export const getMyJoinedCompanies = (params?: Pagination) => api.get('companies/joined', { params });
 
-export const getAllCompanies = ({ limit, offset }) => api.get('companies/all', { params: { limit, offset } });
+export const getAllCompanies = (params?: Pagination) => api.get('companies/all', { params });
 
-export const getCompanyById = company_id => api.get(`companies/${company_id}`);
+export const getCompanyById = (companyId: CompanyId) => api.get(`/companies/${companyId}`);
 
-export const updateCompany = (company_id, data) => api.put(`companies/${company_id}`, data);
+export const updateCompany = ({ companyId, data }: UpdateCompanyDto) => api.put(`/companies/${companyId}`, data);
 
-export const deleteCompany = company_id => api.delete(`companies/${company_id}`);
+export const deleteCompany = (companyId: CompanyId) => api.delete(`/companies/${companyId}`);
 
-export const changeCompanyStatus = (company_id, status) =>
-  api.patch(`companies/${company_id}?company_status=${status}`);
+export const changeCompanyStatus = ({ companyId, status }: ChangeCompanyStatusDto) =>
+  api.patch(`/companies/${companyId}`, null, {
+    params: { company_status: status },
+  });
 
-export const changeCompanyLogo = (company_id, logoFile) =>
-  api.post(`companies/${company_id}/logo`, logoFile, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const changeCompanyLogo = ({ companyId, file }: ChangeCompanyLogoDto) => {
+  const formData = new FormData();
+  formData.append('logo_file', file);
+  return api.post(`/companies/${companyId}/logo`, formData);
+};
 
-export const getCompanyMembers = company_id => api.get(`companies/${company_id}/members`);
+export const getCompanyMembers = (companyId: CompanyId) => api.get(`companies/${companyId}/members`);
 
-export const removeCompanyMember = (company_id, user_id) => api.delete(`companies/${company_id}/members/${user_id}`);
+export const removeCompanyMember = ({ companyId, userId }: RemoveCompanyMemberDto) =>
+  api.delete(`/companies/${companyId}/members/${userId}`);
 
-export const changeCompanyMemberRole = (company_id, user_id, role) =>
-  api.patch(`companies/${company_id}/members/${user_id}/role?new_role=${role}`);
+export const changeCompanyMemberRole = ({ companyId, userId, role }: ChangeCompanyMemberRoleDto) =>
+  api.patch(`/companies/${companyId}/members/${userId}/role`, null, {
+    params: { new_role: role },
+  });
 
-export const getCompanyAdmins = company_id => api.get(`companies/${company_id}/admins`);
+export const getCompanyAdmins = (companyId: CompanyId) => api.get(`companies/${companyId}/admins`);
 
-export const leaveCompany = companyId => api.post(`user-actions/${companyId}/leave`);
+export const leaveCompany = (companyId: CompanyId) => api.post(`user-actions/${companyId}/leave`);
