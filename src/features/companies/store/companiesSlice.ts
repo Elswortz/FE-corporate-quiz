@@ -1,7 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import companiesState from './companiesState';
 import {
-  fetchCompanies,
+  fetchAllCompanies,
+  fetchJoinedCompanies,
+  fetchOwnedCompanies,
   fetchCompanyById,
   createCompany,
   updateCompany,
@@ -89,7 +91,7 @@ const companiesSlice = createSlice({
       })
       .addCase(fetchCompanyById.rejected, (state, { payload }) => {
         state.selected.isLoading = false;
-        state.selected.error = payload;
+        state.selected.error = payload ?? null;
       })
       // --- createCompany ---
       .addCase(createCompany.pending, state => {
@@ -103,7 +105,7 @@ const companiesSlice = createSlice({
       })
       .addCase(createCompany.rejected, (state, { payload }) => {
         state.operations.create.isLoading = false;
-        state.operations.create.error = payload;
+        state.operations.create.error = payload ?? null;
       })
       // --- updateCompany ---
       .addCase(updateCompany.pending, state => {
@@ -116,7 +118,7 @@ const companiesSlice = createSlice({
       })
       .addCase(updateCompany.rejected, (state, { payload }) => {
         state.operations.update.isLoading = false;
-        state.operations.update.error = payload;
+        state.operations.update.error = payload ?? null;
       })
       // --- deleteCompany ---
       .addCase(deleteCompany.pending, state => {
@@ -129,7 +131,7 @@ const companiesSlice = createSlice({
       })
       .addCase(deleteCompany.rejected, (state, { payload }) => {
         state.operations.delete.isLoading = false;
-        state.operations.delete.error = payload;
+        state.operations.delete.error = payload ?? null;
       })
       // --- changeCompanyStatus ---
       .addCase(changeCompanyStatus.pending, state => {
@@ -142,7 +144,7 @@ const companiesSlice = createSlice({
       })
       .addCase(changeCompanyStatus.rejected, (state, { payload }) => {
         state.operations.changeStatus.isLoading = false;
-        state.operations.changeStatus.error = payload;
+        state.operations.changeStatus.error = payload ?? null;
       })
       // --- changeCompanyLogo ---
       .addCase(changeCompanyLogo.pending, state => {
@@ -155,7 +157,7 @@ const companiesSlice = createSlice({
       })
       .addCase(changeCompanyLogo.rejected, (state, { payload }) => {
         state.operations.changeLogo.isLoading = false;
-        state.operations.changeLogo.error = payload;
+        state.operations.changeLogo.error = payload ?? null;
       })
       // --- removeCompanyMember ---
       .addCase(removeCompanyMember.pending, state => {
@@ -168,72 +170,72 @@ const companiesSlice = createSlice({
       })
       .addCase(removeCompanyMember.rejected, (state, { payload }) => {
         state.operations.removeMember.isLoading = false;
-        state.operations.removeMember.error = payload;
+        state.operations.removeMember.error = payload ?? null;
       })
       // --- fetchCompanyInvitations ---
       .addCase(fetchCompanyInvitations.pending, state => {
-        state.selected.invitations.isLoading = true;
-        state.selected.invitations.error = null;
+        state.invitations.isLoading = true;
+        state.invitations.error = null;
       })
       .addCase(fetchCompanyInvitations.fulfilled, (state, { payload }) => {
-        state.selected.invitations.data = payload.filter(i => i.status === 'pending');
-        state.selected.invitations.isLoading = false;
+        state.invitations.data = payload.filter(i => i.status === 'pending');
+        state.invitations.isLoading = false;
       })
       .addCase(fetchCompanyInvitations.rejected, (state, { payload }) => {
-        state.selected.invitations.error = payload;
-        state.selected.invitations.isLoading = false;
+        state.invitations.error = payload ?? null;
+        state.invitations.isLoading = false;
       })
       // --- inviteUser ---
       .addCase(inviteUser.pending, state => {
-        state.selected.invitations.operations.invite.error = null;
-        state.selected.invitations.operations.invite.isLoading = true;
+        state.invitations.actions.invite.error = null;
+        state.invitations.actions.invite.isLoading = true;
       })
       .addCase(inviteUser.fulfilled, (state, { payload }) => {
-        state.selected.invitations.data.push(payload);
-        state.selected.invitations.operations.invite.isLoading = false;
+        state.invitations.data.push(payload);
+        state.invitations.actions.invite.isLoading = false;
       })
       .addCase(inviteUser.rejected, (state, { payload }) => {
-        state.selected.invitations.operations.invite.error = payload;
-        state.selected.invitations.operations.invite.isLoading = false;
+        state.invitations.actions.invite.error = payload ?? null;
+        state.invitations.actions.invite.isLoading = false;
       })
       // --- acceptRequest ---
       .addCase(acceptRequest.pending, state => {
-        state.selected.invitations.operations.accept.isLoading = true;
-        state.selected.invitations.operations.accept.error = null;
+        state.invitations.actions.accept.isLoading = true;
+        state.invitations.actions.accept.error = null;
       })
       .addCase(acceptRequest.fulfilled, (state, { payload }) => {
-        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
-        state.selected.invitations.operations.accept.isLoading = false;
+        state.invitations.data = state.invitations.data.filter(i => i.id !== payload);
+        state.invitations.actions.accept.isLoading = false;
       })
       .addCase(acceptRequest.rejected, (state, { payload }) => {
-        state.selected.invitations.operations.accept.isLoading = false;
-        state.selected.invitations.operations.accept.error = payload;
+        state.invitations.actions.accept.isLoading = false;
+        state.invitations.actions.accept.error = payload ?? null;
       })
       // --- rejectRequest ---
       .addCase(rejectRequest.pending, state => {
-        state.selected.invitations.operations.reject.isLoading = true;
-        state.selected.invitations.operations.reject.error = null;
+        state.invitations.actions.reject.isLoading = true;
+        state.invitations.actions.reject.error = null;
       })
       .addCase(rejectRequest.fulfilled, (state, { payload }) => {
-        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
-        state.selected.invitations.operations.reject.isLoading = false;
+        state.invitations.data = state.invitations.data.filter(i => i.id !== payload);
+        state.invitations.actions.reject.isLoading = false;
       })
       .addCase(rejectRequest.rejected, (state, { payload }) => {
-        state.selected.invitations.operations.reject.isLoading = false;
-        state.selected.invitations.operations.reject.error = payload;
+        state.invitations.actions.reject.isLoading = false;
+        state.invitations.actions.reject.error = payload ?? null;
       })
       // --- cancelInvitation ---
       .addCase(cancelInvitation.pending, state => {
-        state.selected.invitations.operations.cancel.isLoading = true;
-        state.selected.invitations.operations.cancel.error = null;
+        state.invitations.actions.cancel.isLoading = true;
+        state.invitations.actions.cancel.error = null;
       })
       .addCase(cancelInvitation.fulfilled, (state, { payload }) => {
-        state.selected.invitations.data = state.selected.invitations.data.filter(i => i.id !== payload);
-        state.selected.invitations.isLoading = false;
+        state.invitations.data = state.invitations.data.filter(i => i.id !== payload);
+        state.invitations.isLoading = false;
       })
       .addCase(cancelInvitation.rejected, (state, { payload }) => {
-        state.selected.invitations.operations.cancel.error = payload;
-        state.selected.invitations.operations.cancel.isLoading = false;
+        state.invitations.actions.cancel.error = payload ?? null;
+        state.invitations.actions.cancel.isLoading = false;
       })
       // --- leaveCompany ---
       .addCase(leaveCompany.pending, state => {
@@ -245,7 +247,7 @@ const companiesSlice = createSlice({
         state.operations.leave.isLoading = false;
       })
       .addCase(leaveCompany.rejected, (state, { payload }) => {
-        state.operations.leave.error = payload;
+        state.operations.leave.error = payload ?? null;
         state.operations.leave.isLoading = false;
       }),
 });

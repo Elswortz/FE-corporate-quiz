@@ -1,11 +1,14 @@
 import { api } from '../../../api/apiClient';
+import { InviteUserDto, InvitationId } from '../types/invitationsTypes';
+import { CompanyId } from '../types/companiesTypes';
 
-export const inviteUser = data => api.post('company-actions/invite', data);
+export const inviteUser = (payload: InviteUserDto) => api.post('company-actions/invite', payload);
 
-export const acceptRequest = requestId => api.post(`company-actions/${requestId}/accept`);
+export const acceptRequest = (invitationId: InvitationId) => api.post(`company-actions/${invitationId}/accept`);
 
-export const rejectRequest = requestId => api.post(`company-actions/${requestId}/reject`);
+export const rejectRequest = (invitationId: InvitationId) => api.post(`company-actions/${invitationId}/reject`);
 
-export const cancelInvitation = invitationId => api.post(`company-actions/${invitationId}/cancel`);
+export const cancelInvitation = (invitationId: InvitationId) => api.post(`company-actions/${invitationId}/cancel`);
 
-export const getCompanyInvitations = companyId => api.get(`company-actions/${companyId}/company-invitations`);
+export const getCompanyInvitations = (companyId: CompanyId) =>
+  api.get(`company-actions/${companyId}/company-invitations`);

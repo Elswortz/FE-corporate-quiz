@@ -1,8 +1,22 @@
-import type { UserId } from '../../users/types/userTypes';
+import type { User, UserId } from '../../users/types/userTypes';
 
 export type CompanyId = string;
 export type CompanyStatus = 'hidden' | 'visible';
 export type CompanyRole = 'member' | 'admin' | 'owner';
+
+export interface Company {
+  id: CompanyId;
+  company_name: string;
+  company_address: string;
+  company_email: string;
+  company_phone: string;
+  company_website: string;
+  company_logo_url: string;
+  company_description: string;
+  company_status: CompanyStatus;
+  owner?: User;
+  members?: User[];
+}
 
 export type Pagination = {
   limit?: number;

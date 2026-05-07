@@ -1,19 +1,65 @@
-const companiesState = {
+import { Company } from '../types/companiesTypes';
+import { Invitation } from '../types/invitationsTypes';
+
+type AsyncState<T> = {
+  data: T;
+  isLoading: boolean;
+  error: string | null;
+};
+
+type OperationState = {
+  isLoading: boolean;
+  error: string | null;
+};
+
+export interface CompaniesState {
+  owned: AsyncState<Company[]>;
+  joined: AsyncState<Company[]>;
+  all: AsyncState<Company[]>;
+
+  selected: {
+    data: Company | null;
+    isLoading: boolean;
+    error: string | null;
+  };
+
+  invitations: {
+    data: Invitation[];
+    isLoading: boolean;
+    error: string | null;
+
+    actions: {
+      invite: OperationState;
+      accept: OperationState;
+      reject: OperationState;
+      cancel: OperationState;
+    };
+  };
+
+  operations: {
+    create: OperationState;
+    update: OperationState;
+    delete: OperationState;
+    changeStatus: OperationState;
+    changeLogo: OperationState;
+    removeMember: OperationState;
+    leave: OperationState;
+  };
+}
+
+const companiesState: CompaniesState = {
   all: {
     data: [],
-    meta: { total: 0, limit: 10, offset: 0, has_next: false, has_previous: false },
     isLoading: false,
     error: null,
   },
   owned: {
     data: [],
-    meta: { total: 0, limit: 10, offset: 0, has_next: false, has_previous: false },
     isLoading: false,
     error: null,
   },
   joined: {
     data: [],
-    meta: { total: 0, limit: 10, offset: 0, has_next: false, has_previous: false },
     isLoading: false,
     error: null,
   },
@@ -21,16 +67,16 @@ const companiesState = {
     data: null,
     isLoading: false,
     error: null,
-    invitations: {
-      data: [],
-      isLoading: false,
-      error: null,
-      operations: {
-        invite: { isLoading: false, error: null },
-        accept: { isLoading: false, error: null },
-        reject: { isLoading: false, error: null },
-        cancel: { isLoading: false, error: null },
-      },
+  },
+  invitations: {
+    data: [],
+    isLoading: false,
+    error: null,
+    actions: {
+      invite: { isLoading: false, error: null },
+      accept: { isLoading: false, error: null },
+      reject: { isLoading: false, error: null },
+      cancel: { isLoading: false, error: null },
     },
   },
   operations: {
@@ -42,7 +88,6 @@ const companiesState = {
     removeMember: { isLoading: false, error: null },
     leave: { isLoading: false, error: null },
   },
-  isGlobalLoading: false,
 };
 
 export default companiesState;

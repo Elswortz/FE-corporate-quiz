@@ -1,9 +1,15 @@
-export const selectCompanyInvitations = state => state.companies.selected.invitations.data;
-export const selectInvitationsLoading = state => state.companies.selected.invitations.isLoading;
-export const selectInvitationsError = state => state.companies.selected.invitations.error;
+import type { RootState } from '../../../store/store';
 
-export const selectCancelLoading = state => state.companies.selected.invitations.operations.reject.isLoading;
-export const selectCancelError = state => state.companies.selected.invitations.operations.reject.error;
+export const selectCompanyInvitations = (state: RootState) => state.companies.invitations.data;
 
-export const selectLeaveLoading = state => state.companies.operations.leave.isLoading;
-export const selectLeaveError = state => state.companies.operations.leave.error;
+export const selectInvitationsLoading = (state: RootState) => state.companies.invitations.isLoading;
+
+export const selectInvitationsError = (state: RootState) => state.companies.invitations.error;
+
+export const selectCancelLoading = (state: RootState) => state.companies.invitations.actions.reject.isLoading;
+
+export const selectCancelError = (state: RootState) => state.companies.invitations.actions.reject.error;
+
+export const selectLeaveLoading = (state: RootState) => state.companies.operations.leave.isLoading;
+
+export const selectLeaveError = (state: RootState) => state.companies.operations.leave.error;
