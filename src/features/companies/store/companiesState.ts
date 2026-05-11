@@ -1,4 +1,4 @@
-import { Company } from '../types/companiesTypes';
+import { Company, CompanyDetails } from '../types/companiesTypes';
 import { Invitation } from '../types/invitationsTypes';
 
 type AsyncState<T> = {
@@ -18,7 +18,7 @@ export interface CompaniesState {
   all: AsyncState<Company[]>;
 
   selected: {
-    data: Company | null;
+    data: CompanyDetails | null;
     isLoading: boolean;
     error: string | null;
   };

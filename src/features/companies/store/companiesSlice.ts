@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import companiesState from './companiesState';
+import { CompaniesState } from './companiesState';
+import { Company, CompanyId } from '../types/companiesTypes';
 import {
   fetchAllCompanies,
   fetchJoinedCompanies,
@@ -21,8 +23,8 @@ import {
   inviteUser,
 } from './companiesActionsThunks';
 
-const updateCompanyEverywhere = (state, updated) => {
-  ['owned', 'joined'].forEach(type => {
+const updateCompanyEverywhere = (state: CompaniesState, updated: Company) => {
+  (['owned', 'joined'] as const).forEach(type => {
     state[type].data = state[type].data.map(comp => (comp.id === updated.id ? updated : comp));
   });
 
@@ -30,6 +32,7 @@ const updateCompanyEverywhere = (state, updated) => {
     state.all.data = state.all.data.filter(comp => comp.id !== updated.id);
   } else {
     const exists = state.all.data.some(comp => comp.id === updated.id);
+
     if (exists) {
       state.all.data = state.all.data.map(comp => (comp.id === updated.id ? updated : comp));
     } else {
@@ -37,13 +40,16 @@ const updateCompanyEverywhere = (state, updated) => {
     }
   }
 
-  if (state.selected.data?.id === updated.id) {
-    state.selected.data = updated;
+  if (state.selected.data && state.selected.data.id === updated.id) {
+    state.selected.data = {
+      ...state.selected.data,
+      ...updated,
+    };
   }
 };
 
-const removeCompanyEverywhere = (state, deletedId) => {
-  ['owned', 'all', 'joined'].forEach(type => {
+const removeCompanyEverywhere = (state: CompaniesState, deletedId: CompanyId) => {
+  (['owned', 'all', 'joined'] as const).forEach(type => {
     state[type].data = state[type].data.filter(comp => comp.id !== deletedId);
   });
   if (state.selected.data?.id === deletedId) {
@@ -63,22 +69,44 @@ const companiesSlice = createSlice({
   },
   extraReducers: builder =>
     builder
-      // --- fetchCompanies ---
-      .addCase(fetchCompanies.pending, (state, { meta }) => {
-        const { type } = meta.arg;
-        state[type].isLoading = true;
-        state[type].error = null;
+      // --- fetchAllCompanies ---
+      .addCase(fetchAllCompanies.pending, state => {
+        state.all.isLoading = true;
+        state.all.error = null;
       })
-      .addCase(fetchCompanies.fulfilled, (state, { meta, payload }) => {
-        const { type } = meta.arg;
-        state[type].isLoading = false;
-        state[type].data = payload.items;
-        state[type].meta = payload.meta;
+      .addCase(fetchAllCompanies.fulfilled, (state, { payload }) => {
+        state.all.isLoading = false;
+        state.all.data = payload;
       })
-      .addCase(fetchCompanies.rejected, (state, { meta, payload }) => {
-        const { type } = meta.arg;
-        state[type].isLoading = false;
-        state[type].error = payload;
+      .addCase(fetchAllCompanies.rejected, (state, { payload }) => {
+        state.all.isLoading = false;
+        state.all.error = payload ?? null;
+      })
+      // --- fetchJoinedCompanies ---
+      .addCase(fetchJoinedCompanies.pending, state => {
+        state.joined.isLoading = true;
+        state.joined.error = null;
+      })
+      .addCase(fetchJoinedCompanies.fulfilled, (state, { payload }) => {
+        state.joined.isLoading = false;
+        state.joined.data = payload;
+      })
+      .addCase(fetchJoinedCompanies.rejected, (state, { payload }) => {
+        state.joined.isLoading = false;
+        state.joined.error = payload ?? null;
+      })
+      // --- fetchOwnedCompanies ---
+      .addCase(fetchOwnedCompanies.pending, state => {
+        state.owned.isLoading = true;
+        state.owned.error = null;
+      })
+      .addCase(fetchOwnedCompanies.fulfilled, (state, { payload }) => {
+        state.owned.isLoading = false;
+        state.owned.data = payload;
+      })
+      .addCase(fetchOwnedCompanies.rejected, (state, { payload }) => {
+        state.owned.isLoading = false;
+        state.owned.error = payload ?? null;
       })
       // --- fetchCompaniesById ---
       .addCase(fetchCompanyById.pending, state => {
@@ -135,7 +163,7 @@ const companiesSlice = createSlice({
       })
       // --- changeCompanyStatus ---
       .addCase(changeCompanyStatus.pending, state => {
-        state.operations.changeStatus.isLoading;
+        state.operations.changeStatus.isLoading = true;
         state.operations.changeStatus.error = null;
       })
       .addCase(changeCompanyStatus.fulfilled, (state, { payload }) => {
@@ -166,7 +194,9 @@ const companiesSlice = createSlice({
       })
       .addCase(removeCompanyMember.fulfilled, (state, { payload }) => {
         state.operations.removeMember.isLoading = false;
-        state.selected.data.members = state.selected.data.members.filter(m => m.id !== payload);
+        if (state.selected.data) {
+          state.selected.data.members = state.selected.data.members.filter(m => m.id !== payload);
+        }
       })
       .addCase(removeCompanyMember.rejected, (state, { payload }) => {
         state.operations.removeMember.isLoading = false;

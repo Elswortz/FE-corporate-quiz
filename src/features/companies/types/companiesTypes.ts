@@ -14,25 +14,19 @@ export interface Company {
   company_logo_url: string;
   company_description: string;
   company_status: CompanyStatus;
-  owner?: User;
-  members?: User[];
 }
+
+export type CompanyDetails = Company & {
+  owner: User;
+  members: User[];
+};
 
 export type Pagination = {
   limit?: number;
   offset?: number;
 };
 
-export type CreateCompanyDto = {
-  company_name: string;
-  company_address: string;
-  company_email: string;
-  company_phone: string;
-  company_website: string;
-  company_logo_url: string;
-  company_description: string;
-  company_status: CompanyStatus;
-};
+export type CreateCompanyDto = Omit<Company, 'company_id'>;
 
 export type UpdateCompanyDto = {
   companyId: CompanyId;

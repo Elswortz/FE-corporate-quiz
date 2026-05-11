@@ -3,6 +3,7 @@ import * as companiesAPI from '../api/companiesApi';
 
 import {
   Company,
+  CompanyDetails,
   CompanyId,
   Pagination,
   CreateCompanyDto,
@@ -21,7 +22,7 @@ export const fetchAllCompanies = createAsyncThunk<Company[], Pagination, { rejec
   async ({ limit, offset }, { rejectWithValue }) => {
     try {
       const res = await companiesAPI.getAllCompanies({ limit, offset });
-      return res.data;
+      return res.data.items;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to load companies');
     }
@@ -33,7 +34,7 @@ export const fetchJoinedCompanies = createAsyncThunk<Company[], Pagination, { re
   async ({ limit, offset }, { rejectWithValue }) => {
     try {
       const res = await companiesAPI.getMyJoinedCompanies({ limit, offset });
-      return res.data;
+      return res.data.items;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to load companies');
     }
@@ -45,14 +46,14 @@ export const fetchOwnedCompanies = createAsyncThunk<Company[], Pagination, { rej
   async ({ limit, offset }, { rejectWithValue }) => {
     try {
       const res = await companiesAPI.getMyOwnedCompanies({ limit, offset });
-      return res.data;
+      return res.data.items;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to load companies');
     }
   }
 );
 
-export const fetchCompanyById = createAsyncThunk<Company, CompanyId, { rejectValue: RejectValue }>(
+export const fetchCompanyById = createAsyncThunk<CompanyDetails, CompanyId, { rejectValue: RejectValue }>(
   'companies/fetchById',
   async (companyId, { rejectWithValue }) => {
     try {
