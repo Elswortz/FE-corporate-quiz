@@ -6,4 +6,19 @@ export interface User {
   avatar_url: string;
 }
 
+export type Pagination = {
+  limit?: number;
+  offset?: number;
+};
+
 export type UserId = string;
+
+export type UpdateUserGto = Pick<User, 'first_name' | 'last_name'>;
+
+export type UpdateAvatarGto = File;
+
+export type CreateUserGto = Omit<User, 'id' | 'updateAvatar'> & Password;
+
+type Password = {
+  password: string;
+};

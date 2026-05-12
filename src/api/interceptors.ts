@@ -1,17 +1,13 @@
-import { tokenService } from './tokenService';
-import { store } from '../store/store';
-import { logOut, setTokens } from '../features/auth/store/authSlice';
-import { api, refreshApi } from './apiClient';
+import { tokenService } from '@/api/tokenService';
+import { store } from '@/store/store';
+import { logOut, setTokens } from '@/features/auth/store/authSlice';
+import { api, refreshApi } from '@/api/apiClient';
 import { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { AuthResponse } from '@/features/auth/types/authTypes';
 
 type Tokens = {
   accessToken: string;
   refreshToken: string;
-};
-
-type RefreshResponse = {
-  access_token: string;
-  refresh_token: string;
 };
 
 type FailedRequest = {
@@ -75,7 +71,7 @@ export const setupInterceptors = () => {
           const currentRefreshToken = tokenService.getRefreshToken();
           if (!currentRefreshToken) throw new Error('No refresh token');
 
-          const response = await refreshApi.post<RefreshResponse>('/auth/refresh', {
+          const response = await refreshApi.post<AuthResponse>('/auth/refresh', {
             refresh_token: currentRefreshToken,
           });
 

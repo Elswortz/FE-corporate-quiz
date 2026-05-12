@@ -6,6 +6,7 @@ import { tokenService } from '../../../api/tokenService.js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState, AppDispatch } from '../../../store/store.js';
 import { LoginGto, JwtPayload } from '../types/authTypes.js';
+import axios from 'axios';
 
 type RejectValue = string;
 
@@ -26,9 +27,11 @@ export const logIn = createAsyncThunk<
     tokenService.setTokens({ accessToken, refreshToken });
 
     await dispatch(fetchUserProfile());
-  } catch (err: any) {
-    const message = err?.response?.data?.message || 'Login failed';
-
+  } catch (err: unknown) {
+    let message = 'Login failed';
+    if (axios.isAxiosError(err)) {
+      message = err.response?.data?.message ?? message;
+    }
     return rejectWithValue(message);
   }
 });
@@ -71,8 +74,13 @@ export const checkAuth = createAsyncThunk<
     tokenService.setTokens({ accessToken, refreshToken });
 
     await dispatch(fetchUserProfile());
-  } catch (err: any) {
-    const message = err.response?.data?.message || 'Session expired. Please login again.';
+  } catch (err: unknown) {
+    let message = 'Session expired. Please login again.';
+
+    if (axios.isAxiosError(err)) {
+      message = err.response?.data?.message ?? message;
+    }
+
     return rejectWithValue(message);
   }
 });

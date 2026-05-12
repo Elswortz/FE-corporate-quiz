@@ -1,6 +1,6 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks.js';
+import { ChangeEvent, useEffect, useState } from 'react';
 import {
   fetchCompanyById,
   deleteCompany,
@@ -23,6 +23,7 @@ import { showNotification } from '../../../notifications/store/notificationsSlic
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.js';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal.js';
 import getUserRoleInCompany from '../../../../utils/getUserRoleInCompany.js';
+import { selectSelectedCompany } from '../../store/companiesSelectors.js';
 
 import {
   Box,
@@ -50,23 +51,33 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
+import { selectChangeStatusLoading } from '../../store/companiesSelectors.js';
+
+type RouteParams = {
+  companyId: string;
+};
+
 const CompaniesDetails = () => {
-  const { companyId } = useParams();
-  const dispatch = useDispatch();
+  const { companyId } = useParams<RouteParams>();
+
+  if (!companyId) {
+    return null;
+  }
+  const pendingInvitationId = useAppSelector(selectPendingInvitationIdByCompany(companyId));
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data, isLoading, error } = useSelector(state => state.companies.selected);
-  const { isLoading: SatusLoading } = useSelector(state => state.companies.operations.changeStatus);
+  const { data, isLoading, error } = useAppSelector(selectSelectedCompany);
+  const SatusLoading = useAppSelector(selectChangeStatusLoading);
 
-  const pendingInvitationId = useSelector(selectPendingInvitationIdByCompany(companyId));
   const hasPendingRequest = Boolean(pendingInvitationId);
 
-  const requestLoading = useSelector(selectRequestLoading);
-  const cancelLoading = useSelector(selectCancelLoading);
-  const leaveLoading = useSelector(selectLeaveLoading);
+  const requestLoading = useAppSelector(selectRequestLoading);
+  const cancelLoading = useAppSelector(selectCancelLoading);
+  const leaveLoading = useAppSelector(selectLeaveLoading);
 
-  const user = useSelector(selectProfileData);
+  const user = useAppSelector(selectProfileData);
 
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false);
@@ -86,14 +97,14 @@ const CompaniesDetails = () => {
     await dispatch(fetchCompanyById(data.id)).unwrap();
   };
 
-  const handleChangeLogo = async e => {
+  const handleChangeLogo = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const formData = new FormData();
     formData.append('logo_file', file);
 
-    await dispatch(changeCompanyLogo({ companyId: data.id, logoFile: formData })).unwrap();
+    await dispatch(changeCompanyLogo({ companyId: data.id, file })).unwrap();
     await dispatch(fetchCompanyById(data.id)).unwrap();
   };
 

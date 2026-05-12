@@ -9,12 +9,16 @@ import './index.css';
 
 import App from './App.js';
 
-createRoot(document.getElementById('root')).render(
-  // <StrictMode>
+const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+  throw new Error('Root element not found');
+}
+
+createRoot(rootElement).render(
   <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
   </Provider>
-  // </StrictMode>
 );

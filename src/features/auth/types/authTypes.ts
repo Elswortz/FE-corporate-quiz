@@ -29,3 +29,8 @@ export type ConfirmResetGto = {
 export type JwtPayload = {
   exp: number;
 };
+
+export type AuthResponse = {
+  access_token: string;
+  refresh_token: string;
+};

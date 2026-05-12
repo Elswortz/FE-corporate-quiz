@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { confirmResetPassword } from '../../api/authApi';
 import { resetPasswordSchema } from '../../../../utils/schemas';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/store/hooks';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 
 type FormState = {
@@ -18,7 +18,7 @@ const ResetPassword = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const uid = searchParams.get('uid');
   const token = searchParams.get('token');
 
@@ -34,7 +34,7 @@ const ResetPassword = () => {
       setErrors({});
 
       if (uid && token) {
-        await confirmResetPassword({ token, uid }, { new_password: form.password });
+        await confirmResetPassword({ token, uid, payload: { new_password: form.password } });
       }
 
       dispatch(

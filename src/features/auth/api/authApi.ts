@@ -1,9 +1,16 @@
-import { api } from '../../../api/apiClient';
-import { LoginGto, RefreshGto, ChangePasswordGto, ResetPasswordGto, ConfirmResetGto } from '../types/authTypes';
+import { api } from '@/api/apiClient';
+import {
+  LoginGto,
+  RefreshGto,
+  ChangePasswordGto,
+  ResetPasswordGto,
+  ConfirmResetGto,
+  AuthResponse,
+} from '../types/authTypes';
 
-export const login = (payload: LoginGto) => api.post('auth/login', payload);
+export const login = (payload: LoginGto) => api.post<AuthResponse>('auth/login', payload);
 
-export const refresh = (payload: RefreshGto) => api.post('auth/refresh', payload);
+export const refresh = (payload: RefreshGto) => api.post<AuthResponse>('auth/refresh', payload);
 
 export const azureLogin = () => api.get('auth/azure/login');
 

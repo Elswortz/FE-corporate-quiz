@@ -1,10 +1,7 @@
-import Logo from '../../ui/Logo/Logo';
-import NavMenu from '../../ui/NavMenu/NavMenu';
-import LangSelector from '../../ui/LangSelector/LangSelector';
-import AuthNav from '../../../features/auth/components/AuthNav/AuthNav';
-import AccountMenu from '../../../features/users/components/AccountMenu/AccountMenu';
-import NotificationsBell from '../../../features/users/components/NotificationBell/NotificationBell';
-import { useAuth } from '../../../features/auth/hooks/useAuth';
+import { Logo, NavMenu, LangSelector } from '@/components/ui';
+import { AuthNav } from '@/features/auth/components';
+import { AccountMenu, NotificationBell } from '@/features/users/components';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { AppBar, Toolbar, Box } from '@mui/material';
 
 function Header() {
@@ -19,7 +16,7 @@ function Header() {
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
           <LangSelector />
-          {isLoggedIn && <NotificationsBell />}
+          {isLoggedIn && <NotificationBell />}
           {isLoggedIn ? <AccountMenu /> : <AuthNav />}
         </Box>
       </Toolbar>

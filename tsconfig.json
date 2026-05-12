@@ -11,6 +11,13 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
 
+    /* Alias */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "ignoreDeprecations": "6.0",
+
     /* JSX */
     "jsx": "react-jsx",
 

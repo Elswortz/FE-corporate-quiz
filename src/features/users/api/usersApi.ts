@@ -1,16 +1,20 @@
 import { api } from '../../../api/apiClient';
+import { UserId, UpdateUserGto, CreateUserGto, Pagination, UpdateAvatarGto } from '../types/userTypes';
 
-export const getUsers = ({ limit, offset }) => api.get('users', { params: { limit, offset } });
+export const getUsers = (params?: Pagination) => api.get('users', { params });
 
-export const getUserById = id => api.get(`users/${id}`);
+export const getUserById = (id: UserId) => api.get(`users/${id}`);
 
-export const updateUser = credentials => api.put('users', credentials);
+export const updateUser = (payload: UpdateUserGto) => api.put('users', payload);
 
 export const deleteUser = () => api.delete('users');
 
-export const updateAvatar = formData =>
-  api.post('users/avatar', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+export const updateAvatar = (file: UpdateAvatarGto) => {
+  const formData = new FormData();
+  formData.append('logo_file', file);
+  return api.post(`users/avatar`, formData);
+};
 
-export const createUser = credentials => api.post('users', credentials);
+export const createUser = (payload: CreateUserGto) => api.post('users', payload);
 
 export const getUserProfile = () => api.get('users/profile');

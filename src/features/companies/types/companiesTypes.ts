@@ -17,7 +17,6 @@ export interface Company {
 }
 
 export type CompanyDetails = Company & {
-  owner: User;
   members: User[];
 };
 

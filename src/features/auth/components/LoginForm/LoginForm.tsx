@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, SubmitEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '@/store/hooks';
 import { useTranslation } from 'react-i18next';
 import { logIn } from '../../store/authThunks';
 import { loginSchema } from '../../../../utils/schemas';
@@ -24,7 +24,7 @@ const LoginForm = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [forgotOpen, setForgotOpen] = useState<boolean>(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation('auth');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

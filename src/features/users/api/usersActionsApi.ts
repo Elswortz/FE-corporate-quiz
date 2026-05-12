@@ -1,11 +1,13 @@
 import { api } from '../../../api/apiClient';
+import { InvitationId } from '../../companies/types/invitationsTypes';
+import { CompanyId } from '../../companies/types/companiesTypes';
 
 export const getMyInvitations = () => api.get('user-actions/invitations');
 
-export const acceptInvitation = invitationId => api.post(`user-actions/${invitationId}/accept`);
+export const acceptInvitation = (id: InvitationId) => api.post(`user-actions/${id}/accept`);
 
-export const rejectInvitation = invitationId => api.post(`user-actions/${invitationId}/reject`);
+export const rejectInvitation = (id: InvitationId) => api.post(`user-actions/${id}/reject`);
 
-export const cancelInvitation = invitationId => api.post(`user-actions/${invitationId}/cancel`);
+export const cancelInvitation = (id: InvitationId) => api.post(`user-actions/${id}/cancel`);
 
-export const requestMembership = companyId => api.post(`user-actions/${companyId}/requests`);
+export const requestMembership = (id: CompanyId) => api.post(`user-actions/${id}/requests`);

@@ -1,8 +1,8 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { changePasswordSchema } from '../../../../utils/schemas';
 import { useDispatch } from 'react-redux';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
-import { changePassword } from '../../api/authApi';
+import { changePassword } from '@/features/auth/api/authApi';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 
 type FormState = {

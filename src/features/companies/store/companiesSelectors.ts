@@ -13,3 +13,7 @@ export const selectCancelError = (state: RootState) => state.companies.invitatio
 export const selectLeaveLoading = (state: RootState) => state.companies.operations.leave.isLoading;
 
 export const selectLeaveError = (state: RootState) => state.companies.operations.leave.error;
+
+export const selectSelectedCompany = (state: RootState) => state.companies.selected;
+
+export const selectChangeStatusLoading = (state: RootState) => state.companies.operations.changeStatus.isLoading;
