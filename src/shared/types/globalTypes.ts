@@ -10,3 +10,8 @@ export type OperationState = {
 };
 
 export type RejectValue = string;
+
+export type Pagination = {
+  limit?: number;
+  offset?: number;
+};

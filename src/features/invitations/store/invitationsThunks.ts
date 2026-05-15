@@ -68,7 +68,7 @@ export const rejectRequest = createAsyncThunk<InvitationId, InvitationId, { reje
 
 // USER THUNKS
 
-export const fetchUserInvitations = createAsyncThunk<Invitation[]>(
+export const fetchUserInvitations = createAsyncThunk<Invitation[], void, { rejectValue: RejectValue }>(
   'invitations/fetchUserInvitations',
   async (_, { rejectWithValue }) => {
     try {
@@ -116,7 +116,7 @@ export const cancelRequest = createAsyncThunk<InvitationId, InvitationId, { reje
   }
 );
 
-export const sendRequest = createAsyncThunk<Invitation[], CompanyId, { rejectValue: RejectValue }>(
+export const sendRequest = createAsyncThunk<Invitation, CompanyId, { rejectValue: RejectValue }>(
   'invitations/sendRequest',
   async (companyId, { rejectWithValue }) => {
     try {

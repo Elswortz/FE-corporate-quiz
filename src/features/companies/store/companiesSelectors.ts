@@ -1,19 +1,38 @@
 import type { RootState } from '../../../store/store';
 
-export const selectCompanyInvitations = (state: RootState) => state.companies.invitations.data;
+export const selectAllCompanies = (state: RootState) => state.companies.lists.all.data;
+export const selectAllCompaniesLoading = (state: RootState) => state.companies.lists.all.isLoading;
+export const selectAllCompaniesError = (state: RootState) => state.companies.lists.all.error;
 
-export const selectInvitationsLoading = (state: RootState) => state.companies.invitations.isLoading;
+export const selectJoinedCompanies = (state: RootState) => state.companies.lists.joined.data;
+export const selectJoinedCompaniesLoading = (state: RootState) => state.companies.lists.joined.isLoading;
+export const selectJoinedCompaniesError = (state: RootState) => state.companies.lists.joined.error;
 
-export const selectInvitationsError = (state: RootState) => state.companies.invitations.error;
+export const selectOwnedCompanies = (state: RootState) => state.companies.lists.owned.data;
+export const selectOwnedCompaniesLoading = (state: RootState) => state.companies.lists.owned.isLoading;
+export const selectOwnedCompaniesError = (state: RootState) => state.companies.lists.owned.error;
 
-export const selectCancelLoading = (state: RootState) => state.companies.invitations.actions.reject.isLoading;
+export const selectSelectedCompany = (state: RootState) => state.companies.selected.data;
+export const selectSelectedCompanyLoading = (state: RootState) => state.companies.selected.isLoading;
+export const selectSelectedCompanyError = (state: RootState) => state.companies.selected.error;
 
-export const selectCancelError = (state: RootState) => state.companies.invitations.actions.reject.error;
+export const selectCreateCompanyLoading = (state: RootState) => state.companies.mutations.create.isLoading;
+export const selectCreateCompanyError = (state: RootState) => state.companies.mutations.create.error;
 
-export const selectLeaveLoading = (state: RootState) => state.companies.operations.leave.isLoading;
+export const selectUpdateCompanyLoading = (state: RootState) => state.companies.mutations.update.isLoading;
+export const selectUpdateCompanyError = (state: RootState) => state.companies.mutations.update.error;
 
-export const selectLeaveError = (state: RootState) => state.companies.operations.leave.error;
+export const selectDeleteCompanyLoading = (state: RootState) => state.companies.mutations.delete.isLoading;
+export const selectDeleteCompanyError = (state: RootState) => state.companies.mutations.delete.error;
 
-export const selectSelectedCompany = (state: RootState) => state.companies.selected;
+export const selectChangeStatusLoading = (state: RootState) => state.companies.mutations.changeStatus.isLoading;
+export const selectChangeStatusError = (state: RootState) => state.companies.mutations.changeStatus.error;
 
-export const selectChangeStatusLoading = (state: RootState) => state.companies.operations.changeStatus.isLoading;
+export const selectChangeLogoLoading = (state: RootState) => state.companies.mutations.changeLogo.isLoading;
+export const selectChangeLogoError = (state: RootState) => state.companies.mutations.changeLogo.error;
+
+export const selectRemoveMemberLoading = (state: RootState) => state.companies.mutations.removeMember.isLoading;
+export const selectRemoveMemberError = (state: RootState) => state.companies.mutations.removeMember.error;
+
+export const selectLeaveCompanyLoading = (state: RootState) => state.companies.mutations.leave.isLoading;
+export const selectLeaveCompanyError = (state: RootState) => state.companies.mutations.leave.error;

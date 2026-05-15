@@ -2,7 +2,7 @@ import { sendInvitationDto, InvitationId } from '../types/invitationsTypes';
 import { CompanyId } from '@/features/companies/types/companiesTypes';
 import { api } from '@/api/apiClient';
 
-// COMPANY ACTIONS
+// COMPANY INVITATIONS
 
 export const getCompanyInvitations = (companyId: CompanyId) =>
   api.get(`company-actions/${companyId}/company-invitations`);
@@ -15,7 +15,7 @@ export const acceptRequest = (id: InvitationId) => api.post(`company-actions/${i
 
 export const rejectRequest = (id: InvitationId) => api.post(`company-actions/${id}/reject`);
 
-// USER ACTIONS
+// USER INVITATIONS
 
 export const getUserInvitations = () => api.get('user-actions/invitations');
 
