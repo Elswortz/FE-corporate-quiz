@@ -1,9 +1,11 @@
-import { useState } from 'react';
 import { forgotPasswordSchema } from '../../../../utils/schemas';
-import { useDispatch } from 'react-redux';
 import { resetPassword } from '../../api/authApi';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, TextField, Button } from '@mui/material';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
+import { useAppDispatch } from '@/store/hooks';
+import { useForm } from 'react-hook-form';
+import { ForgotPasswordFormData } from '../../schemas/authSchemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 type ForgotPassModalProps = {
   open: boolean;
@@ -11,23 +13,30 @@ type ForgotPassModalProps = {
 };
 
 const ForgotPassModal = ({ open, onClose }: ForgotPassModalProps) => {
-  const [email, setEmail] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const dispatch = useAppDispatch();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotPasswordFormData>({ resolver: zodResolver(forgotPasswordSchema), defaultValues: { email: '' } });
 
-  const dispatch = useDispatch();
-
-  const handleSubmit = async () => {
+  const onSubmit = async ({ email }: ForgotPasswordFormData) => {
     try {
-      await forgotPasswordSchema.validate({ email });
-      setError('');
       await resetPassword({ email });
       dispatch(
         showNotification({ message: `The reset email has been successfully sent to ${email}`, severity: 'success' })
       );
-      setEmail('');
-    } catch (err: any) {
-      setError(err.response?.data?.message);
-      dispatch(showNotification({ message: err.response?.data?.message, severity: 'error' }));
+      reset();
+      onClose();
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to reset password';
+      dispatch(
+        showNotification({
+          message,
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -42,15 +51,14 @@ const ForgotPassModal = ({ open, onClose }: ForgotPassModalProps) => {
           fullWidth
           label="E-mail"
           type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          error={!!error}
-          helperText={error}
+          error={!!errors.email}
+          helperText={errors.email?.message}
+          {...register('email')}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Отмена</Button>
-        <Button onClick={handleSubmit} variant="contained">
+        <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting} variant="contained">
           Отправить
         </Button>
       </DialogActions>

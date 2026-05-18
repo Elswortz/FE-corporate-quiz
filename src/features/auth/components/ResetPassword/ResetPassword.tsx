@@ -1,83 +1,64 @@
-import { useState, ChangeEvent, SubmitEvent } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { confirmResetPassword } from '../../api/authApi';
-import { resetPasswordSchema } from '../../../../utils/schemas';
 import { useAppDispatch } from '@/store/hooks';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
-
-type FormState = {
-  password: string;
-  confirmPassword: string;
-};
-
-type FormErrors = Partial<Record<keyof FormState, string>>;
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ResetPasswordFormData, resetPasswordSchema } from '../../schemas/authSchemas';
 
 const ResetPassword = () => {
-  const [form, setForm] = useState<FormState>({ password: '', confirmPassword: '' });
-  const [errors, setErrors] = useState<FormErrors>({});
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const uid = searchParams.get('uid');
   const token = searchParams.get('token');
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: undefined });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
 
-  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const onSubmit = async (data: ResetPasswordFormData) => {
     try {
-      await resetPasswordSchema.validate(form, { abortEarly: false });
-      setErrors({});
-
-      if (uid && token) {
-        await confirmResetPassword({ token, uid, payload: { new_password: form.password } });
+      if (!uid || !token) {
+        throw new Error('Invalid or corrupted reset link');
       }
+
+      await confirmResetPassword({
+        uid,
+        token,
+        payload: {
+          new_password: data.password,
+        },
+      });
 
       dispatch(
-        showNotification({ message: 'Your password has been successfully reset! You can log in', severity: 'success' })
+        showNotification({
+          message: 'Your password has been successfully reset! You can log in',
+          severity: 'success',
+        })
       );
 
-      setTimeout(() => navigate('/login'), 2000);
-    } catch (err: unknown) {
-      // 👉 Yup ошибка
-      if (
-        typeof err === 'object' &&
-        err !== null &&
-        'name' in err &&
-        err.name === 'ValidationError' &&
-        'inner' in err
-      ) {
-        const validationError = err as {
-          inner: Array<{ path?: string; message: string }>;
-        };
-
-        const newErrors: FormErrors = {};
-
-        validationError.inner.forEach(e => {
-          if (e.path) {
-            newErrors[e.path as keyof FormState] = e.message;
-          }
-        });
-
-        setErrors(newErrors);
-      } else {
-        // 👉 API ошибка (например axios)
-        const errorMessage =
-          typeof err === 'object' && err !== null && 'response' in err && (err as any).response?.data?.message
-            ? (err as any).response.data.message
-            : 'Reset password failed';
-
-        dispatch(
-          showNotification({
-            message: errorMessage,
-            severity: 'error',
-          })
-        );
-      }
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } catch (error: any) {
+      const message = error.response?.data?.message || error.message || 'Reset password failed';
+      dispatch(
+        showNotification({
+          message,
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -92,7 +73,7 @@ const ResetPassword = () => {
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{
         maxWidth: 400,
         margin: 'auto',
@@ -108,25 +89,21 @@ const ResetPassword = () => {
 
       <TextField
         label="Новый пароль"
-        name="password"
         type="password"
-        value={form.password}
-        onChange={handleChange}
         error={!!errors.password}
-        helperText={errors.password}
+        helperText={errors.password?.message}
+        {...register('password')}
       />
 
       <TextField
         label="Повторите пароль"
-        name="confirmPassword"
         type="password"
-        value={form.confirmPassword}
-        onChange={handleChange}
         error={!!errors.confirmPassword}
-        helperText={errors.confirmPassword}
+        helperText={errors.confirmPassword?.message}
+        {...register('confirmPassword')}
       />
 
-      <Button type="submit" variant="contained">
+      <Button type="submit" variant="contained" loading={isSubmitting}>
         Сбросить пароль
       </Button>
     </Box>

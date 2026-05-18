@@ -1,4 +1,5 @@
 import type { RootState } from '../../../store/store';
+import { CompanyId } from '../types/companiesTypes';
 
 export const selectAllCompanies = (state: RootState) => state.companies.lists.all.data;
 export const selectAllCompaniesLoading = (state: RootState) => state.companies.lists.all.isLoading;
@@ -36,3 +37,13 @@ export const selectRemoveMemberError = (state: RootState) => state.companies.mut
 
 export const selectLeaveCompanyLoading = (state: RootState) => state.companies.mutations.leave.isLoading;
 export const selectLeaveCompanyError = (state: RootState) => state.companies.mutations.leave.error;
+
+export const selectPendingInvitationIdByCompany = (companyId: CompanyId) => (state: RootState) => {
+  if (!companyId) return null;
+
+  return (
+    state.invitations.lists.userInvitations.data.find(invitation => {
+      return invitation.status === 'pending' && String(invitation.company.id) === String(companyId);
+    })?.id ?? null
+  );
+};
