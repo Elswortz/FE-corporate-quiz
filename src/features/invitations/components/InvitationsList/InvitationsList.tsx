@@ -1,48 +1,44 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import {
-  fetchCompanyInvitations,
-  cancelInvitation,
-  acceptRequest,
-  rejectRequest,
-} from '../../store/companiesActionsThunks';
+import { fetchCompanyInvitations, acceptRequest, rejectRequest, cancelInvitation } from '../../store/invitationsThunks';
 import { useParams } from 'react-router-dom';
 
 import {
   selectCompanyInvitations,
-  selectInvitationsLoading,
-  selectInvitationsError,
-} from '../../store/companiesSelectors';
+  selectCompanyInvitationsLoading,
+  selectCompanyInvitationsError,
+} from '../../store/invitationsSelectors';
 
 import { showNotification } from '../../../notifications/store/notificationsSlice';
-import InvitationsItem from '../InvitationsItem/InvitationsItem';
+import InvitationsItem from '../../../invitations/components/InvitationsItem/InvitationsItem';
 
 import { Box, CircularProgress, List, Typography, Divider, Stack } from '@mui/material';
 
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { InvitationId } from '../../types/invitationsTypes';
 
 const InvitationsList = () => {
   const [isConfirmDialogOpen, setIsConfirmDelOpen] = useState(false);
-  const [selectedInvitationId, setSelectedInvitationId] = useState(null);
+  const [selectedInvitationId, setSelectedInvitationId] = useState<string | null>('');
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { companyId } = useParams();
 
   useEffect(() => {
     if (companyId) dispatch(fetchCompanyInvitations(companyId));
   }, [dispatch, companyId]);
 
-  const invitations = useSelector(selectCompanyInvitations);
-  const isLoading = useSelector(selectInvitationsLoading);
-  const error = useSelector(selectInvitationsError);
+  const invitations = useAppSelector(selectCompanyInvitations);
+  const isLoading = useAppSelector(selectCompanyInvitationsLoading);
+  const error = useAppSelector(selectCompanyInvitationsError);
 
-  const handleAccept = async requestId => {
+  const handleAccept = async (id: InvitationId) => {
     try {
-      await dispatch(acceptRequest(requestId)).unwrap();
+      await dispatch(acceptRequest(id)).unwrap();
       dispatch(showNotification({ message: 'Request successfuly accepted', severity: 'success' }));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(
         showNotification({
           message: err.response?.data?.message || 'Failed to accept request',
@@ -52,11 +48,11 @@ const InvitationsList = () => {
     }
   };
 
-  const handleReject = async requestId => {
+  const handleReject = async (id: InvitationId) => {
     try {
-      await dispatch(rejectRequest(requestId)).unwrap();
+      await dispatch(rejectRequest(id)).unwrap();
       dispatch(showNotification({ message: 'Request successfuly rejected', severity: 'success' }));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(
         showNotification({
           message: err.response?.data?.message || 'Failed to reject request',
@@ -67,10 +63,13 @@ const InvitationsList = () => {
   };
 
   const handleCancel = async () => {
+    if (!selectedInvitationId) {
+      return null;
+    }
     try {
       await dispatch(cancelInvitation(selectedInvitationId)).unwrap();
       dispatch(showNotification({ message: 'Invitation successfully canceled', severity: 'info' }));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(
         showNotification({
           message: err.response?.data?.message || 'Failed to cancel invitation',

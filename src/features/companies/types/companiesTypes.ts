@@ -25,7 +25,7 @@ export type Pagination = {
   offset?: number;
 };
 
-export type CreateCompanyDto = Omit<Company, 'company_id'>;
+export type CreateCompanyDto = Omit<Company, 'id'>;
 
 export type UpdateCompanyDto = {
   companyId: CompanyId;

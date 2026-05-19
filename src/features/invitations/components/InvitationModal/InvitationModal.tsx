@@ -10,16 +10,27 @@ import {
   Divider,
   Stack,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectAcceptLoading, selectRejectLoading, selectCancelLoading } from '../../store/usersSelectors';
-import { acceptInvitation, rejectInvitation, cancelInvitation } from '../../store/usersActionsThunks';
-import { showNotification } from '../../../notifications/store/notificationsSlice';
 
-const InvitationModal = ({ invite, onClose }) => {
-  const dispatch = useDispatch();
-  const acceptLoading = useSelector(selectAcceptLoading);
-  const rejectLoading = useSelector(selectRejectLoading);
-  const cancelLoading = useSelector(selectCancelLoading);
+import { acceptInvitation, rejectInvitation, cancelRequest } from '../../store/invitationsThunks';
+import { showNotification } from '../../../notifications/store/notificationsSlice';
+import { Invitation } from '../../types/invitationsTypes';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  selectAcceptInvitationLoading,
+  selectCancelRequestLoading,
+  selectRejectInvitationLoading,
+} from '../../store/invitationsSelectors';
+
+type Props = {
+  invite: Invitation;
+  onClose: () => void;
+};
+
+const InvitationModal = ({ invite, onClose }: Props) => {
+  const dispatch = useAppDispatch();
+  const acceptLoading = useAppSelector(selectAcceptInvitationLoading);
+  const rejectLoading = useAppSelector(selectRejectInvitationLoading);
+  const cancelLoading = useAppSelector(selectCancelRequestLoading);
   const {
     id,
     status,
@@ -60,7 +71,7 @@ const InvitationModal = ({ invite, onClose }) => {
 
   const handleCancel = async () => {
     try {
-      await dispatch(cancelInvitation(id)).unwrap();
+      await dispatch(cancelRequest(id)).unwrap();
       dispatch(
         showNotification({
           message: `Invitation succesfuly canceled`,

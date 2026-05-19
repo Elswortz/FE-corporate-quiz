@@ -1,5 +1,3 @@
-import { Button, Typography, Container } from '@mui/material';
-
 const About = () => {
   return (
     <>

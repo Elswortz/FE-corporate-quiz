@@ -4,15 +4,18 @@ import { useState } from 'react';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
 import { removeCompanyMember } from '../features/companies/store/companiesThunks';
 import getUserRoleInCompany from '../utils/getUserRoleInCompany';
-import { selectProfileData } from '../features/users/store/usersSelectors';
+import { selectUserProfileData } from '@/features/users/store/usersSelectors';
 import ConfirmModal from '../components/ui/ConfirmModal/ConfirmModal';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectSelectedCompany } from '@/features/companies/store/companiesSelectors';
+import { User } from '@/features/users/types/userTypes';
 
 const Members = () => {
   const [isConfirmDialogOpen, setisConfirmDialogOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState(null);
-  const dispatch = useDispatch();
-  const selectedCompany = useSelector(state => state.companies.selected?.data);
-  const user = useSelector(selectProfileData);
+  const [selectedMember, setSelectedMember] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const selectedCompany = useAppSelector(selectSelectedCompany);
+  const user = useAppSelector(selectUserProfileData);
   const members = selectedCompany?.members || [];
 
   const role = getUserRoleInCompany(selectedCompany, user?.id);
@@ -20,7 +23,7 @@ const Members = () => {
   // const isAdmin = role === 'admin';
   // const isMember = role === 'member';
 
-  const handleRemove = async member => {
+  const handleRemove = async (member: User) => {
     try {
       await dispatch(removeCompanyMember({ companyId: selectedCompany.id, userId: member.id })).unwrap();
       dispatch(
@@ -30,7 +33,7 @@ const Members = () => {
         })
       );
       // Можно добавить обновление данных компании после удаления
-    } catch (err) {
+    } catch (err: any) {
       dispatch(
         showNotification({
           message: err.response?.data?.message || 'Failed to exclude member',

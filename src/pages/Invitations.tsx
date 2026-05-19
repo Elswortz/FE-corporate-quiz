@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
-import { inviteUser } from '../features/companies/store/companiesActionsThunks';
-import { useDispatch } from 'react-redux';
+import { sendInvitation } from '@/features/invitations/store/invitationsThunks';
 import { useParams } from 'react-router-dom';
 
-import InvitationsList from '../features/companies/components/InvitationsList/InvitationsList';
+import InvitationsList from '@/features/invitations/components/InvitationsList/InvitationsList';
+import { useAppDispatch } from '@/store/hooks';
 
 const Invitations = () => {
   const [open, setOpen] = useState(false);
@@ -13,9 +13,10 @@ const Invitations = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const { companyId } = useParams();
+  if (!companyId) return null;
 
   const handleOpen = () => {
     setEmail('');
@@ -30,9 +31,9 @@ const Invitations = () => {
   const handleSend = async () => {
     setIsLoading(true);
     try {
-      dispatch(inviteUser({ company_id: companyId, invite_user_email: email }));
+      dispatch(sendInvitation({ company_id: companyId, invite_user_email: email }));
       dispatch(showNotification({ message: `User with email ${email} invited`, severity: 'success' }));
-    } catch (err) {
+    } catch (err: any) {
       setError(err.response?.data?.message);
       dispatch(
         showNotification({

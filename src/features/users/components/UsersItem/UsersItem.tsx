@@ -1,7 +1,12 @@
 import { Card, CardHeader, Avatar, Typography } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
+import { User } from '../../types/userTypes';
 
-const UsersItem = ({ user }) => {
+type Props = {
+  user: User;
+};
+
+const UsersItem = ({ user }: Props) => {
   return (
     <Card
       sx={{
@@ -28,7 +33,7 @@ const UsersItem = ({ user }) => {
           mr: 2,
         }}
       >
-        {!user.avatar && (user.first_name?.[0] || '?')}
+        {!user.avatar_url && (user.first_name?.[0] || '?')}
       </Avatar>
 
       <CardHeader

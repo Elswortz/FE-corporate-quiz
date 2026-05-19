@@ -1,8 +1,16 @@
 import { ListItem, ListItemAvatar, ListItemText, Box, Typography, Chip, Stack, Button, Avatar } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
+import { Invitation, InvitationId } from '../../types/invitationsTypes';
 
-const InvitationsItem = ({ inv, onAccept, onReject, onCancel }) => {
+type Props = {
+  inv: Invitation;
+  onAccept: (id: InvitationId) => void;
+  onReject: (id: InvitationId) => void;
+  onCancel: () => void;
+};
+
+const InvitationsItem = ({ inv, onAccept, onReject, onCancel }: Props) => {
   const user = inv.invited_user;
   const invitedBy = inv.invited_by;
   const avatarUrl = user?.avatar_url;

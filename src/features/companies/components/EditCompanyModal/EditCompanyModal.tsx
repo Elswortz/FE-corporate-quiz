@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import * as Yup from 'yup';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import {
   Dialog,
   DialogTitle,
@@ -10,119 +13,132 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+
 import { updateCompany } from '../../store/companiesThunks';
+import { selectSelectedCompany, selectUpdateCompanyLoading } from '../../store/companiesSelectors';
+import { editCompanySchema, EditCompanyFormData } from '../../schemas/companiesSchemas';
 
-const editCompanySchema = Yup.object().shape({
-  company_name: Yup.string().required('Введите название компании'),
-  company_address: Yup.string().nullable(),
-  company_phone: Yup.string().nullable(),
-  company_website: Yup.string().url('Некорректный URL').nullable(),
-  company_description: Yup.string().nullable(),
-});
+type Props = {
+  open: boolean;
+  onClose: () => void;
+};
 
-const EditCompanyModal = ({ open, onClose }) => {
-  const dispatch = useDispatch();
-  const { data, isLoading } = useSelector(state => state.companies.selected);
-  const [form, setForm] = useState({
-    company_name: data.company_name || '',
-    company_address: data.company_address || '',
-    company_phone: data.company_phone || '',
-    company_website: data.company_website || '',
-    company_description: data.company_description || '',
+const EditCompanyModal = ({ open, onClose }: Props) => {
+  const dispatch = useAppDispatch();
+  const company = useAppSelector(selectSelectedCompany);
+  const isLoading = useAppSelector(selectUpdateCompanyLoading);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<EditCompanyFormData>({
+    resolver: zodResolver(editCompanySchema),
+    defaultValues: {
+      company_name: '',
+      company_address: '',
+      company_phone: '',
+      company_website: '',
+      company_description: '',
+    },
   });
-  const [errors, setErrors] = useState({});
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(s => ({ ...s, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: undefined }));
-  };
+  useEffect(() => {
+    if (!company || !open) return;
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+    reset({
+      company_name: company.company_name || '',
+      company_address: company.company_address || '',
+      company_phone: company.company_phone || '',
+      company_website: company.company_website || '',
+      company_description: company.company_description || '',
+    });
+  }, [company, open, reset]);
+
+  const onSubmit = async (formData: EditCompanyFormData) => {
+    if (!company) return;
+
     try {
-      await editCompanySchema.validate(form, { abortEarly: false });
-      setErrors({});
-      dispatch(updateCompany({ companyId: data.id, data: form }));
+      await dispatch(
+        updateCompany({
+          companyId: company.id,
+          data: formData,
+        })
+      ).unwrap();
 
       onClose();
     } catch (err) {
-      if (err.name === 'ValidationError' && err.inner) {
-        const newErrors = {};
-        err.inner.forEach(e => {
-          newErrors[e.path] = e.message;
-        });
-        setErrors(newErrors);
-      } else {
-        console.log(err.message);
-      }
+      console.error(err);
     }
   };
 
   const handleClose = () => {
-    setErrors({});
+    reset();
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>Edit Company</DialogTitle>
-      <Box component="form" onSubmit={handleSubmit}>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <DialogContent
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
           <TextField
             label="Company name"
-            name="company_name"
-            value={form.company_name}
-            onChange={handleChange}
-            required
-            error={!!errors.company_name}
-            helperText={errors.company_name}
             fullWidth
+            required
+            {...register('company_name')}
+            error={!!errors.company_name}
+            helperText={errors.company_name?.message}
           />
+
           <TextField
             label="Address"
-            name="company_address"
-            value={form.company_address}
-            onChange={handleChange}
-            error={!!errors.company_address}
-            helperText={errors.company_address}
             fullWidth
+            {...register('company_address')}
+            error={!!errors.company_address}
+            helperText={errors.company_address?.message}
           />
+
           <TextField
             label="Phone"
-            name="company_phone"
-            value={form.company_phone}
-            onChange={handleChange}
-            error={!!errors.company_phone}
-            helperText={errors.company_phone}
             fullWidth
+            {...register('company_phone')}
+            error={!!errors.company_phone}
+            helperText={errors.company_phone?.message}
           />
+
           <TextField
             label="Website"
-            name="company_website"
-            value={form.company_website}
-            onChange={handleChange}
-            error={!!errors.company_website}
-            helperText={errors.company_website}
             fullWidth
+            {...register('company_website')}
+            error={!!errors.company_website}
+            helperText={errors.company_website?.message}
           />
+
           <TextField
             label="Description"
-            name="company_description"
-            value={form.company_description}
-            onChange={handleChange}
-            error={!!errors.company_description}
-            helperText={errors.company_description}
             fullWidth
             multiline
             minRows={3}
+            {...register('company_description')}
+            error={!!errors.company_description}
+            helperText={errors.company_description?.message}
           />
         </DialogContent>
+
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={handleClose} disabled={isLoading}>
             Cancel
           </Button>
+
           <Button type="submit" variant="contained" disabled={isLoading}>
             {isLoading ? <CircularProgress size={20} /> : 'Save'}
           </Button>

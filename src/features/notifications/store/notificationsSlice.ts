@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
+import type { AlertColor } from '@mui/material';
 
 type NotificationState = {
   open: boolean;
   message: string;
-  severity: 'success' | 'error' | 'warning' | 'info';
+  severity: AlertColor;
 };
 
 const initialState: NotificationState = {

@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Menu, MenuItem, IconButton, Typography, Box, Divider } from '@mui/material';
 import { logOut } from '../../../auth/store/authSlice';
-import { selectProfileData } from '../../store/usersSelectors';
+import { selectUserProfileData } from '../../store/usersSelectors';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 const AccountMenu = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector(selectProfileData);
+  const user = useAppSelector(selectUserProfileData);
 
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleMenuOpen = event => {
+  const handleMenuOpen = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 

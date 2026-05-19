@@ -14,7 +14,11 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchMyInvitations } from '../../store/usersActionsThunks';
-import { selectInvitations, selectInvitationsCount, selectInvitationsLoading } from '../../store/usersSelectors';
+import {
+  selectInvitations,
+  selectInvitationsCount,
+  selectInvitationsLoading,
+} from '../../../users/store/usersSelectors';
 
 import InvitationModal from '../InvitationModal/InvitationModal';
 

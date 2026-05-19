@@ -1,69 +1,65 @@
-import { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
-import AlterLogin from '../../../auth/components/AlterLogin/AlterLogin';
 import { useTranslation } from 'react-i18next';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AlterLogin } from '@/features/auth/components';
 import { createUser } from '../../api/usersApi';
-import { registrationSchema } from '../../../../utils/schemas';
-import { showNotification } from '../../../notifications/store/notificationsSlice';
-import { useDispatch } from 'react-redux';
+import { createUserSchema, CreateUserFormData } from '../../schemas/usersSchemas';
+import { showNotification } from '@/features/notifications/store/notificationsSlice';
+import { useAppDispatch } from '@/store/hooks';
+
+const defaultValues: CreateUserFormData = {
+  first_name: '',
+  last_name: '',
+  email: '',
+  password: '',
+};
 
 const RegistrationForm = () => {
-  const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-  });
-  const [errors, setErrors] = useState({});
-
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation('auth');
 
-  const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: undefined });
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateUserFormData>({
+    resolver: zodResolver(createUserSchema),
+    defaultValues,
+  });
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const onSubmit = async ({ first_name, last_name, email, password }: CreateUserFormData) => {
     try {
-      await registrationSchema.validate(form, { abortEarly: false });
-      setErrors({});
-
       await createUser({
-        first_name: form.firstName,
-        last_name: form.lastName,
-        email: form.email,
-        password: form.password,
+        first_name,
+        last_name,
+        email,
+        password,
       });
 
-      dispatch(showNotification({ message: 'Registration successful', severity: 'success' }));
+      dispatch(
+        showNotification({
+          message: 'Registration successful',
+          severity: 'success',
+        })
+      );
 
-      setForm({
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-      });
-    } catch (err) {
-      if (err.name === 'ValidationError') {
-        const newErrors = {};
-        err.inner.forEach(err => {
-          newErrors[err.path] = err.message;
-        });
-        setErrors(newErrors);
-      } else {
-        dispatch(
-          showNotification({ message: err.response?.data?.message || 'Registration failed', severity: 'error' })
-        );
-      }
+      reset();
+    } catch (err: any) {
+      dispatch(
+        showNotification({
+          message: err.response?.data?.message || 'Registration failed',
+          severity: 'error',
+        })
+      );
     }
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{
         maxWidth: 400,
         width: '100%',
@@ -77,47 +73,41 @@ const RegistrationForm = () => {
       <Typography variant="h5" align="center" gutterBottom>
         {t('text.registerTitle')}
       </Typography>
+
       <TextField
         label={t('formFields.firstName')}
-        name="firstName"
-        value={form.firstName}
-        onChange={handleChange}
-        required
-        error={!!errors.firstName}
-        helperText={errors.firstName}
+        error={!!errors.first_name}
+        helperText={errors.first_name?.message}
+        {...register('first_name')}
       />
+
       <TextField
         label={t('formFields.lastName')}
-        name="lastName"
-        value={form.lastName}
-        onChange={handleChange}
-        required
-        error={!!errors.lastName}
-        helperText={errors.lastName}
+        error={!!errors.last_name}
+        helperText={errors.last_name?.message}
+        {...register('last_name')}
       />
+
       <TextField
         label={t('formFields.email')}
-        name="email"
         type="email"
-        value={form.email}
-        onChange={handleChange}
-        required
         error={!!errors.email}
-        helperText={errors.email}
+        helperText={errors.email?.message}
+        {...register('email')}
       />
+
       <TextField
         label={t('formFields.password')}
-        name="password"
         type="password"
-        value={form.password}
-        onChange={handleChange}
-        required
         error={!!errors.password}
-        helperText={errors.password}
+        helperText={errors.password?.message}
+        {...register('password')}
       />
-      <Button type="submit" variant="contained" color="primary">
+
+      <Button type="submit" variant="contained" color="primary" loading={isSubmitting}>
         {t('buttons.registerBtn')}
       </Button>
+
       <AlterLogin />
     </Box>
   );

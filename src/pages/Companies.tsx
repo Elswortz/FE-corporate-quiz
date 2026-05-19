@@ -11,7 +11,7 @@ const Companies = () => {
       <Button sx={{ marginBottom: 4 }} variant="contained" color="primary" onClick={handleCreate}>
         Create company
       </Button>
-      <CompaniesList type="all" />
+      <CompaniesList />
       <CreateCompanyModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   );

@@ -17,7 +17,7 @@ export type UpdateUserGto = Pick<User, 'first_name' | 'last_name'>;
 
 export type UpdateAvatarGto = File;
 
-export type CreateUserGto = Omit<User, 'id' | 'updateAvatar'> & Password;
+export type CreateUserGto = Omit<User, 'id' | 'avatar_url'> & Password;
 
 type Password = {
   password: string;
