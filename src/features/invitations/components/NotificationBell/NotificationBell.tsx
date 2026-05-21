@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEvent } from 'react';
 import {
   IconButton,
   Badge,
@@ -11,37 +11,34 @@ import {
   Typography,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchMyInvitations } from '../../store/usersActionsThunks';
-import {
-  selectInvitations,
-  selectInvitationsCount,
-  selectInvitationsLoading,
-} from '../../../users/store/usersSelectors';
+import { fetchUserInvitations } from '../../store/invitationsThunks';
+import { selectUserInvitations, selectUserInvitationsLoading } from '../../store/invitationsSelectors';
 
 import InvitationModal from '../InvitationModal/InvitationModal';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { Invitation } from '../../types/invitationsTypes';
 
 const NotificationsBell = () => {
-  const dispatch = useDispatch();
-  const invitations = useSelector(selectInvitations);
-  const count = useSelector(selectInvitationsCount);
-  const isLoading = useSelector(selectInvitationsLoading);
+  const dispatch = useAppDispatch();
+  const invitations = useAppSelector(selectUserInvitations);
+  const count = invitations.length;
+  const isLoading = useAppSelector(selectUserInvitationsLoading);
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedInvite, setSelectedInvite] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [selectedInvite, setSelectedInvite] = useState<Invitation | null>(null);
 
   useEffect(() => {
-    dispatch(fetchMyInvitations());
-    const onFocus = () => dispatch(fetchMyInvitations());
+    dispatch(fetchUserInvitations());
+    const onFocus = () => dispatch(fetchUserInvitations());
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
   }, [dispatch]);
 
-  const openMenu = e => setAnchorEl(e.currentTarget);
+  const openMenu = (e: MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
   const closeMenu = () => setAnchorEl(null);
 
-  const handleItemClick = invite => {
+  const handleItemClick = (invite: Invitation) => {
     setSelectedInvite(invite);
     closeMenu();
   };

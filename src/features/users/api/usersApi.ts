@@ -9,11 +9,7 @@ export const updateUser = (payload: UpdateUserGto) => api.put('users', payload);
 
 export const deleteUser = () => api.delete('users');
 
-export const updateAvatar = (file: UpdateAvatarGto) => {
-  const formData = new FormData();
-  formData.append('logo_file', file);
-  return api.post(`users/avatar`, formData);
-};
+export const updateAvatar = (formData: UpdateAvatarGto) => api.post(`users/avatar`, formData);
 
 export const createUser = (payload: CreateUserGto) => api.post('users', payload);
 

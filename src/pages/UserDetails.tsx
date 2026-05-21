@@ -1,18 +1,27 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { fetchUserById } from '../features/users/store/usersThunks';
 import { Box, Card, CardContent, Avatar, Typography, CircularProgress, Divider, Paper } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  selectSelectedUser,
+  selectSelectedUserError,
+  selectSelectedUserLoading,
+} from '@/features/users/store/usersSelectors';
 
 const UserDetails = () => {
-  const { userId } = useParams();
-  const dispatch = useDispatch();
-  const { data: selected, isLoading, error } = useSelector(state => state.users.selected);
+  const params = useParams();
+  const userId = params.userId;
+  const dispatch = useAppDispatch();
+  const selectedUser = useAppSelector(selectSelectedUser);
+  const isLoading = useAppSelector(selectSelectedUserLoading);
+  const error = useAppSelector(selectSelectedUserError);
   const location = useLocation();
   const backLinkHref = location.state?.from ?? '/users';
 
   useEffect(() => {
+    if (!userId) return;
     dispatch(fetchUserById(userId));
   }, [dispatch, userId]);
 
@@ -32,7 +41,7 @@ const UserDetails = () => {
     );
   }
 
-  if (!selected) {
+  if (!selectedUser) {
     return (
       <Typography textAlign="center" mt={4}>
         User not found
@@ -40,7 +49,7 @@ const UserDetails = () => {
     );
   }
 
-  const { id, avatar_url, first_name, last_name, email } = selected;
+  const { id, avatar_url, first_name, last_name, email } = selectedUser;
   return (
     <>
       <NavLink to={backLinkHref}>← Go back</NavLink>

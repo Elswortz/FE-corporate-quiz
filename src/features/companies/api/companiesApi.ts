@@ -29,11 +29,8 @@ export const changeCompanyStatus = ({ companyId, status }: ChangeCompanyStatusDt
     params: { company_status: status },
   });
 
-export const changeCompanyLogo = ({ companyId, file }: ChangeCompanyLogoDto) => {
-  const formData = new FormData();
-  formData.append('logo_file', file);
-  return api.post(`/companies/${companyId}/logo`, formData);
-};
+export const changeCompanyLogo = ({ companyId, formData }: ChangeCompanyLogoDto) =>
+  api.post(`/companies/${companyId}/logo`, formData);
 
 export const getCompanyMembers = (companyId: CompanyId) => api.get(`companies/${companyId}/members`);
 

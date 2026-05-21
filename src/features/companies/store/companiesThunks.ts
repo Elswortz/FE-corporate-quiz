@@ -18,7 +18,7 @@ import { UserId } from '../../users/types/userTypes';
 type RejectValue = string;
 
 export const fetchAllCompanies = createAsyncThunk<Company[], Pagination, { rejectValue: RejectValue }>(
-  'companies/fetch',
+  'companies/fetchAll',
   async ({ limit, offset }, { rejectWithValue }) => {
     try {
       const res = await companiesAPI.getAllCompanies({ limit, offset });
@@ -30,7 +30,7 @@ export const fetchAllCompanies = createAsyncThunk<Company[], Pagination, { rejec
 );
 
 export const fetchJoinedCompanies = createAsyncThunk<Company[], Pagination, { rejectValue: RejectValue }>(
-  'companies/fetch',
+  'companies/fetchJoined',
   async ({ limit, offset }, { rejectWithValue }) => {
     try {
       const res = await companiesAPI.getMyJoinedCompanies({ limit, offset });
@@ -42,7 +42,7 @@ export const fetchJoinedCompanies = createAsyncThunk<Company[], Pagination, { re
 );
 
 export const fetchOwnedCompanies = createAsyncThunk<Company[], Pagination, { rejectValue: RejectValue }>(
-  'companies/fetch',
+  'companies/fetchOwned',
   async ({ limit, offset }, { rejectWithValue }) => {
     try {
       const res = await companiesAPI.getMyOwnedCompanies({ limit, offset });
@@ -115,9 +115,9 @@ export const changeCompanyStatus = createAsyncThunk<Company, ChangeCompanyStatus
 
 export const changeCompanyLogo = createAsyncThunk<Company, ChangeCompanyLogoDto, { rejectValue: RejectValue }>(
   'companies/changeLogo',
-  async ({ companyId, file }, { rejectWithValue }) => {
+  async ({ companyId, formData }, { rejectWithValue }) => {
     try {
-      const res = await companiesAPI.changeCompanyLogo({ companyId, file });
+      const res = await companiesAPI.changeCompanyLogo({ companyId, formData });
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to update company logo');

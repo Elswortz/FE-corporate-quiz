@@ -16,8 +16,14 @@ export interface Company {
   company_status: CompanyStatus;
 }
 
+export type Member = User & Role;
+
 export type CompanyDetails = Company & {
-  members: User[];
+  members: Member[];
+};
+
+export type Role = {
+  role: CompanyRole;
 };
 
 export type Pagination = {
@@ -39,7 +45,7 @@ export type ChangeCompanyStatusDto = {
 
 export type ChangeCompanyLogoDto = {
   companyId: CompanyId;
-  file: File;
+  formData: FormData;
 };
 
 export type RemoveCompanyMemberDto = {

@@ -15,7 +15,7 @@ export type UserId = string;
 
 export type UpdateUserGto = Pick<User, 'first_name' | 'last_name'>;
 
-export type UpdateAvatarGto = File;
+export type UpdateAvatarGto = FormData;
 
 export type CreateUserGto = Omit<User, 'id' | 'avatar_url'> & Password;
 

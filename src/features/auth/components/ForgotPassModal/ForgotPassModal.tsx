@@ -1,10 +1,9 @@
-import { forgotPasswordSchema } from '../../../../utils/schemas';
 import { resetPassword } from '../../api/authApi';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, TextField, Button } from '@mui/material';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 import { useAppDispatch } from '@/store/hooks';
 import { useForm } from 'react-hook-form';
-import { ForgotPasswordFormData } from '../../schemas/authSchemas';
+import { ForgotPasswordFormData, forgotPasswordSchema } from '../../schemas/authSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 type ForgotPassModalProps = {

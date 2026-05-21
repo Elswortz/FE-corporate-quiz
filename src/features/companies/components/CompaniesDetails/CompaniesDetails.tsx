@@ -79,13 +79,6 @@ const CompaniesDetails = () => {
 
   const selectedCompany = useAppSelector(selectSelectedCompany);
 
-  if (!selectedCompany) {
-    return (
-      <Typography textAlign="center" mt={4}>
-        Company not found
-      </Typography>
-    );
-  }
   const selectedCompanyLoading = useAppSelector(selectDeleteCompanyLoading);
   const selectedCompanyError = useAppSelector(selectSelectedCompanyError);
 
@@ -115,6 +108,25 @@ const CompaniesDetails = () => {
 
   const backLinkHref = location.state?.from ?? '/companies';
 
+  useEffect(() => {
+    if (!companyId) return;
+
+    dispatch(fetchCompanyById(companyId));
+    dispatch(fetchUserInvitations());
+
+    return () => {
+      dispatch(clearCurrentCompany());
+    };
+  }, [dispatch, companyId]);
+
+  if (!selectedCompany) {
+    return (
+      <Typography textAlign="center" mt={4}>
+        Company not found
+      </Typography>
+    );
+  }
+
   const handleToggleStatus = async () => {
     const newStatus = selectedCompany.company_status === 'hidden' ? 'visible' : 'hidden';
     await dispatch(changeCompanyStatus({ companyId: selectedCompany.id, status: newStatus })).unwrap();
@@ -124,10 +136,12 @@ const CompaniesDetails = () => {
   const handleChangeLogo = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const formData = new FormData();
+    formData.append('logo_file', file);
     await dispatch(
       changeCompanyLogo({
         companyId: selectedCompany.id,
-        file,
+        formData,
       })
     ).unwrap();
 
@@ -181,17 +195,6 @@ const CompaniesDetails = () => {
   // const isAdmin = role === 'admin';
   const isMember = role === 'member';
   const isUser = user && role !== 'owner' && role !== 'admin' && role !== 'member';
-
-  useEffect(() => {
-    if (!companyId) return;
-
-    dispatch(fetchCompanyById(companyId));
-    dispatch(fetchUserInvitations());
-
-    return () => {
-      dispatch(clearCurrentCompany());
-    };
-  }, [dispatch, companyId]);
 
   const handleDelete = async () => {
     await dispatch(deleteCompany(selectedCompany.id)).unwrap();

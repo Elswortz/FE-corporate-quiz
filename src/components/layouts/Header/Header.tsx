@@ -1,6 +1,7 @@
 import { Logo, NavMenu, LangSelector } from '@/components/ui';
 import { AuthNav } from '@/features/auth/components';
-import { AccountMenu, NotificationBell } from '@/features/users/components';
+import { AccountMenu } from '@/features/users/components';
+import { NotificationBell } from '@/features/invitations/components';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { AppBar, Toolbar, Box } from '@mui/material';
 

@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from '../../store/usersThunks';
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 import { NavLink, useLocation } from 'react-router-dom';

@@ -8,7 +8,7 @@ export const fetchUsers = createAsyncThunk<User[], Pagination, { rejectValue: Re
   async ({ limit, offset }, { rejectWithValue }) => {
     try {
       const res = await usersAPI.getUsers({ limit, offset });
-      return res.data;
+      return res.data.items;
     } catch (err: any) {
       return rejectWithValue(err.response?.data || 'Failed to load users');
     }
@@ -64,9 +64,9 @@ export const removeUser = createAsyncThunk<void, void, { rejectValue: RejectValu
 
 export const updateUserAvatar = createAsyncThunk<User, UpdateAvatarGto, { rejectValue: RejectValue }>(
   'users/updateAvatar',
-  async (file, { rejectWithValue }) => {
+  async (formData, { rejectWithValue }) => {
     try {
-      const res = await usersAPI.updateAvatar(file);
+      const res = await usersAPI.updateAvatar(formData);
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to update avatar');

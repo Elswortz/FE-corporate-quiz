@@ -53,9 +53,11 @@ const UserInfo = () => {
   const handleAvatarChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const formData = new FormData();
+    formData.append('avatar_file', file);
 
     try {
-      await dispatch(updateUserAvatar(file)).unwrap();
+      await dispatch(updateUserAvatar(formData)).unwrap();
       dispatch(showNotification({ message: 'Avatar successfully updated', severity: 'success' }));
     } catch (error) {
       dispatch(
