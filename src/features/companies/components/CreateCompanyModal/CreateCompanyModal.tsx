@@ -22,6 +22,7 @@ import {
 import { createCompany } from '../../store/companiesThunks';
 import { createCompanySchema, CreateCompanyFormData } from '../../schemas/companiesSchemas';
 import { selectCreateCompanyLoading } from '../../store/companiesSelectors';
+import { showNotification } from '@/features/notifications/store/notificationsSlice';
 
 type Props = {
   open: boolean;
@@ -64,8 +65,11 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
       await dispatch(createCompany(data)).unwrap();
       reset(defaultValues);
       onClose?.();
-    } catch (err) {
-      console.error(err);
+      dispatch(showNotification({ message: `${data.company_name} company successfuly created`, severity: 'success' }));
+    } catch (err: any) {
+      dispatch(
+        showNotification({ message: err.response?.data?.message || 'Failed to create a company', severity: 'success' })
+      );
     }
   };
 

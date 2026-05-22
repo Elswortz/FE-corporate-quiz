@@ -1,8 +1,20 @@
-import { Box, List, ListItem, ListItemAvatar, ListItemText, Avatar, Typography, Divider, Button } from '@mui/material';
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Avatar,
+  Typography,
+  Divider,
+  Button,
+  Chip,
+} from '@mui/material';
 import { useState } from 'react';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
 import { removeCompanyMember } from '../features/companies/store/companiesThunks';
 import getUserRoleInCompany from '../utils/getUserRoleInCompany';
+import { getRoleColor } from '@/utils/getRoleColor';
 import { selectUserProfileData } from '@/features/users/store/usersSelectors';
 import ConfirmModal from '../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -16,6 +28,8 @@ const Members = () => {
   const selectedCompany = useAppSelector(selectSelectedCompany);
   const user = useAppSelector(selectUserProfileData);
   const members = selectedCompany?.members || [];
+
+  if (!selectedCompany) return null;
 
   const role = getUserRoleInCompany(selectedCompany, user?.id);
   const isOwner = role === 'owner';
@@ -56,7 +70,7 @@ const Members = () => {
               <div key={member.id}>
                 <ListItem
                   secondaryAction={
-                    isOwner ? (
+                    isOwner && member.role !== 'owner' ? (
                       <Button
                         variant="outlined"
                         color="error"
@@ -74,7 +88,23 @@ const Members = () => {
                   <ListItemAvatar>
                     <Avatar src={member.avatar_url}></Avatar>
                   </ListItemAvatar>
-                  <ListItemText primary={`${member.first_name} ${member.last_name}`} secondary={member.email} />
+                  <ListItemText
+                    primary={
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <Typography variant="body1">
+                          {member.first_name} {member.last_name}
+                        </Typography>
+
+                        <Chip
+                          label={member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                          size="small"
+                          color={getRoleColor(member.role)}
+                          variant="outlined"
+                        />
+                      </Box>
+                    }
+                    secondary={member.email}
+                  />
                 </ListItem>
                 <Divider />
               </div>

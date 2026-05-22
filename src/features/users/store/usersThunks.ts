@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { RejectValue, Pagination } from '@/shared/types/globalTypes';
 import * as usersAPI from '../api/usersApi';
 import { UpdateAvatarGto, UpdateUserGto, User, UserId } from '../types/userTypes';
+import { AppDispatch } from '@/store/store';
+import { logOut } from '@/features/auth/store/authSlice';
 
 export const fetchUsers = createAsyncThunk<User[], Pagination, { rejectValue: RejectValue }>(
   'users/fetchAll',
@@ -51,11 +53,12 @@ export const updateUser = createAsyncThunk<User, UpdateUserGto, { rejectValue: R
   }
 );
 
-export const removeUser = createAsyncThunk<void, void, { rejectValue: RejectValue }>(
+export const removeUser = createAsyncThunk<void, void, { rejectValue: RejectValue; dispatch: AppDispatch }>(
   'users/remove',
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       await usersAPI.deleteUser();
+      dispatch(logOut());
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to delete user');
     }

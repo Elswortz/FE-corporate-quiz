@@ -14,9 +14,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import ChangePassModal from '../../../auth/components/ChangePassModal/ChangePassModal';
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useNavigate } from 'react-router-dom';
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const user = useAppSelector(selectUserProfileData);
   const editLoading = useAppSelector(selectUpdateUserLoading);
@@ -74,6 +76,7 @@ const UserInfo = () => {
       await dispatch(removeUser()).unwrap();
       dispatch(showNotification({ message: 'The account has been successfully deleted.', severity: 'info' }));
       setIsConfirmDelOpen(false);
+      navigate('/');
     } catch (error) {
       dispatch(
         showNotification({

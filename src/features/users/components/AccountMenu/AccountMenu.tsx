@@ -30,6 +30,7 @@ const AccountMenu = () => {
   const handleLogout = () => {
     handleMenuClose();
     dispatch(logOut());
+    navigate(`/`);
   };
 
   return (

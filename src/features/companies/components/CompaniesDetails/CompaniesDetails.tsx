@@ -31,6 +31,7 @@ import {
   Button,
   Tabs,
   Tab,
+  Backdrop,
 } from '@mui/material';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -192,14 +193,19 @@ const CompaniesDetails = () => {
 
   const role = getUserRoleInCompany(selectedCompany, user?.id);
   const isOwner = role === 'owner';
-  // const isAdmin = role === 'admin';
+  const isAdmin = role === 'admin';
   const isMember = role === 'member';
   const isUser = user && role !== 'owner' && role !== 'admin' && role !== 'member';
 
   const handleDelete = async () => {
-    await dispatch(deleteCompany(selectedCompany.id)).unwrap();
-    setIsConfirmDeleteOpen(false);
-    navigate(backLinkHref);
+    try {
+      await dispatch(deleteCompany(selectedCompany.id)).unwrap();
+      setIsConfirmDeleteOpen(false);
+      navigate(backLinkHref);
+      dispatch(showNotification({ message: 'Your company successfully deleted', severity: 'success' }));
+    } catch (err: any) {
+      showNotification({ message: err.response?.data?.message || 'Unable to delete a company', severity: 'error' });
+    }
   };
 
   if (selectedCompanyLoading) {
@@ -434,7 +440,7 @@ const CompaniesDetails = () => {
         <Tabs value={tabValue} textColor="primary" indicatorColor="primary">
           <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
           <Tab label="Quizzes" component={NavLink} to={`${basePath}/quizzes`} />
-          <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />
+          {(isOwner || isAdmin) && <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />}
         </Tabs>
       </Box>
 
@@ -458,7 +464,6 @@ const CompaniesDetails = () => {
         onCancel={() => setIsConfirmLeaveOpen(false)}
         isLoading={leaveCompanyLoading}
       />
-
       <EditCompanyModal open={isEditOpen} onClose={() => setIsEditOpen(false)} />
     </Box>
   );
