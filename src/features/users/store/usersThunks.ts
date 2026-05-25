@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { RejectValue, Pagination } from '@/shared/types/globalTypes';
+import { RejectValue, Pagination } from '@/types/globalTypes';
 import * as usersAPI from '../api/usersApi';
 import { UpdateAvatarGto, UpdateUserGto, User, UserId } from '../types/userTypes';
 import { AppDispatch } from '@/store/store';

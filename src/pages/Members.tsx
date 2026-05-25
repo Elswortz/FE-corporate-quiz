@@ -13,8 +13,8 @@ import {
 import { useState } from 'react';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
 import { removeCompanyMember } from '../features/companies/store/companiesThunks';
-import getUserRoleInCompany from '../utils/getUserRoleInCompany';
-import { getRoleColor } from '@/utils/getRoleColor';
+import { getUserRoleInCompany } from '@/utils/companyHelpers';
+import { getRoleColor } from '@/utils/companyHelpers';
 import { selectUserProfileData } from '@/features/users/store/usersSelectors';
 import ConfirmModal from '../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';

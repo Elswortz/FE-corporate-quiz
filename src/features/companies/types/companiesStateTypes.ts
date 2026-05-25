@@ -1,11 +1,11 @@
 import { Company, CompanyDetails } from './companiesTypes';
-import { AsyncState, OperationState } from '@/shared/types/globalTypes';
+import { AsyncState, PaginatedAsyncState, OperationState } from '@/types/globalTypes';
 
 export interface CompaniesState {
   lists: {
-    all: AsyncState<Company[]>;
-    joined: AsyncState<Company[]>;
-    owned: AsyncState<Company[]>;
+    all: PaginatedAsyncState<Company[]>;
+    joined: PaginatedAsyncState<Company[]>;
+    owned: PaginatedAsyncState<Company[]>;
   };
 
   selected: AsyncState<CompanyDetails | null>;

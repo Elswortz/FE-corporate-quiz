@@ -69,7 +69,8 @@ const companiesSlice = createSlice({
       })
       .addCase(fetchAllCompanies.fulfilled, (state, { payload }) => {
         state.lists.all.isLoading = false;
-        state.lists.all.data = payload;
+        state.lists.all.data = payload.items;
+        state.lists.all.meta = payload.meta;
       })
       .addCase(fetchAllCompanies.rejected, (state, { payload }) => {
         state.lists.all.isLoading = false;
@@ -82,7 +83,8 @@ const companiesSlice = createSlice({
       })
       .addCase(fetchJoinedCompanies.fulfilled, (state, { payload }) => {
         state.lists.joined.isLoading = false;
-        state.lists.joined.data = payload;
+        state.lists.joined.data = payload.items;
+        state.lists.joined.meta = payload.meta;
       })
       .addCase(fetchJoinedCompanies.rejected, (state, { payload }) => {
         state.lists.joined.isLoading = false;
@@ -95,7 +97,8 @@ const companiesSlice = createSlice({
       })
       .addCase(fetchOwnedCompanies.fulfilled, (state, { payload }) => {
         state.lists.owned.isLoading = false;
-        state.lists.owned.data = payload;
+        state.lists.owned.data = payload.items;
+        state.lists.owned.meta = payload.meta;
       })
       .addCase(fetchOwnedCompanies.rejected, (state, { payload }) => {
         state.lists.owned.isLoading = false;

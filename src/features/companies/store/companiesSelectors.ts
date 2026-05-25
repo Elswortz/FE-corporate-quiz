@@ -4,14 +4,17 @@ import { CompanyId } from '../types/companiesTypes';
 export const selectAllCompanies = (state: RootState) => state.companies.lists.all.data;
 export const selectAllCompaniesLoading = (state: RootState) => state.companies.lists.all.isLoading;
 export const selectAllCompaniesError = (state: RootState) => state.companies.lists.all.error;
+export const selectAllCompaniesMeta = (state: RootState) => state.companies.lists.all.meta;
 
 export const selectJoinedCompanies = (state: RootState) => state.companies.lists.joined.data;
 export const selectJoinedCompaniesLoading = (state: RootState) => state.companies.lists.joined.isLoading;
 export const selectJoinedCompaniesError = (state: RootState) => state.companies.lists.joined.error;
+export const selectJoinedCompaniesMeta = (state: RootState) => state.companies.lists.joined.meta;
 
 export const selectOwnedCompanies = (state: RootState) => state.companies.lists.owned.data;
 export const selectOwnedCompaniesLoading = (state: RootState) => state.companies.lists.owned.isLoading;
 export const selectOwnedCompaniesError = (state: RootState) => state.companies.lists.owned.error;
+export const selectOwnedCompaniesMeta = (state: RootState) => state.companies.lists.owned.meta;
 
 export const selectSelectedCompany = (state: RootState) => state.companies.selected.data;
 export const selectSelectedCompanyLoading = (state: RootState) => state.companies.selected.isLoading;

@@ -1,4 +1,4 @@
-import { AsyncState, OperationState } from '@/shared/types/globalTypes';
+import { AsyncState, OperationState } from '@/types/globalTypes';
 import { Invitation } from './invitationsTypes';
 
 export interface InvitationsState {

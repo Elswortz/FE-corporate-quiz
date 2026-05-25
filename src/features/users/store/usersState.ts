@@ -1,4 +1,4 @@
-import { AsyncState, OperationState } from '@/shared/types/globalTypes';
+import { AsyncState, OperationState } from '@/types/globalTypes';
 import { UsersState } from '../types/usersStateTypes';
 import { User } from '../types/userTypes';
 

@@ -4,7 +4,7 @@ import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import UsersItem from '../UsersItem/UsersItem';
-import Pagination from '../../../../components/ui/Pagination/Pagination';
+import Pagination from '../../../../components/ui/Pagination/AppPagination';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectUsersList, selectUsersListLoading } from '../../store/usersSelectors';
 

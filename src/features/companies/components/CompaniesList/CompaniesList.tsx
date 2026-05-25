@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 
 import CompaniesItem from '../CompaniesItem/CompaniesItem';
-import Pagination from '../../../../components/ui/Pagination/Pagination';
+import Pagination from '../../../../components/ui/Pagination/AppPagination';
 
 import { Company } from '../../types/companiesTypes';
 
@@ -38,7 +38,7 @@ const CompaniesList = ({ companies = [], isLoading, error }: CompaniesListProps)
   }
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box>
       {companies.length === 0 ? (
         <Typography variant="body1">No companies found</Typography>
       ) : (

@@ -2,7 +2,7 @@ import { Invitation, InvitationId, sendInvitationDto } from '../types/invitation
 import { CompanyId } from '@/features/companies/types/companiesTypes';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as invitationsAPI from '@/features/invitations/api/invitationsApi';
-import { RejectValue } from '@/shared/types/globalTypes';
+import { RejectValue } from '@/types/globalTypes';
 
 // COMPANIES THUNKS
 

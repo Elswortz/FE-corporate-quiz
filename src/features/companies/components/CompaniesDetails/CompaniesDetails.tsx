@@ -15,7 +15,7 @@ import { showNotification } from '../../../notifications/store/notificationsSlic
 
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.js';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal.js';
-import getUserRoleInCompany from '../../../../utils/getUserRoleInCompany.js';
+import { getUserRoleInCompany } from '@/utils/companyHelpers.js';
 
 import {
   Box,
