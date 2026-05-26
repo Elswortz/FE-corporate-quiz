@@ -63,7 +63,7 @@ const Members = () => {
 
   return (
     <>
-      <Box sx={{ maxWidth: 1100, mx: 'auto', p: { xs: 2, md: 4 } }}>
+      <Box>
         {members?.length ? (
           <List>
             {members.map(member => (

@@ -98,7 +98,6 @@ const UserInfo = () => {
   return (
     <Box
       sx={{
-        maxWidth: 1000,
         mx: 'auto',
         mt: 5,
         p: 4,
