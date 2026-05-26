@@ -1,11 +1,14 @@
 import CompaniesDetails from '../features/companies/components/CompaniesDetails/CompaniesDetails';
 import { Outlet } from 'react-router-dom';
+import { Container } from '@mui/material';
 
 const CompanyProfile = () => {
   return (
     <>
-      <CompaniesDetails />
-      <Outlet />
+      <Container maxWidth="lg">
+        <CompaniesDetails />
+        <Outlet />
+      </Container>
     </>
   );
 };

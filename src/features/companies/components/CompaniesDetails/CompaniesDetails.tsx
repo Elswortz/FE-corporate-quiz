@@ -237,7 +237,7 @@ const CompaniesDetails = () => {
   } = selectedCompany;
 
   return (
-    <Box sx={{ maxWidth: 1100, mx: 'auto', p: { xs: 2, md: 4 } }}>
+    <Box sx={{ mx: 'auto', p: { xs: 2, md: 4 } }}>
       <Button component={NavLink} to={backLinkHref} startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
         Back
       </Button>

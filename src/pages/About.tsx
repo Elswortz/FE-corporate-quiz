@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Grid, Card, CardContent, Stack, Avatar, Paper, Button } from '@mui/material';
+import { Box, Container, Typography, Grid, Card, CardContent, Stack, Avatar, Button } from '@mui/material';
 
 import GroupsIcon from '@mui/icons-material/Groups';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -31,10 +31,9 @@ const features = [
 
 const About = () => {
   return (
-    <Box sx={{ py: 8 }}>
-      <Container maxWidth="lg">
+    <Container maxWidth="lg">
+      <Box sx={{ py: 8 }}>
         <Stack spacing={8}>
-          {/* Hero Section */}
           <Box textAlign="center">
             <Typography variant="h3" fontWeight={700} gutterBottom>
               Quiz Platform for Companies
@@ -50,7 +49,6 @@ const About = () => {
             </Button>
           </Box>
 
-          {/* Features */}
           <Box>
             <Typography variant="h4" fontWeight={600} mb={4} textAlign="center">
               Main Features
@@ -99,29 +97,9 @@ const About = () => {
               ))}
             </Grid>
           </Box>
-
-          {/* Bottom Section */}
-          {/* <Paper
-            elevation={1}
-            sx={{
-              p: 6,
-              borderRadius: 4,
-              textAlign: 'center',
-            }}
-          >
-            <Typography variant="h4" fontWeight={700} gutterBottom>
-              Why This Platform?
-            </Typography>
-
-            <Typography variant="body1" color="text.secondary" maxWidth={800} mx="auto">
-              This application helps companies organize internal education, employee onboarding, and knowledge testing
-              in one centralized system. Employees can easily join companies, complete quizzes, and improve their skills
-              while managers monitor engagement and performance.
-            </Typography>
-          </Paper> */}
         </Stack>
-      </Container>
-    </Box>
+      </Box>
+    </Container>
   );
 };
 

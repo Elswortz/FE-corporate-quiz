@@ -1,9 +1,12 @@
 import UsersList from '../features/users/components/UsersList/UsersList';
+import { Container } from '@mui/material';
 
 const Users = () => {
   return (
     <>
-      <UsersList />
+      <Container maxWidth="lg">
+        <UsersList />
+      </Container>
     </>
   );
 };

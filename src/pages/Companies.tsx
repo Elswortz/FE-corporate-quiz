@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Container } from '@mui/material';
+import { Button, Container, Box } from '@mui/material';
 import CompaniesList from '../features/companies/components/CompaniesList/CompaniesList';
 import CreateCompanyModal from '../features/companies/components/CreateCompanyModal/CreateCompanyModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
@@ -21,23 +21,25 @@ const Companies = () => {
   const allCompaniesLoading = useAppSelector(selectAllCompaniesLoading);
   const allCompaniesError = useAppSelector(selectAllCompaniesError);
   const allCompaniesMeta = useAppSelector(selectAllCompaniesMeta);
-  const { page, limit, offset, setPage } = usePagination({});
+  const { limit, offset, setPage } = usePagination({});
 
   useEffect(() => {
     dispatch(fetchAllCompanies({ limit, offset }));
   }, [dispatch, limit, offset]);
 
   return (
-    <Container maxWidth="lg">
-      <Button sx={{ marginBottom: 4 }} variant="contained" color="primary" onClick={handleCreate}>
-        Create company
-      </Button>
-      <CompaniesList companies={allCompanies} isLoading={allCompaniesLoading} error={allCompaniesError} />
-      {allCompaniesMeta && (
-        <AppPagination total={allCompaniesMeta.total} limit={limit} offset={offset} onChange={setPage} />
-      )}
-      <CreateCompanyModal open={modalOpen} onClose={() => setModalOpen(false)} />
-    </Container>
+    <Box sx={{ py: 6 }}>
+      <Container maxWidth="lg">
+        <Button sx={{ marginBottom: 4 }} variant="contained" color="primary" onClick={handleCreate}>
+          Create company
+        </Button>
+        <CompaniesList companies={allCompanies} isLoading={allCompaniesLoading} error={allCompaniesError} />
+        {allCompaniesMeta && (
+          <AppPagination total={allCompaniesMeta.total} limit={limit} offset={offset} onChange={setPage} />
+        )}
+        <CreateCompanyModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      </Container>
+    </Box>
   );
 };
 
