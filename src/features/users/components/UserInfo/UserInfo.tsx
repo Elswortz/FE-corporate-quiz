@@ -101,8 +101,8 @@ const UserInfo = () => {
         mx: 'auto',
         mt: 5,
         p: 4,
-        boxShadow: 3,
-        borderRadius: 3,
+        boxShadow: 2,
+        borderRadius: 1,
         backgroundColor: 'background.paper',
       }}
     >

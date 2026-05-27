@@ -1,10 +1,5 @@
-import { useEffect } from 'react';
-
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
-
 import CompaniesItem from '../CompaniesItem/CompaniesItem';
-import Pagination from '../../../../components/ui/Pagination/AppPagination';
-
 import { Company } from '../../types/companiesTypes';
 
 interface CompaniesListProps {
@@ -45,13 +40,11 @@ const CompaniesList = ({ companies = [], isLoading, error }: CompaniesListProps)
         <>
           <Grid container spacing={2}>
             {companies.map(company => (
-              <Grid key={company.id} sx={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+              <Grid key={company.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
                 <CompaniesItem company={company} />
               </Grid>
             ))}
           </Grid>
-
-          <Box sx={{ mt: 3 }}>{/* pagination */}</Box>
         </>
       )}
     </Box>

@@ -31,7 +31,7 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await dispatch(logIn(data));
+      await dispatch(logIn(data)).unwrap();
 
       dispatch(
         showNotification({
@@ -39,10 +39,10 @@ const LoginForm = () => {
           severity: 'success',
         })
       );
-    } catch (error: unknown) {
+    } catch (error: any) {
       dispatch(
         showNotification({
-          message: String(error),
+          message: error,
           severity: 'error',
         })
       );

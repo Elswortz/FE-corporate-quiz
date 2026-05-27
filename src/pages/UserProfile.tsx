@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import UserInfo from '../features/users/components/UserInfo/UserInfo';
 import CompaniesList from '../features/companies/components/CompaniesList/CompaniesList';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import {
   selectOwnedCompanies,
@@ -39,13 +39,31 @@ const UserProfile = () => {
             mx: 'auto',
             mt: 5,
             p: 4,
-            boxShadow: 3,
-            borderRadius: 3,
+            boxShadow: 2,
+            borderRadius: 1,
             backgroundColor: 'background.paper',
           }}
         >
-          <CompaniesList companies={ownedCompanies} isLoading={ownedCompaniesLoading} error={ownedCompaniesError} />
-          <CompaniesList companies={joinedCompanies} isLoading={joinedCompaniesLoading} error={joinedCompaniesError} />
+          {ownedCompanies.length ? (
+            <>
+              <Typography variant="h4" sx={{ mb: 4 }}>
+                Owned companies
+              </Typography>
+              <CompaniesList companies={ownedCompanies} isLoading={ownedCompaniesLoading} error={ownedCompaniesError} />
+            </>
+          ) : null}
+          {joinedCompanies.length ? (
+            <>
+              <Typography variant="h4" sx={{ mb: 4 }}>
+                Joined companies
+              </Typography>
+              <CompaniesList
+                companies={joinedCompanies}
+                isLoading={joinedCompaniesLoading}
+                error={joinedCompaniesError}
+              />
+            </>
+          ) : null}
         </Box>
       </Container>
     </>

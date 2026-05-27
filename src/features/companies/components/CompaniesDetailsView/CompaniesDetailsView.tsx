@@ -1,5 +1,5 @@
 import { Company, CompanyRole } from '../../types/companiesTypes';
-import { Box } from '@mui/material';
+import { Box, Card } from '@mui/material';
 import CompanyDetailsHeader from '../CompaniesDetailsHeader/CompaniesDetailsHeader';
 import CompanyDetailsInfo from '../CompanyDetailsInfo/CompanyDetailsInfo';
 import CompanyDetailsTabs from '../CompanyDetailsTabs/CompanyDetailsTabs';
@@ -58,17 +58,19 @@ const CompanyDetailsView = ({
   actions,
 }: Props) => {
   return (
-    <Box>
-      <CompanyDetailsHeader
-        company={company}
-        role={role}
-        hasPendingRequest={hasPendingRequest}
-        loading={loading}
-        modalActions={modalActions}
-        actions={actions}
-      />
+    <>
+      <Card variant="outlined">
+        <CompanyDetailsHeader
+          company={company}
+          role={role}
+          hasPendingRequest={hasPendingRequest}
+          loading={loading}
+          modalActions={modalActions}
+          actions={actions}
+        />
 
-      <CompanyDetailsInfo company={company} />
+        <CompanyDetailsInfo company={company} />
+      </Card>
 
       <CompanyDetailsTabs companyId={company.id} role={role} />
 
@@ -79,7 +81,7 @@ const CompanyDetailsView = ({
         onDelete={actions.handleDelete}
         onLeave={actions.handleLeave}
       />
-    </Box>
+    </>
   );
 };
 

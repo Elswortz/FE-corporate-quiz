@@ -6,7 +6,7 @@ interface UsePaginationProps {
   limit?: number;
 }
 
-export const usePagination = ({ initialPage = 1, limit = 10 }: UsePaginationProps) => {
+export const usePagination = ({ initialPage = 1, limit = 8 }: UsePaginationProps) => {
   const [page, setPage] = useState(initialPage);
 
   const offset = getOffsetFromPage(page, limit);
