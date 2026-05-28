@@ -7,28 +7,50 @@ import {
   selectOwnedCompanies,
   selectOwnedCompaniesLoading,
   selectOwnedCompaniesError,
+  selectOwnedCompaniesMeta,
   selectJoinedCompanies,
   selectJoinedCompaniesLoading,
   selectJoinedCompaniesError,
+  selectJoinedCompaniesMeta,
 } from '@/features/companies/store/companiesSelectors';
 
 import { fetchOwnedCompanies, fetchJoinedCompanies } from '@/features/companies/store/companiesThunks';
+import { usePagination } from '@/hooks/usePagination';
+import LoadMoreButton from '@/components/ui/LoadMoreButton/LoadMoreButton';
 
 const UserProfile = () => {
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(fetchOwnedCompanies({ limit: 10, offset: 0 }));
-    dispatch(fetchJoinedCompanies({ limit: 10, offset: 0 }));
-  }, [dispatch]);
-
   const ownedCompanies = useAppSelector(selectOwnedCompanies);
   const ownedCompaniesLoading = useAppSelector(selectOwnedCompaniesLoading);
   const ownedCompaniesError = useAppSelector(selectOwnedCompaniesError);
+  const ownedCompaniesMeta = useAppSelector(selectOwnedCompaniesMeta);
 
   const joinedCompanies = useAppSelector(selectJoinedCompanies);
   const joinedCompaniesLoading = useAppSelector(selectJoinedCompaniesLoading);
   const joinedCompaniesError = useAppSelector(selectJoinedCompaniesError);
+  const joinedCompaniesMeta = useAppSelector(selectJoinedCompaniesMeta);
+
+  const ownedPagination = usePagination({ limit: 4 });
+  const joinedPagination = usePagination({ limit: 4 });
+
+  useEffect(() => {
+    dispatch(
+      fetchOwnedCompanies({
+        limit: ownedPagination.limit,
+        offset: ownedPagination.offset,
+      })
+    );
+  }, [dispatch, ownedPagination.limit, ownedPagination.offset]);
+
+  useEffect(() => {
+    dispatch(
+      fetchJoinedCompanies({
+        limit: joinedPagination.limit,
+        offset: joinedPagination.offset,
+      })
+    );
+  }, [dispatch, joinedPagination.limit, joinedPagination.offset]);
 
   return (
     <>
@@ -50,6 +72,11 @@ const UserProfile = () => {
                 Owned companies
               </Typography>
               <CompaniesList companies={ownedCompanies} isLoading={ownedCompaniesLoading} error={ownedCompaniesError} />
+              <LoadMoreButton
+                hasMore={ownedCompaniesMeta?.has_next}
+                isLoading={ownedCompaniesLoading}
+                onClick={ownedPagination.loadMore}
+              />
             </>
           ) : null}
           {joinedCompanies.length ? (
@@ -61,6 +88,11 @@ const UserProfile = () => {
                 companies={joinedCompanies}
                 isLoading={joinedCompaniesLoading}
                 error={joinedCompaniesError}
+              />
+              <LoadMoreButton
+                hasMore={joinedCompaniesMeta?.has_next}
+                isLoading={joinedCompaniesLoading}
+                onClick={joinedPagination.loadMore}
               />
             </>
           ) : null}

@@ -67,9 +67,14 @@ const companiesSlice = createSlice({
         state.lists.all.isLoading = true;
         state.lists.all.error = null;
       })
-      .addCase(fetchAllCompanies.fulfilled, (state, { payload }) => {
+      .addCase(fetchAllCompanies.fulfilled, (state, { payload, meta }) => {
+        const offset = meta.arg.offset;
+        if (offset === 0) {
+          state.lists.all.data = payload.items;
+        } else {
+          state.lists.all.data = [...state.lists.all.data, ...payload.items];
+        }
         state.lists.all.isLoading = false;
-        state.lists.all.data = payload.items;
         state.lists.all.meta = payload.meta;
       })
       .addCase(fetchAllCompanies.rejected, (state, { payload }) => {

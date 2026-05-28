@@ -1,4 +1,5 @@
 import { Box, Container, Typography, Grid, Card, CardContent, Stack, Avatar, Button } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 
 import GroupsIcon from '@mui/icons-material/Groups';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -44,7 +45,7 @@ const About = () => {
               interactive assessments and progress tracking.
             </Typography>
 
-            <Button variant="contained" sx={{ mt: 3 }}>
+            <Button variant="contained" sx={{ mt: 3 }} component={RouterLink} to="/companies">
               Get started
             </Button>
           </Box>
