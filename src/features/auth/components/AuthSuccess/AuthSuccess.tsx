@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { setTokens } from '../../store/authSlice';
-import { fetchUserProfile } from '../../../users/store/usersThunks';
-import { tokenService } from '../../../../api/tokenService';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../../store/store';
+import { setTokens } from '@/features/auth/store/authSlice';
+import { fetchUserProfile } from '@/features/users/store/usersThunks';
+import { tokenService } from '@/api/tokenService';
+import { useAppDispatch } from '@/store/hooks';
 
 const AuthSuccess = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 

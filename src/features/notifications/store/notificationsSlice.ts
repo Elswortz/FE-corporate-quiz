@@ -1,9 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
+import type { AlertColor } from '@mui/material';
 
-const initialState = {
+type NotificationState = {
+  open: boolean;
+  message: string;
+  severity: AlertColor;
+};
+
+const initialState: NotificationState = {
   open: false,
   message: '',
-  severity: 'info', // 'success' | 'error' | 'warning' | 'info'
+  severity: 'info',
 };
 
 const notificationSlice = createSlice({

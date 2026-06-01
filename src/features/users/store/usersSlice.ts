@@ -1,32 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit';
 import usersState from './usersState';
 import { fetchUsers, fetchUserById, fetchUserProfile, updateUser, updateUserAvatar, removeUser } from './usersThunks';
-import {
-  fetchMyInvitations,
-  acceptInvitation,
-  rejectInvitation,
-  cancelInvitation,
-  requestMembership,
-} from './usersActionsThunks';
 import { logOut } from '../../auth/store/authSlice';
+import { UsersState } from '../types/usersStateTypes';
 
-const resetUserProfile = state => {
+const resetUserProfile = (state: UsersState) => {
   state.profile.data = null;
   state.profile.isLoading = false;
   state.profile.error = null;
-  state.profile.invitations.data = [];
-  state.profile.invitations.isLoading = false;
-  state.profile.invitations.error = null;
-  state.profile.invitations.operations.accept.isLoading = false;
-  state.profile.invitations.operations.accept.error = null;
-  state.profile.invitations.operations.cancel.isLoading = false;
-  state.profile.invitations.operations.cancel.error = null;
-  state.profile.operations.update.isLoading = false;
-  state.profile.operations.update.error = null;
-  state.profile.operations.updateAvatar.isLoading = false;
-  state.profile.operations.updateAvatar.error = null;
-  state.profile.operations.remove.isLoading = false;
-  state.profile.operations.remove.error = null;
+  state.mutations.update.isLoading = false;
+  state.mutations.update.error = null;
+  state.mutations.updateAvatar.isLoading = false;
+  state.mutations.updateAvatar.error = null;
+  state.mutations.remove.isLoading = false;
+  state.mutations.remove.error = null;
 };
 
 const usersSlice = createSlice({
@@ -38,17 +25,16 @@ const usersSlice = createSlice({
   extraReducers: builder =>
     builder
       .addCase(fetchUsers.pending, state => {
-        state.all.isLoading = true;
-        state.all.error = null;
+        state.list.isLoading = true;
+        state.list.error = null;
       })
       .addCase(fetchUsers.fulfilled, (state, { payload }) => {
-        state.all.isLoading = false;
-        state.all.data = payload.items;
-        state.all.meta = payload.meta;
+        state.list.isLoading = false;
+        state.list.data = payload;
       })
       .addCase(fetchUsers.rejected, (state, { payload }) => {
-        state.all.isLoading = false;
-        state.all.error = payload;
+        state.list.isLoading = false;
+        state.list.error = payload ?? null;
       })
       .addCase(fetchUserById.pending, state => {
         state.selected.isLoading = true;
@@ -60,114 +46,54 @@ const usersSlice = createSlice({
       })
       .addCase(fetchUserById.rejected, (state, { payload }) => {
         state.selected.isLoading = false;
-        state.selected.error = payload;
+        state.selected.error = payload ?? null;
       })
       .addCase(fetchUserProfile.pending, state => {
         state.profile.isLoading = true;
-        state.profile.error = false;
+        state.profile.error = null;
       })
-      .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.profile.data = action.payload;
+      .addCase(fetchUserProfile.fulfilled, (state, { payload }) => {
+        state.profile.data = payload;
         state.profile.isLoading = false;
       })
-      .addCase(fetchUserProfile.rejected, (state, action) => {
-        state.profile.error = action.payload;
+      .addCase(fetchUserProfile.rejected, (state, { payload }) => {
+        state.profile.error = payload ?? null;
         state.profile.isLoading = false;
       })
       .addCase(updateUser.pending, state => {
-        state.profile.operations.update.isLoading = true;
-        state.profile.operations.update.error = null;
+        state.mutations.update.isLoading = true;
+        state.mutations.update.error = null;
       })
-      .addCase(updateUser.fulfilled, (state, action) => {
-        state.profile.data = action.payload;
-        state.profile.operations.update.isLoading = false;
+      .addCase(updateUser.fulfilled, (state, { payload }) => {
+        state.profile.data = payload;
+        state.mutations.update.isLoading = false;
       })
-      .addCase(updateUser.rejected, (state, action) => {
-        state.profile.operations.update.error = action.payload;
-        state.profile.operations.update.isLoading = false;
+      .addCase(updateUser.rejected, (state, { payload }) => {
+        state.mutations.update.error = payload ?? null;
+        state.mutations.update.isLoading = false;
       })
       .addCase(removeUser.pending, state => {
-        state.profile.operations.remove.isLoading = true;
-        state.profile.operations.remove.error = null;
+        state.mutations.remove.isLoading = true;
+        state.mutations.remove.error = null;
       })
       .addCase(removeUser.fulfilled, resetUserProfile)
-      .addCase(removeUser.rejected, (state, action) => {
-        state.profile.operations.remove.isLoading = false;
-        state.profile.operations.remove.error = action.payload;
+      .addCase(removeUser.rejected, (state, { payload }) => {
+        state.mutations.remove.isLoading = false;
+        state.mutations.remove.error = payload ?? null;
       })
       .addCase(updateUserAvatar.pending, state => {
-        state.profile.operations.updateAvatar.isLoading = true;
-        state.profile.operations.updateAvatar.error = null;
+        state.mutations.updateAvatar.isLoading = true;
+        state.mutations.updateAvatar.error = null;
       })
-      .addCase(updateUserAvatar.fulfilled, (state, action) => {
-        state.profile.data = action.payload;
-        state.profile.operations.updateAvatar.isLoading = false;
+      .addCase(updateUserAvatar.fulfilled, (state, { payload }) => {
+        state.profile.data = payload;
+        state.mutations.updateAvatar.isLoading = false;
       })
-      .addCase(updateUserAvatar.rejected, (state, action) => {
-        state.profile.operations.updateAvatar.isLoading = false;
-        state.profile.operations.updateAvatar.error = action.payload;
+      .addCase(updateUserAvatar.rejected, (state, { payload }) => {
+        state.mutations.updateAvatar.isLoading = false;
+        state.mutations.updateAvatar.error = payload ?? null;
       })
-      .addCase(logOut, resetUserProfile)
-      .addCase(fetchMyInvitations.pending, state => {
-        state.profile.invitations.isLoading = true;
-        state.profile.invitations.error = null;
-      })
-      .addCase(fetchMyInvitations.fulfilled, (state, { payload }) => {
-        state.profile.invitations.isLoading = false;
-        state.profile.invitations.data = payload.filter(i => i.status === 'pending');
-      })
-      .addCase(fetchMyInvitations.rejected, (state, { payload }) => {
-        state.profile.invitations.isLoading = false;
-        state.profile.invitations.error = payload;
-      })
-      .addCase(acceptInvitation.pending, state => {
-        state.profile.invitations.operations.accept.isLoading = true;
-        state.profile.invitations.operations.accept.error = null;
-      })
-      .addCase(acceptInvitation.fulfilled, (state, { payload }) => {
-        state.profile.invitations.operations.accept.isLoading = false;
-        state.profile.invitations.data = state.profile.invitations.data.filter(i => i.id !== payload.invitationId);
-      })
-      .addCase(acceptInvitation.rejected, (state, { payload }) => {
-        state.profile.invitations.operations.accept.isLoading = false;
-        state.profile.invitations.operations.accept.error = payload;
-      })
-      .addCase(rejectInvitation.pending, state => {
-        state.profile.invitations.operations.reject.isLoading = true;
-        state.profile.invitations.operations.reject.error = null;
-      })
-      .addCase(rejectInvitation.fulfilled, (state, { payload }) => {
-        state.profile.invitations.operations.reject.isLoading = false;
-        state.profile.invitations.data = state.profile.invitations.data.filter(i => i.id !== payload.invitationId);
-      })
-      .addCase(rejectInvitation.rejected, (state, { payload }) => {
-        state.profile.invitations.operations.reject.isLoading = false;
-        state.profile.invitations.operations.reject.error = payload;
-      })
-      .addCase(requestMembership.pending, state => {
-        state.profile.invitations.operations.request.isLoading = true;
-        state.profile.invitations.operations.request.error = null;
-      })
-      .addCase(requestMembership.fulfilled, (state, { payload }) => {
-        state.profile.invitations.operations.request.isLoading = false;
-        state.profile.invitations.data.push(payload);
-      })
-      .addCase(requestMembership.rejected, (state, { payload }) => {
-        state.profile.invitations.operations.request.isLoading = false;
-        state.profile.invitations.operations.request.error = payload;
-      })
-      .addCase(cancelInvitation.pending, state => {
-        state.profile.invitations.operations.cancel.isLoading = true;
-        state.profile.invitations.operations.cancel.error = null;
-      })
-      .addCase(cancelInvitation.fulfilled, (state, { payload }) => {
-        state.profile.invitations.operations.cancel.isLoading = false;
-        state.profile.invitations.data = state.profile.invitations.data.filter(i => i.id !== payload);
-      })
-      .addCase(cancelInvitation.rejected, (state, { payload }) => {
-        state.profile.invitations.operations.cancel.isLoading = false;
-        state.profile.invitations.operations.cancel.error = payload;
-      }),
+      .addCase(logOut, resetUserProfile),
 });
 
 export const { resetProfile } = usersSlice.actions;

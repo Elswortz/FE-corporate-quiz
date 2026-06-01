@@ -1,5 +1,3 @@
-import { api } from './apiClient';
-
 type Tokens = { accessToken: string; refreshToken: string };
 
 const ACCESS_TOKEN_KEY = 'accessToken';
@@ -12,12 +10,10 @@ export const tokenService = {
   setTokens: ({ accessToken, refreshToken }: Tokens) => {
     localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-    api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
   },
 
   clearTokens: () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
-    delete api.defaults.headers.common.Authorization;
   },
 };

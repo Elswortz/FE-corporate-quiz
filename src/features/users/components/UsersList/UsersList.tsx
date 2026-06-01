@@ -1,31 +1,24 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from '../../store/usersThunks';
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
 import { NavLink, useLocation } from 'react-router-dom';
 
 import UsersItem from '../UsersItem/UsersItem';
-import Pagination from '../../../../components/ui/Pagination/Pagination';
+import Pagination from '../../../../components/ui/LoadMoreButton/LoadMoreButton';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectUsersList, selectUsersListLoading } from '../../store/usersSelectors';
 
 const UsersList = () => {
-  const dispatch = useDispatch();
-  const { data: users, isLoading, meta } = useSelector(state => state.users.all);
-  const { limit, offset, total } = meta;
-
-  const currentPage = Math.floor(offset / limit) + 1;
-  const totalPages = Math.ceil(total / limit);
+  const dispatch = useAppDispatch();
+  const users = useAppSelector(selectUsersList);
+  const isLoading = useAppSelector(selectUsersListLoading);
   const location = useLocation();
 
   useEffect(() => {
     if (!users.length) {
-      dispatch(fetchUsers({ limit, offset: 0 }));
+      dispatch(fetchUsers({ limit: 10, offset: 0 }));
     }
-  }, [dispatch, limit, users.length]);
-
-  const handlePageChange = newPage => {
-    const newOffset = (newPage - 1) * limit;
-    dispatch(fetchAction({ limit, offset: newOffset }));
-  };
+  }, [dispatch, users.length]);
 
   return (
     <Box sx={{ p: 3 }}>
@@ -51,7 +44,7 @@ const UsersList = () => {
           ) : (
             <Grid container spacing={2}>
               {users.map(user => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={user.id}>
+                <Grid sx={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={user.id}>
                   <NavLink to={user.id.toString()} state={{ from: location }}>
                     <UsersItem user={user} />
                   </NavLink>
@@ -62,7 +55,7 @@ const UsersList = () => {
 
           {users.length > 0 && (
             <Box sx={{ mt: 3 }}>
-              <Pagination page={currentPage} total={totalPages} limit={limit} onPageChange={handlePageChange} />
+              {/* <Pagination page={currentPage} total={totalPages} limit={limit} onPageChange={handlePageChange} /> */}
             </Box>
           )}
         </>

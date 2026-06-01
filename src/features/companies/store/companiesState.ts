@@ -1,48 +1,41 @@
-const companiesState = {
-  all: {
-    data: [],
-    meta: { total: 0, limit: 10, offset: 0, has_next: false, has_previous: false },
-    isLoading: false,
-    error: null,
+import { AsyncState, OperationState, PaginatedAsyncState } from '@/types/globalTypes';
+import { CompaniesState } from '../types/companiesStateTypes';
+import { Company, CompanyDetails } from '../types/companiesTypes';
+
+const initialAsyncState = <T>(data: T): AsyncState<T> => ({
+  data,
+  isLoading: false,
+  error: null,
+});
+
+const initialPaginatedAsyncState = <T>(data: T): PaginatedAsyncState<T> => ({
+  data,
+  isLoading: false,
+  error: null,
+  meta: null,
+});
+
+const initialOperationState: OperationState = {
+  isLoading: false,
+  error: null,
+};
+
+const companiesState: CompaniesState = {
+  lists: {
+    all: initialPaginatedAsyncState<Company[]>([]),
+    joined: initialPaginatedAsyncState<Company[]>([]),
+    owned: initialPaginatedAsyncState<Company[]>([]),
   },
-  owned: {
-    data: [],
-    meta: { total: 0, limit: 10, offset: 0, has_next: false, has_previous: false },
-    isLoading: false,
-    error: null,
+  selected: initialAsyncState<CompanyDetails | null>(null),
+  mutations: {
+    create: initialOperationState,
+    update: initialOperationState,
+    delete: initialOperationState,
+    changeStatus: initialOperationState,
+    changeLogo: initialOperationState,
+    removeMember: initialOperationState,
+    leave: initialOperationState,
   },
-  joined: {
-    data: [],
-    meta: { total: 0, limit: 10, offset: 0, has_next: false, has_previous: false },
-    isLoading: false,
-    error: null,
-  },
-  selected: {
-    data: null,
-    isLoading: false,
-    error: null,
-    invitations: {
-      data: [],
-      isLoading: false,
-      error: null,
-      operations: {
-        invite: { isLoading: false, error: null },
-        accept: { isLoading: false, error: null },
-        reject: { isLoading: false, error: null },
-        cancel: { isLoading: false, error: null },
-      },
-    },
-  },
-  operations: {
-    create: { isLoading: false, error: null },
-    update: { isLoading: false, error: null },
-    delete: { isLoading: false, error: null },
-    changeStatus: { isLoading: false, error: null },
-    changeLogo: { isLoading: false, error: null },
-    removeMember: { isLoading: false, error: null },
-    leave: { isLoading: false, error: null },
-  },
-  isGlobalLoading: false,
 };
 
 export default companiesState;

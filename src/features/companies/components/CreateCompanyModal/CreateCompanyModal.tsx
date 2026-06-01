@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import * as Yup from 'yup';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import {
   Dialog,
   DialogTitle,
@@ -13,22 +16,20 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  FormHelperText,
 } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+
 import { createCompany } from '../../store/companiesThunks';
+import { createCompanySchema, CreateCompanyFormData } from '../../schemas/companiesSchemas';
+import { selectCreateCompanyLoading } from '../../store/companiesSelectors';
+import { showNotification } from '@/features/notifications/store/notificationsSlice';
 
-const schema = Yup.object().shape({
-  company_name: Yup.string().required('Введите название компании'),
-  company_address: Yup.string().nullable(),
-  company_email: Yup.string().email('Некорректный e-mail').nullable(),
-  company_phone: Yup.string().nullable(),
-  company_website: Yup.string().url('Некорректный URL').nullable(),
-  company_logo_url: Yup.string().url('Некорректный URL').nullable(),
-  company_description: Yup.string().nullable(),
-  company_status: Yup.string().oneOf(['visible', 'hidden']).required(),
-});
+type Props = {
+  open: boolean;
+  onClose?: () => void;
+};
 
-const emptyForm = {
+const defaultValues: CreateCompanyFormData = {
   company_name: '',
   company_address: '',
   company_email: '',
@@ -39,144 +40,139 @@ const emptyForm = {
   company_status: 'visible',
 };
 
-const CreateCompanyModal = ({ open, onClose }) => {
-  const { isLoading } = useSelector(state => state.companies.operations.create);
-  const dispatch = useDispatch();
-  const [form, setForm] = useState(emptyForm);
-  const [errors, setErrors] = useState({});
+const CreateCompanyModal = ({ open, onClose }: Props) => {
+  const dispatch = useAppDispatch();
+  const isLoading = useAppSelector(selectCreateCompanyLoading);
+  const {
+    register,
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CreateCompanyFormData>({
+    resolver: zodResolver(createCompanySchema),
+    defaultValues,
+  });
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(s => ({ ...s, [name]: value }));
-    setErrors(prev => ({ ...prev, [name]: undefined }));
-  };
+  useEffect(() => {
+    if (!open) {
+      reset(defaultValues);
+    }
+  }, [open, reset]);
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const onSubmit = async (data: CreateCompanyFormData) => {
     try {
-      await schema.validate(form, { abortEarly: false });
-      setErrors({});
-
-      dispatch(createCompany(form));
-
-      setForm(emptyForm);
-      if (onClose) onClose();
-    } catch (err) {
-      if (err.name === 'ValidationError' && err.inner) {
-        const newErrors = {};
-        err.inner.forEach(e => {
-          newErrors[e.path] = e.message;
-        });
-        setErrors(newErrors);
-      } else {
-        console.log(err.message);
-      }
+      await dispatch(createCompany(data)).unwrap();
+      reset(defaultValues);
+      onClose?.();
+      dispatch(showNotification({ message: `${data.company_name} company successfuly created`, severity: 'success' }));
+    } catch (err: any) {
+      dispatch(
+        showNotification({ message: err.response?.data?.message || 'Failed to create a company', severity: 'success' })
+      );
     }
   };
 
   const handleClose = () => {
-    setForm(emptyForm);
-    setErrors({});
-    if (onClose) onClose();
+    reset(defaultValues);
+    onClose?.();
   };
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>Create Company</DialogTitle>
-      <Box component="form" onSubmit={handleSubmit}>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <DialogContent
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
           <TextField
             label="Company name"
-            name="company_name"
-            value={form.company_name}
-            onChange={handleChange}
-            required
-            error={!!errors.company_name}
-            helperText={errors.company_name}
             fullWidth
+            {...register('company_name')}
+            error={!!errors.company_name}
+            helperText={errors.company_name?.message}
           />
+
           <TextField
             label="Address"
-            name="company_address"
-            value={form.company_address}
-            onChange={handleChange}
-            error={!!errors.company_address}
-            helperText={errors.company_address}
             fullWidth
+            {...register('company_address')}
+            error={!!errors.company_address}
+            helperText={errors.company_address?.message}
           />
+
           <TextField
             label="Email"
-            name="company_email"
             type="email"
-            value={form.company_email}
-            onChange={handleChange}
-            error={!!errors.company_email}
-            helperText={errors.company_email}
             fullWidth
+            {...register('company_email')}
+            error={!!errors.company_email}
+            helperText={errors.company_email?.message}
           />
+
           <TextField
             label="Phone"
-            name="company_phone"
-            value={form.company_phone}
-            onChange={handleChange}
-            error={!!errors.company_phone}
-            helperText={errors.company_phone}
             fullWidth
+            {...register('company_phone')}
+            error={!!errors.company_phone}
+            helperText={errors.company_phone?.message}
           />
+
           <TextField
             label="Website"
-            name="company_website"
-            value={form.company_website}
-            onChange={handleChange}
-            error={!!errors.company_website}
-            helperText={errors.company_website}
             fullWidth
+            {...register('company_website')}
+            error={!!errors.company_website}
+            helperText={errors.company_website?.message}
           />
+
           <TextField
             label="Logo URL"
-            name="company_logo_url"
-            value={form.company_logo_url}
-            onChange={handleChange}
-            error={!!errors.company_logo_url}
-            helperText={errors.company_logo_url}
             fullWidth
+            {...register('company_logo_url')}
+            error={!!errors.company_logo_url}
+            helperText={errors.company_logo_url?.message}
           />
+
           <TextField
             label="Description"
-            name="company_description"
-            value={form.company_description}
-            onChange={handleChange}
-            error={!!errors.company_description}
-            helperText={errors.company_description}
             fullWidth
             multiline
             minRows={3}
+            {...register('company_description')}
+            error={!!errors.company_description}
+            helperText={errors.company_description?.message}
           />
 
           <FormControl fullWidth error={!!errors.company_status}>
-            <InputLabel id="company-status-label">Status</InputLabel>
-            <Select
-              labelId="company-status-label"
-              id="company-status"
+            <InputLabel>Status</InputLabel>
+
+            <Controller
               name="company_status"
-              value={form.company_status}
-              label="Status"
-              onChange={handleChange}
-            >
-              <MenuItem value="visible">Visible</MenuItem>
-              <MenuItem value="hidden">Hidden</MenuItem>
-            </Select>
-            {errors.company_status && (
-              <Box component="span" sx={{ color: 'error.main', fontSize: '0.75rem', mt: 0.5 }}>
-                {errors.company_status}
-              </Box>
-            )}
+              control={control}
+              render={({ field }) => (
+                <Select {...field} label="Status">
+                  <MenuItem value="visible">Visible</MenuItem>
+
+                  <MenuItem value="hidden">Hidden</MenuItem>
+                </Select>
+              )}
+            />
+
+            <FormHelperText>{errors.company_status?.message}</FormHelperText>
           </FormControl>
         </DialogContent>
+
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={handleClose} disabled={isLoading}>
             Cancel
           </Button>
+
           <Button type="submit" variant="contained" disabled={isLoading}>
             {isLoading ? <CircularProgress size={20} /> : 'Create'}
           </Button>

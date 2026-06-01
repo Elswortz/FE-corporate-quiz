@@ -1,46 +1,37 @@
-import { useState, ChangeEvent, SubmitEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { useAppDispatch } from '@/store/hooks';
 import { useTranslation } from 'react-i18next';
 import { logIn } from '../../store/authThunks';
-import { loginSchema } from '../../../../utils/schemas';
 import { showNotification } from '../../../notifications/store/notificationsSlice';
 import { Box, TextField, Button, Typography, Link } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginFormData, loginSchema } from '../../schemas/authSchemas';
 
 import AlterLogin from '../AlterLogin/AlterLogin';
 import ForgotPassModal from '../ForgotPassModal/ForgotPassModal';
 
-type FormState = {
-  email: string;
-  password: string;
-};
-
-type FormErrors = Partial<Record<keyof FormState, string>>;
-
 const LoginForm = () => {
-  const [form, setForm] = useState<FormState>({
-    email: '',
-    password: '',
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [forgotOpen, setForgotOpen] = useState<boolean>(false);
-
-  const dispatch = useDispatch();
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const dispatch = useAppDispatch();
   const { t } = useTranslation('auth');
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: undefined });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
 
-  const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      await loginSchema.validate(form, { abortEarly: false });
-
-      setErrors({});
-
-      await dispatch(logIn(form)).unwrap();
+      await dispatch(logIn(data)).unwrap();
 
       dispatch(
         showNotification({
@@ -48,35 +39,13 @@ const LoginForm = () => {
           severity: 'success',
         })
       );
-    } catch (err: unknown) {
-      if (
-        typeof err === 'object' &&
-        err !== null &&
-        'name' in err &&
-        err.name === 'ValidationError' &&
-        'inner' in err
-      ) {
-        const validationError = err as {
-          inner: Array<{ path?: string; message: string }>;
-        };
-
-        const newErrors: FormErrors = {};
-
-        validationError.inner.forEach(e => {
-          if (e.path) {
-            newErrors[e.path as keyof FormState] = e.message;
-          }
-        });
-
-        setErrors(newErrors);
-      } else {
-        dispatch(
-          showNotification({
-            message: String(err),
-            severity: 'error',
-          })
-        );
-      }
+    } catch (error: any) {
+      dispatch(
+        showNotification({
+          message: error,
+          severity: 'error',
+        })
+      );
     }
   };
 
@@ -84,7 +53,7 @@ const LoginForm = () => {
     <>
       <Box
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         sx={{
           maxWidth: 400,
           width: '100%',
@@ -98,37 +67,39 @@ const LoginForm = () => {
         <Typography variant="h5" align="center" gutterBottom>
           {t('text.loginTitle')}
         </Typography>
+
         <TextField
           label={t('formFields.email')}
-          name="email"
           type="email"
-          value={form.email}
-          onChange={handleChange}
-          required
           error={!!errors.email}
-          helperText={errors.email}
+          helperText={errors.email?.message}
+          {...register('email')}
         />
+
         <TextField
           label={t('formFields.password')}
-          name="password"
           type="password"
-          value={form.password}
-          onChange={handleChange}
-          required
           error={!!errors.password}
-          helperText={errors.password}
+          helperText={errors.password?.message}
+          {...register('password')}
         />
-        <Button type="submit" variant="contained" color="primary">
+
+        <Button type="submit" variant="contained" color="primary" loading={isSubmitting}>
           {t('buttons.loginBtn')}
         </Button>
+
         <Link
           component="button"
           variant="body2"
-          sx={{ textAlign: 'center', mt: 1 }}
+          sx={{
+            textAlign: 'center',
+            mt: 1,
+          }}
           onClick={() => setForgotOpen(true)}
         >
           Forgot your password? Reset password
         </Link>
+
         <AlterLogin />
       </Box>
 

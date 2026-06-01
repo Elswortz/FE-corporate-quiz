@@ -1,28 +1,21 @@
 import * as authAPI from '../api/authApi.js';
 import { jwtDecode } from 'jwt-decode';
 import { fetchUserProfile } from '../../users/store/usersThunks.js';
-import { logOut, setTokens } from './authSlice.js';
+import { setTokens } from './authSlice.js';
 import { tokenService } from '../../../api/tokenService.js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState, AppDispatch } from '../../../store/store.js';
+import { LoginGto, JwtPayload } from '../types/authTypes.js';
+import axios from 'axios';
 
-type LoginCredentials = {
-  email: string;
-  password: string;
-};
-
-type AuthError = string;
-
-type JwtPayload = {
-  exp: number;
-};
+type RejectValue = string;
 
 export const logIn = createAsyncThunk<
   void,
-  LoginCredentials,
+  LoginGto,
   {
     dispatch: AppDispatch;
-    rejectValue: AuthError;
+    rejectValue: RejectValue;
   }
 >('auth/login', async (credentials, { dispatch, rejectWithValue }) => {
   try {
@@ -35,8 +28,10 @@ export const logIn = createAsyncThunk<
 
     await dispatch(fetchUserProfile());
   } catch (err: unknown) {
-    const message = (err as any)?.response?.data?.message || 'Login failed';
-
+    let message = 'Login failed';
+    if (axios.isAxiosError(err)) {
+      message = err.response?.data?.message ?? message;
+    }
     return rejectWithValue(message);
   }
 });
@@ -47,7 +42,7 @@ export const checkAuth = createAsyncThunk<
   {
     state: RootState;
     dispatch: AppDispatch;
-    rejectValue: AuthError;
+    rejectValue: RejectValue;
   }
 >('auth/checkAuth', async (_, { dispatch, rejectWithValue, getState }) => {
   try {
@@ -55,7 +50,6 @@ export const checkAuth = createAsyncThunk<
     const { accessToken: currentAccessToken, refreshToken: currentRefreshToken } = state.auth;
 
     if (!currentRefreshToken) {
-      dispatch(logOut());
       return rejectWithValue('No refresh token available');
     }
 
@@ -81,9 +75,11 @@ export const checkAuth = createAsyncThunk<
 
     await dispatch(fetchUserProfile());
   } catch (err: unknown) {
-    dispatch(logOut());
+    let message = 'Session expired. Please login again.';
 
-    const message = (err as any)?.response?.data?.message || 'Session expired. Please login again.';
+    if (axios.isAxiosError(err)) {
+      message = err.response?.data?.message ?? message;
+    }
 
     return rejectWithValue(message);
   }

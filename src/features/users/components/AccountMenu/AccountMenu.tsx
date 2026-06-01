@@ -1,20 +1,24 @@
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Menu, MenuItem, IconButton, Typography, Box, Divider } from '@mui/material';
+import { Avatar, Menu, MenuItem, Button, Typography, Box, Divider } from '@mui/material';
 import { logOut } from '../../../auth/store/authSlice';
-import { selectProfileData } from '../../store/usersSelectors';
+import { selectUserProfileData } from '../../store/usersSelectors';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
-const AccountMenu = () => {
-  const dispatch = useDispatch();
+type AccountMenuProps = {
+  isMobile?: boolean;
+};
+
+const AccountMenu = ({ isMobile = false }: AccountMenuProps) => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const user = useSelector(selectProfileData);
+  const user = useAppSelector(selectUserProfileData);
 
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleMenuOpen = event => {
+  const handleMenuOpen = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -30,19 +34,45 @@ const AccountMenu = () => {
   const handleLogout = () => {
     handleMenuClose();
     dispatch(logOut());
+    navigate(`/`);
   };
 
   return (
     <Box display="flex" alignItems="center">
-      <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 2 }}>
-        <Avatar sx={{ bgcolor: 'secondary.main', width: 36, height: 36 }} src={user?.avatar_url || undefined}>
+      <Button
+        onClick={handleMenuOpen}
+        sx={{
+          textTransform: 'none',
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+          borderRadius: 2,
+          px: 1,
+          transition: 'background-color 0.2s ease',
+
+          '&:hover': {
+            backgroundColor: 'action.hover',
+          },
+        }}
+      >
+        <Avatar
+          sx={{
+            bgcolor: 'secondary.main',
+            width: 36,
+            height: 36,
+          }}
+          src={user?.avatar_url || undefined}
+        >
           {user?.first_name?.[0] || '?'}
         </Avatar>
-      </IconButton>
 
-      <Typography variant="body1" sx={{ ml: 1, color: 'white' }}>
-        {user ? `${user.first_name || ''} ${user.last_name || ''}` : 'Loading...'}
-      </Typography>
+        {!isMobile && (
+          <Typography variant="body1">
+            {user ? `${user.first_name || ''} ${user.last_name || ''}` : 'Loading...'}
+          </Typography>
+        )}
+      </Button>
 
       <Menu
         anchorEl={anchorEl}

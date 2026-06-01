@@ -1,9 +1,8 @@
 import { Box, Avatar, Typography, TextField, Button, CircularProgress, Stack } from '@mui/material';
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { updateUser, updateUserAvatar, removeUser } from '../../store/usersThunks';
 import {
-  selectProfileData,
+  selectUserProfileData,
   selectUpdateUserLoading,
   selectUpdateUserAvatarLoading,
   selectRemoveUserLoading,
@@ -14,14 +13,17 @@ import PersonIcon from '@mui/icons-material/Person';
 
 import ChangePassModal from '../../../auth/components/ChangePassModal/ChangePassModal';
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useNavigate } from 'react-router-dom';
 
 const UserInfo = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const user = useSelector(selectProfileData);
-  const editLoading = useSelector(selectUpdateUserLoading);
-  const removeLoading = useSelector(selectRemoveUserLoading);
-  const changeAvatarLoading = useSelector(selectUpdateUserAvatarLoading);
+  const user = useAppSelector(selectUserProfileData);
+  const editLoading = useAppSelector(selectUpdateUserLoading);
+  const removeLoading = useAppSelector(selectRemoveUserLoading);
+  const changeAvatarLoading = useAppSelector(selectUpdateUserAvatarLoading);
 
   const [firstName, setFirstName] = useState(user?.first_name || '');
   const [lastName, setLastName] = useState(user?.last_name || '');
@@ -50,10 +52,9 @@ const UserInfo = () => {
     }
   };
 
-  const handleAvatarChange = async e => {
-    const file = e.target.files[0];
+  const handleAvatarChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append('avatar_file', file);
 
@@ -75,6 +76,7 @@ const UserInfo = () => {
       await dispatch(removeUser()).unwrap();
       dispatch(showNotification({ message: 'The account has been successfully deleted.', severity: 'info' }));
       setIsConfirmDelOpen(false);
+      navigate('/');
     } catch (error) {
       dispatch(
         showNotification({
@@ -96,12 +98,11 @@ const UserInfo = () => {
   return (
     <Box
       sx={{
-        maxWidth: 1000,
         mx: 'auto',
         mt: 5,
         p: 4,
-        boxShadow: 3,
-        borderRadius: 3,
+        boxShadow: 2,
+        borderRadius: 1,
         backgroundColor: 'background.paper',
       }}
     >

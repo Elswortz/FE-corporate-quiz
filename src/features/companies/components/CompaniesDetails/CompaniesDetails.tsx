@@ -1,6 +1,6 @@
 import { NavLink, useParams, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/store/hooks.js';
+import { ChangeEvent, useEffect, useState, useRef } from 'react';
 import {
   fetchCompanyById,
   deleteCompany,
@@ -9,20 +9,13 @@ import {
   leaveCompany,
 } from '../../store/companiesThunks.js';
 import { clearCurrentCompany } from '../../store/companiesSlice.js';
-import { requestMembership, cancelInvitation, fetchMyInvitations } from '../../../users/store/usersActionsThunks.js';
+import { sendRequest, cancelRequest, fetchUserInvitations } from '@/features/invitations/store/invitationsThunks.js';
 import { useNavigate } from 'react-router-dom';
-import {
-  selectProfileData,
-  selectRequestLoading,
-  selectCancelLoading,
-  selectPendingInvitationIdByCompany,
-} from '../../../users/store/usersSelectors.js';
-import { selectLeaveLoading } from '../../store/companiesSelectors.js';
 import { showNotification } from '../../../notifications/store/notificationsSlice.js';
 
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal.js';
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal.js';
-import getUserRoleInCompany from '../../../../utils/getUserRoleInCompany.js';
+import { getUserRoleInCompany } from '@/utils/companyHelpers.js';
 
 import {
   Box,
@@ -38,6 +31,7 @@ import {
   Button,
   Tabs,
   Tab,
+  Backdrop,
 } from '@mui/material';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -50,23 +44,58 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
+import {
+  selectChangeStatusError,
+  selectChangeStatusLoading,
+  selectDeleteCompanyLoading,
+  selectLeaveCompanyError,
+  selectLeaveCompanyLoading,
+  selectPendingInvitationIdByCompany,
+  selectSelectedCompany,
+  selectSelectedCompanyError,
+} from '../../store/companiesSelectors.js';
+import {
+  selectCancelRequestError,
+  selectCancelRequestLoading,
+  selectSendRequestError,
+  selectSendRequestLoading,
+} from '@/features/invitations/store/invitationsSelectors.js';
+import { selectUserProfileData } from '@/features/users/store/usersSelectors.js';
+
 const CompaniesDetails = () => {
-  const { companyId } = useParams();
-  const dispatch = useDispatch();
+  const params = useParams();
+  const companyId = params.companyId;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  if (!companyId) {
+    return null;
+  }
+
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data, isLoading, error } = useSelector(state => state.companies.selected);
-  const { isLoading: SatusLoading } = useSelector(state => state.companies.operations.changeStatus);
-
-  const pendingInvitationId = useSelector(selectPendingInvitationIdByCompany(companyId));
+  const pendingInvitationId = useAppSelector(selectPendingInvitationIdByCompany(companyId));
   const hasPendingRequest = Boolean(pendingInvitationId);
 
-  const requestLoading = useSelector(selectRequestLoading);
-  const cancelLoading = useSelector(selectCancelLoading);
-  const leaveLoading = useSelector(selectLeaveLoading);
+  const selectedCompany = useAppSelector(selectSelectedCompany);
 
-  const user = useSelector(selectProfileData);
+  const selectedCompanyLoading = useAppSelector(selectDeleteCompanyLoading);
+  const selectedCompanyError = useAppSelector(selectSelectedCompanyError);
+
+  const changeStatusLoading = useAppSelector(selectChangeStatusLoading);
+  // const changeStatusError = useAppSelector(selectChangeStatusError);
+
+  const sendRequestLoading = useAppSelector(selectSendRequestLoading);
+  // const sendRequestError = useAppSelector(selectSendRequestError);
+
+  const cancelRequestLoading = useAppSelector(selectCancelRequestLoading);
+  // const cancelRequestError = useAppSelector(selectCancelRequestError);
+
+  const leaveCompanyLoading = useAppSelector(selectLeaveCompanyLoading);
+  // const leaveCompanyError = useAppSelector(selectLeaveCompanyError);
+
+  const user = useAppSelector(selectUserProfileData);
 
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
   const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false);
@@ -80,29 +109,52 @@ const CompaniesDetails = () => {
 
   const backLinkHref = location.state?.from ?? '/companies';
 
+  useEffect(() => {
+    if (!companyId) return;
+
+    dispatch(fetchCompanyById(companyId));
+    dispatch(fetchUserInvitations());
+
+    return () => {
+      dispatch(clearCurrentCompany());
+    };
+  }, [dispatch, companyId]);
+
+  if (!selectedCompany) {
+    return (
+      <Typography textAlign="center" mt={4}>
+        Company not found
+      </Typography>
+    );
+  }
+
   const handleToggleStatus = async () => {
-    const newStatus = data.company_status === 'hidden' ? 'visible' : 'hidden';
-    await dispatch(changeCompanyStatus({ companyId: data.id, status: newStatus })).unwrap();
-    await dispatch(fetchCompanyById(data.id)).unwrap();
+    const newStatus = selectedCompany.company_status === 'hidden' ? 'visible' : 'hidden';
+    await dispatch(changeCompanyStatus({ companyId: selectedCompany.id, status: newStatus })).unwrap();
+    await dispatch(fetchCompanyById(selectedCompany.id)).unwrap();
   };
 
-  const handleChangeLogo = async e => {
-    const file = e.target.files[0];
+  const handleChangeLogo = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
-
     const formData = new FormData();
     formData.append('logo_file', file);
+    await dispatch(
+      changeCompanyLogo({
+        companyId: selectedCompany.id,
+        formData,
+      })
+    ).unwrap();
 
-    await dispatch(changeCompanyLogo({ companyId: data.id, logoFile: formData })).unwrap();
-    await dispatch(fetchCompanyById(data.id)).unwrap();
+    await dispatch(fetchCompanyById(selectedCompany.id)).unwrap();
   };
 
   const handleRequest = async () => {
     try {
-      await dispatch(requestMembership(companyId)).unwrap();
-      await dispatch(fetchMyInvitations()).unwrap();
+      await dispatch(sendRequest(companyId)).unwrap();
+      await dispatch(fetchUserInvitations()).unwrap();
       dispatch(showNotification({ message: 'Request to join successfully sent', severity: 'success' }));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(
         showNotification({
           message: err.response?.data?.message || 'Failed request to join company',
@@ -115,11 +167,11 @@ const CompaniesDetails = () => {
   const handleCancelRequest = async () => {
     if (!pendingInvitationId) return;
     try {
-      await dispatch(cancelInvitation(pendingInvitationId)).unwrap();
-      await dispatch(fetchMyInvitations()).unwrap();
+      await dispatch(cancelRequest(pendingInvitationId)).unwrap();
+      await dispatch(fetchUserInvitations()).unwrap();
 
       dispatch(showNotification({ message: 'Request successfully canceled', severity: 'info' }));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(
         showNotification({ message: err.response?.data?.message || 'Failed to cancel request', severity: 'error' })
       );
@@ -132,37 +184,31 @@ const CompaniesDetails = () => {
       await dispatch(fetchCompanyById(companyId)).unwrap();
       setIsConfirmLeaveOpen(false);
       dispatch(showNotification({ message: 'You have successfully left the company', severity: 'success' }));
-    } catch (err) {
+    } catch (err: any) {
       dispatch(
         showNotification({ message: err.response?.data?.message || 'Failed to leave the company', severity: 'error' })
       );
     }
   };
 
-  const role = getUserRoleInCompany(data, user?.id);
+  const role = getUserRoleInCompany(selectedCompany, user?.id);
   const isOwner = role === 'owner';
-  // const isAdmin = role === 'admin';
+  const isAdmin = role === 'admin';
   const isMember = role === 'member';
   const isUser = user && role !== 'owner' && role !== 'admin' && role !== 'member';
 
-  useEffect(() => {
-    if (!companyId) return;
-
-    dispatch(fetchCompanyById(companyId));
-    dispatch(fetchMyInvitations());
-
-    return () => {
-      dispatch(clearCurrentCompany());
-    };
-  }, [dispatch, companyId]);
-
   const handleDelete = async () => {
-    await dispatch(deleteCompany(data.id)).unwrap();
-    setIsConfirmDeleteOpen(false);
-    navigate(backLinkHref);
+    try {
+      await dispatch(deleteCompany(selectedCompany.id)).unwrap();
+      setIsConfirmDeleteOpen(false);
+      navigate(backLinkHref);
+      dispatch(showNotification({ message: 'Your company successfully deleted', severity: 'success' }));
+    } catch (err: any) {
+      showNotification({ message: err.response?.data?.message || 'Unable to delete a company', severity: 'error' });
+    }
   };
 
-  if (isLoading) {
+  if (selectedCompanyLoading) {
     return (
       <Box display="flex" justifyContent="center" mt={6}>
         <CircularProgress />
@@ -170,18 +216,10 @@ const CompaniesDetails = () => {
     );
   }
 
-  if (error) {
+  if (selectedCompanyError) {
     return (
       <Typography color="error" textAlign="center" mt={4}>
-        {error}
-      </Typography>
-    );
-  }
-
-  if (!data) {
-    return (
-      <Typography textAlign="center" mt={4}>
-        Company not found
+        {selectedCompanyError}
       </Typography>
     );
   }
@@ -196,10 +234,10 @@ const CompaniesDetails = () => {
     company_logo_url,
     company_description,
     company_status,
-  } = data;
+  } = selectedCompany;
 
   return (
-    <Box sx={{ maxWidth: 1100, mx: 'auto', p: { xs: 2, md: 4 } }}>
+    <Box sx={{ mx: 'auto', p: { xs: 2, md: 4 } }}>
       <Button component={NavLink} to={backLinkHref} startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
         Back
       </Button>
@@ -209,6 +247,7 @@ const CompaniesDetails = () => {
           avatar={
             <Box position="relative" width={80} height={80}>
               <input
+                ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 id="logo-upload"
@@ -225,7 +264,7 @@ const CompaniesDetails = () => {
                   cursor: isOwner ? 'pointer' : 'default',
                 }}
                 onClick={() => {
-                  if (isOwner) document.getElementById('logo-upload').click();
+                  if (isOwner) fileInputRef.current?.click();
                 }}
               >
                 {!company_logo_url &&
@@ -237,7 +276,7 @@ const CompaniesDetails = () => {
               </Avatar>
               {isOwner && (
                 <Box
-                  onClick={() => document.getElementById('logo-upload').click()}
+                  onClick={() => fileInputRef.current?.click()}
                   sx={{
                     position: 'absolute',
                     top: 0,
@@ -287,12 +326,12 @@ const CompaniesDetails = () => {
                 <Box display="flex" gap={1}>
                   <Button
                     onClick={handleToggleStatus}
-                    startIcon={data.company_status === 'hidden' ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                    disabled={SatusLoading}
+                    startIcon={company_status === 'hidden' ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                    disabled={changeStatusLoading}
                     size="small"
                     variant="outlined"
                   >
-                    {data.company_status === 'hidden' ? 'Show' : 'Hide'}
+                    {company_status === 'hidden' ? 'Show' : 'Hide'}
                   </Button>
 
                   <Button onClick={() => setIsEditOpen(true)} startIcon={<EditIcon />} size="small" variant="outlined">
@@ -318,7 +357,7 @@ const CompaniesDetails = () => {
                     size="small"
                     variant="outlined"
                     color="warning"
-                    loading={cancelLoading}
+                    loading={cancelRequestLoading}
                   >
                     Cancel request
                   </Button>
@@ -328,7 +367,7 @@ const CompaniesDetails = () => {
                     size="small"
                     variant="contained"
                     color="primary"
-                    loading={requestLoading}
+                    loading={sendRequestLoading}
                   >
                     Request to join
                   </Button>
@@ -345,7 +384,7 @@ const CompaniesDetails = () => {
 
         <CardContent>
           <Grid container spacing={3} alignItems="flex-start">
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Box display="flex" flexDirection="column" gap={1}>
                 {company_email && (
                   <Box display="flex" alignItems="center" gap={1}>
@@ -384,7 +423,7 @@ const CompaniesDetails = () => {
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={8}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Typography variant="subtitle1" gutterBottom>
                 About
               </Typography>
@@ -401,7 +440,7 @@ const CompaniesDetails = () => {
         <Tabs value={tabValue} textColor="primary" indicatorColor="primary">
           <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
           <Tab label="Quizzes" component={NavLink} to={`${basePath}/quizzes`} />
-          <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />
+          {(isOwner || isAdmin) && <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />}
         </Tabs>
       </Box>
 
@@ -423,9 +462,8 @@ const CompaniesDetails = () => {
         confirmColor={'error'}
         onConfirm={handleLeave}
         onCancel={() => setIsConfirmLeaveOpen(false)}
-        loading={leaveLoading}
+        isLoading={leaveCompanyLoading}
       />
-
       <EditCompanyModal open={isEditOpen} onClose={() => setIsEditOpen(false)} />
     </Box>
   );

@@ -1,17 +1,13 @@
-import { tokenService } from './tokenService';
-import { store } from '../store/store';
-import { logOut } from '../features/auth/store/authSlice';
-import { api } from './apiClient';
+import { tokenService } from '@/api/tokenService';
+import { store } from '@/store/store';
+import { logOut, setTokens } from '@/features/auth/store/authSlice';
+import { api, refreshApi } from '@/api/apiClient';
 import { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { AuthResponse } from '@/features/auth/types/authTypes';
 
 type Tokens = {
   accessToken: string;
   refreshToken: string;
-};
-
-type RefreshResponse = {
-  access_token: string;
-  refresh_token: string;
 };
 
 type FailedRequest = {
@@ -51,7 +47,12 @@ export const setupInterceptors = () => {
     async (error: AxiosError) => {
       const originalRequest = error.config as CustomAxiosRequestConfig;
 
-      if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      if (
+        error.response?.status === 401 &&
+        originalRequest &&
+        !originalRequest._retry &&
+        originalRequest.url !== '/auth/refresh'
+      ) {
         if (isRefreshing) {
           return new Promise<string>((resolve, reject) => {
             failedQueue.push({ resolve, reject });
@@ -70,7 +71,7 @@ export const setupInterceptors = () => {
           const currentRefreshToken = tokenService.getRefreshToken();
           if (!currentRefreshToken) throw new Error('No refresh token');
 
-          const response = await api.post<RefreshResponse>('/auth/refresh', {
+          const response = await refreshApi.post<AuthResponse>('/auth/refresh', {
             refresh_token: currentRefreshToken,
           });
 
@@ -79,6 +80,7 @@ export const setupInterceptors = () => {
           const tokens: Tokens = { accessToken, refreshToken };
 
           tokenService.setTokens(tokens);
+          store.dispatch(setTokens(tokens));
           processQueue(null, accessToken);
 
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;

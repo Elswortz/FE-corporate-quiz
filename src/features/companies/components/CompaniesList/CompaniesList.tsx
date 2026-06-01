@@ -1,75 +1,50 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchCompanies } from '../../store/companiesThunks';
-
 import { Grid, Typography, CircularProgress, Box } from '@mui/material';
-
 import CompaniesItem from '../CompaniesItem/CompaniesItem';
-import Pagination from '../../../../components/ui/Pagination/Pagination';
+import { Company } from '../../types/companiesTypes';
 
-const CompaniesList = ({ type = 'all' }) => {
-  const dispatch = useDispatch();
+interface CompaniesListProps {
+  companies: Company[];
+  isLoading: boolean;
+  error: string | null;
+}
 
-  const selector = state => state.companies[type];
-  const { data, isLoading, meta } = useSelector(selector);
-  const { limit, offset, total } = meta;
+const CompaniesList = ({ companies = [], isLoading, error }: CompaniesListProps) => {
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '50vh',
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
 
-  const currentPage = Math.floor(offset / limit) + 1;
-  const totalPages = Math.ceil(total / limit);
-
-  useEffect(() => {
-    if (!data.length) dispatch(fetchCompanies({ type, limit, offset: 0 }));
-
-    const interval = setInterval(() => {
-      dispatch(fetchCompanies({ type, limit, offset: 0 }));
-    }, 3 * 60 * 1000);
-
-    const handleFocus = () => dispatch(fetchCompanies({ type, limit, offset: 0 }));
-    window.addEventListener('focus', handleFocus);
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, [dispatch, data.length, type, limit]);
-
-  const handlePageChange = newPage => {
-    const newOffset = (newPage - 1) * limit;
-    dispatch(fetchCompanies({ limit, offset: newOffset }));
-  };
+  if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography color="error">{error}</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ p: 3 }}>
-      {isLoading ? (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '50vh',
-          }}
-        >
-          <CircularProgress size={60} />
-        </Box>
+    <Box>
+      {companies.length === 0 ? (
+        <Typography variant="body1">No companies found</Typography>
       ) : (
         <>
-          {data.length === 0 ? (
-            <Typography variant="body1">No companies found.</Typography>
-          ) : (
-            <Grid container spacing={2}>
-              {data.map(company => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={company.id}>
-                  <CompaniesItem company={company} />
-                </Grid>
-              ))}
-            </Grid>
-          )}
-
-          {data.length > 0 && (
-            <Box sx={{ mt: 3 }}>
-              <Pagination page={currentPage} total={totalPages} limit={limit} onPageChange={handlePageChange} />
-            </Box>
-          )}
+          <Grid container spacing={2}>
+            {companies.map(company => (
+              <Grid key={company.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+                <CompaniesItem company={company} />
+              </Grid>
+            ))}
+          </Grid>
         </>
       )}
     </Box>

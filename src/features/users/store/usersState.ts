@@ -1,32 +1,27 @@
-const usersState = {
-  profile: {
-    data: null,
-    isLoading: false,
-    error: null,
-    invitations: {
-      data: [],
-      isLoading: false,
-      error: null,
-      operations: {
-        accept: { isLoading: false, error: null },
-        reject: { isLoading: false, error: null },
-        cancel: { isLoading: false, error: null },
-        request: { isLoading: false, error: null },
-      },
-    },
-    operations: {
-      update: { isLoading: false, error: null },
-      remove: { isLoading: false, error: null },
-      updateAvatar: { isLoading: false, error: null },
-    },
+import { AsyncState, OperationState } from '@/types/globalTypes';
+import { UsersState } from '../types/usersStateTypes';
+import { User } from '../types/userTypes';
+
+const initialAsyncState = <T>(data: T): AsyncState<T> => ({
+  data,
+  isLoading: false,
+  error: null,
+});
+
+const initialOperationState: OperationState = {
+  isLoading: false,
+  error: null,
+};
+
+const usersState: UsersState = {
+  profile: initialAsyncState<User | null>(null),
+  list: initialAsyncState<User[]>([]),
+  selected: initialAsyncState<User | null>(null),
+  mutations: {
+    update: initialOperationState,
+    remove: initialOperationState,
+    updateAvatar: initialOperationState,
   },
-  all: {
-    data: [],
-    isLoading: false,
-    error: null,
-    meta: { total: 0, limit: 10, offset: 0, has_next: false, has_previous: false },
-  },
-  selected: { data: null, isLoading: false, error: null },
 };
 
 export default usersState;

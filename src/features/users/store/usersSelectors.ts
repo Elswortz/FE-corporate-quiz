@@ -1,34 +1,20 @@
-export const selectProfileData = state => state.users.profile.data;
-export const selectProfileLoading = state => state.users.profile.isLoading;
-export const selectProfileError = state => state.users.profile.error;
+import { RootState } from '@/store/store';
 
-export const selectInvitations = state => state.users.profile.invitations.data;
-export const selectInvitationsCount = state => state.users.profile.invitations.data.length;
-export const selectInvitationsLoading = state => state.users.profile.invitations.isLoading;
-export const selectInvitationsError = state => state.users.profile.invitations.error;
+export const selectUserProfileData = (state: RootState) => state.users.profile.data;
+export const selectUserProfileLoading = (state: RootState) => state.users.profile.isLoading;
+export const selectUserProfileError = (state: RootState) => state.users.profile.error;
 
-export const selectAcceptLoading = state => state.users.profile.invitations.operations.accept.isLoading;
-export const selectAcceptError = state => state.users.profile.invitations.operations.accept.error;
-export const selectRejectLoading = state => state.users.profile.invitations.operations.reject.isLoading;
-export const selectRejectError = state => state.users.profile.invitations.operations.reject.error;
-export const selectCancelLoading = state => state.users.profile.invitations.operations.cancel.isLoading;
-export const selectCancelError = state => state.users.profile.invitations.operations.cancel.error;
-export const selectRequestLoading = state => state.users.profile.invitations.operations.request.isLoading;
-export const selectRequestError = state => state.users.profile.invitations.operations.request.error;
+export const selectUsersList = (state: RootState) => state.users.list.data;
+export const selectUsersListLoading = (state: RootState) => state.users.list.isLoading;
+export const selectUsersListError = (state: RootState) => state.users.list.error;
 
-export const selectUpdateUserLoading = state => state.users.profile.operations.update.isLoading;
-export const selectUpdateUserError = state => state.users.profile.operations.update.error;
-export const selectRemoveUserLoading = state => state.users.profile.operations.remove.isLoading;
-export const selectRemoveUserError = state => state.users.profile.operations.remove.error;
-export const selectUpdateUserAvatarLoading = state => state.users.profile.operations.updateAvatar.isLoading;
-export const selectUpdateUserAvatarError = state => state.users.profile.operations.updateAvatar.error;
+export const selectSelectedUser = (state: RootState) => state.users.selected.data;
+export const selectSelectedUserLoading = (state: RootState) => state.users.selected.isLoading;
+export const selectSelectedUserError = (state: RootState) => state.users.selected.error;
 
-export const selectPendingInvitationIdByCompany = companyId => state => {
-  if (!companyId) return null;
-
-  return (
-    state.users.profile.invitations.data.find(invitation => {
-      return invitation.status === 'pending' && String(invitation.company.id) === String(companyId);
-    })?.id ?? null
-  );
-};
+export const selectUpdateUserLoading = (state: RootState) => state.users.mutations.update.isLoading;
+export const selectUpdateUserError = (state: RootState) => state.users.mutations.update.error;
+export const selectRemoveUserLoading = (state: RootState) => state.users.mutations.remove.isLoading;
+export const selectRemoveUserError = (state: RootState) => state.users.mutations.remove.error;
+export const selectUpdateUserAvatarLoading = (state: RootState) => state.users.mutations.updateAvatar.isLoading;
+export const selectUpdateUserAvatarError = (state: RootState) => state.users.mutations.updateAvatar.error;
