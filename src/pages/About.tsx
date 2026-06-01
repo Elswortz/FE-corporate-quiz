@@ -3,7 +3,6 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import GroupsIcon from '@mui/icons-material/Groups';
 import BusinessIcon from '@mui/icons-material/Business';
-
 import SchoolIcon from '@mui/icons-material/School';
 import InsightsIcon from '@mui/icons-material/Insights';
 

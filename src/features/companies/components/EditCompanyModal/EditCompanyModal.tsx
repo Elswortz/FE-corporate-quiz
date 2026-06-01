@@ -79,7 +79,7 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" disableRestoreFocus>
       <DialogTitle>Edit Company</DialogTitle>
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>

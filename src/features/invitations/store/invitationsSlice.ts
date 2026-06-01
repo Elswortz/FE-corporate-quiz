@@ -144,4 +144,3 @@ const invitationsSlice = createSlice({
 });
 
 export const invitationsReducer = invitationsSlice.reducer;
-// export const { clearCurrentCompany } = companiesSlice.actions;

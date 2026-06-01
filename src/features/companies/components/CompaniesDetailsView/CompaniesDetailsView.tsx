@@ -1,5 +1,5 @@
 import { Company, CompanyRole } from '../../types/companiesTypes';
-import { Box, Card } from '@mui/material';
+import { Card } from '@mui/material';
 import CompanyDetailsHeader from '../CompaniesDetailsHeader/CompaniesDetailsHeader';
 import CompanyDetailsInfo from '../CompanyDetailsInfo/CompanyDetailsInfo';
 import CompanyDetailsTabs from '../CompanyDetailsTabs/CompanyDetailsTabs';
@@ -9,6 +9,8 @@ type Props = {
   company: Company;
 
   role: CompanyRole | null;
+
+  isLoggedIn: boolean;
 
   backLinkHref: string;
 
@@ -51,6 +53,7 @@ type Props = {
 const CompanyDetailsView = ({
   company,
   role,
+  isLoggedIn,
   hasPendingRequest,
   loading,
   modalState,
@@ -63,6 +66,7 @@ const CompanyDetailsView = ({
         <CompanyDetailsHeader
           company={company}
           role={role}
+          isLoggedIn={isLoggedIn}
           hasPendingRequest={hasPendingRequest}
           loading={loading}
           modalActions={modalActions}

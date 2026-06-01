@@ -14,7 +14,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { NavLink, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Company } from '../../types/companiesTypes';
 
 type Props = {
@@ -31,6 +31,7 @@ const getInitials = (name = '') =>
 
 const CompaniesItem = ({ company }: Props) => {
   const location = useLocation();
+  const navigate = useNavigate();
   if (!company) return null;
 
   const {
@@ -47,10 +48,13 @@ const CompaniesItem = ({ company }: Props) => {
   return (
     <Card variant="outlined" sx={{ width: '100%', height: '100%' }}>
       <CardActionArea
-        component={NavLink}
-        to={`/companies/${company.id}`}
-        state={{ from: location }}
+        onClick={() =>
+          navigate(`/companies/${company.id}`, {
+            state: { from: location },
+          })
+        }
         sx={{
+          height: '100%',
           alignItems: 'stretch',
         }}
       >

@@ -4,6 +4,7 @@ import { fetchUserProfile } from '../../users/store/usersThunks.js';
 import { setTokens } from './authSlice.js';
 import { tokenService } from '../../../api/tokenService.js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { logOut } from './authSlice.js';
 import type { RootState, AppDispatch } from '../../../store/store.js';
 import { LoginGto, JwtPayload } from '../types/authTypes.js';
 import axios from 'axios';
@@ -55,7 +56,6 @@ export const checkAuth = createAsyncThunk<
 
     if (currentAccessToken) {
       const decoded = jwtDecode<JwtPayload>(currentAccessToken);
-
       const now = Date.now() / 1000;
 
       if (decoded.exp > now + 10) {
@@ -75,6 +75,8 @@ export const checkAuth = createAsyncThunk<
 
     await dispatch(fetchUserProfile());
   } catch (err: unknown) {
+    tokenService.clearTokens();
+
     let message = 'Session expired. Please login again.';
 
     if (axios.isAxiosError(err)) {
@@ -84,3 +86,8 @@ export const checkAuth = createAsyncThunk<
     return rejectWithValue(message);
   }
 });
+
+export const logout = () => (dispatch: AppDispatch) => {
+  tokenService.clearTokens();
+  dispatch(logOut());
+};

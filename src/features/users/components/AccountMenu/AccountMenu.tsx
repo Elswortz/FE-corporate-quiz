@@ -1,7 +1,7 @@
 import { useState, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Menu, MenuItem, Button, Typography, Box, Divider } from '@mui/material';
-import { logOut } from '../../../auth/store/authSlice';
+import { logout } from '@/features/auth/store/authThunks';
 import { selectUserProfileData } from '../../store/usersSelectors';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
@@ -33,7 +33,7 @@ const AccountMenu = ({ isMobile = false }: AccountMenuProps) => {
 
   const handleLogout = () => {
     handleMenuClose();
-    dispatch(logOut());
+    dispatch(logout());
     navigate(`/`);
   };
 
