@@ -11,6 +11,8 @@ type Props = {
 
   role: CompanyRole | null;
 
+  isLoggedIn: boolean;
+
   hasPendingRequest: boolean;
 
   loading: {
@@ -33,7 +35,15 @@ type Props = {
   };
 };
 
-const CompanyDetailsHeader = ({ company, role, hasPendingRequest, loading, modalActions, actions }: Props) => {
+const CompanyDetailsHeader = ({
+  company,
+  role,
+  isLoggedIn,
+  hasPendingRequest,
+  loading,
+  modalActions,
+  actions,
+}: Props) => {
   return (
     <CardHeader
       sx={{
@@ -52,6 +62,7 @@ const CompanyDetailsHeader = ({ company, role, hasPendingRequest, loading, modal
       action={
         <CompanyDetailsActions
           role={role}
+          isLoggedIn={isLoggedIn}
           companyStatus={company.company_status}
           hasPendingRequest={hasPendingRequest}
           loading={loading}

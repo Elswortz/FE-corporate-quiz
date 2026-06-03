@@ -9,17 +9,20 @@ import {
   Divider,
   Button,
   Chip,
+  FormControl,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { useState } from 'react';
 import { showNotification } from '../features/notifications/store/notificationsSlice';
-import { removeCompanyMember } from '../features/companies/store/companiesThunks';
+import { changeMemberRole, removeCompanyMember } from '../features/companies/store/companiesThunks';
 import { getUserRoleInCompany } from '@/utils/companyHelpers';
 import { getRoleColor } from '@/utils/companyHelpers';
 import { selectUserProfileData } from '@/features/users/store/usersSelectors';
 import ConfirmModal from '../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectSelectedCompany } from '@/features/companies/store/companiesSelectors';
-import { Member } from '@/features/companies/types/companiesTypes';
+import { CompanyRole, Member } from '@/features/companies/types/companiesTypes';
 
 const Members = () => {
   const [isConfirmDialogOpen, setisConfirmDialogOpen] = useState(false);
@@ -37,6 +40,25 @@ const Members = () => {
   // const isMember = role === 'member';
 
   if (!selectedCompany) return null;
+
+  const handleChangeRole = async (member: Member, role: CompanyRole) => {
+    try {
+      await dispatch(changeMemberRole({ companyId: selectedCompany.id, userId: member.id, role })).unwrap();
+      dispatch(
+        showNotification({
+          message: `User ${member.first_name} ${member.last_name} role has been changed to ${role}`,
+          severity: 'success',
+        })
+      );
+    } catch (err: any) {
+      dispatch(
+        showNotification({
+          message: err.response?.data?.message || 'Failed to change role',
+          severity: 'error',
+        })
+      );
+    }
+  };
 
   const handleRemove = async (member: Member) => {
     try {
@@ -71,17 +93,38 @@ const Members = () => {
                 <ListItem
                   secondaryAction={
                     isOwner && member.role !== 'owner' ? (
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        size="small"
-                        onClick={() => {
-                          setisConfirmDialogOpen(true);
-                          setSelectedMember(member);
-                        }}
-                      >
-                        Exclude
-                      </Button>
+                      <Box display="flex" gap={1} alignItems="center">
+                        <FormControl
+                          size="small"
+                          sx={{
+                            minWidth: 120,
+                            '& .MuiOutlinedInput-root': {
+                              height: 31,
+                            },
+                          }}
+                        >
+                          <Select
+                            value={member.role}
+                            onChange={e => handleChangeRole(member, e.target.value as CompanyRole)}
+                          >
+                            <MenuItem value="admin">Admin</MenuItem>
+                            <MenuItem value="member">Member</MenuItem>
+                          </Select>
+                        </FormControl>
+
+                        <Button
+                          sx={{ height: 31 }}
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          onClick={() => {
+                            setisConfirmDialogOpen(true);
+                            setSelectedMember(member);
+                          }}
+                        >
+                          Exclude
+                        </Button>
+                      </Box>
                     ) : null
                   }
                 >

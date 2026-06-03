@@ -11,6 +11,8 @@ import {
   ChangeCompanyStatusDto,
   ChangeCompanyLogoDto,
   RemoveCompanyMemberDto,
+  ChangeCompanyMemberRoleDto,
+  Member,
 } from '../types/companiesTypes';
 
 import { UserId } from '../../users/types/userTypes';
@@ -135,6 +137,18 @@ export const removeCompanyMember = createAsyncThunk<UserId, RemoveCompanyMemberD
     try {
       await companiesAPI.removeCompanyMember({ companyId, userId });
       return userId;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to remove member');
+    }
+  }
+);
+
+export const changeMemberRole = createAsyncThunk<Member, ChangeCompanyMemberRoleDto, { rejectValue: RejectValue }>(
+  'companies/changeMemberRole',
+  async ({ companyId, userId, role }, { rejectWithValue }) => {
+    try {
+      const res = await companiesAPI.changeCompanyMemberRole({ companyId, userId, role });
+      return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to remove member');
     }

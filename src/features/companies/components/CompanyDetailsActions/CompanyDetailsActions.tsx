@@ -8,6 +8,8 @@ import { CompanyStatus, CompanyRole } from '../../types/companiesTypes';
 type Props = {
   role: CompanyRole | null;
 
+  isLoggedIn: boolean;
+
   companyStatus: CompanyStatus;
 
   hasPendingRequest: boolean;
@@ -31,8 +33,16 @@ type Props = {
   };
 };
 
-const CompanyDetailsActions = ({ role, companyStatus, hasPendingRequest, loading, modalActions, actions }: Props) => {
-  const isGuest = role === null;
+const CompanyDetailsActions = ({
+  role,
+  isLoggedIn,
+  companyStatus,
+  hasPendingRequest,
+  loading,
+  modalActions,
+  actions,
+}: Props) => {
+  const isGuest = isLoggedIn && role === null;
 
   return (
     <Box display="flex" gap={1} mt={0.5}>

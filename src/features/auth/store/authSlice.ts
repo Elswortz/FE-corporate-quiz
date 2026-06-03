@@ -1,6 +1,11 @@
-import { createSlice, Draft } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { logIn, checkAuth } from './authThunks';
 import { tokenService } from '../../../api/tokenService';
+
+type TokensPayload = {
+  accessToken: string;
+  refreshToken: string;
+};
 
 type AuthState = {
   accessToken: string | null;
@@ -18,20 +23,19 @@ const initialState: AuthState = {
   error: null,
 };
 
-const resetAuth = (state: Draft<AuthState>) => {
+const resetAuth = (state: AuthState) => {
   state.accessToken = null;
   state.refreshToken = null;
   state.isAuthenticated = false;
   state.error = null;
   state.isLoading = false;
-  tokenService.clearTokens();
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setTokens: (state, action) => {
+    setTokens: (state, action: PayloadAction<TokensPayload>) => {
       const { accessToken, refreshToken } = action.payload;
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;

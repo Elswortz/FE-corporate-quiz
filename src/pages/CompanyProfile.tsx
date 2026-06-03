@@ -28,7 +28,6 @@ import {
   selectSendRequestLoading,
 } from '@/features/invitations/store/invitationsSelectors';
 
-import { selectUserProfileData } from '@/features/users/store/usersSelectors';
 import { showNotification } from '@/features/notifications/store/notificationsSlice';
 
 import { getUserRoleInCompany } from '@/utils/companyHelpers';
@@ -36,6 +35,7 @@ import CompanyDetailsView from '@/features/companies/components/CompaniesDetails
 import { Outlet } from 'react-router-dom';
 import { Container, Typography, Box, CircularProgress, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 const CompanyProfile = () => {
   const { companyId } = useParams();
@@ -43,6 +43,7 @@ const CompanyProfile = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { isLoggedIn, user } = useAuth();
 
   const selectedCompany = useAppSelector(selectSelectedCompany);
   const selectedCompanyLoading = useAppSelector(selectDeleteCompanyLoading);
@@ -52,8 +53,6 @@ const CompanyProfile = () => {
   const sendRequestLoading = useAppSelector(selectSendRequestLoading);
   const cancelRequestLoading = useAppSelector(selectCancelRequestLoading);
   const leaveCompanyLoading = useAppSelector(selectLeaveCompanyLoading);
-
-  const user = useAppSelector(selectUserProfileData);
 
   const pendingInvitationId = useAppSelector(selectPendingInvitationIdByCompany(companyId || ''));
   const hasPendingRequest = Boolean(pendingInvitationId);
@@ -235,6 +234,7 @@ const CompanyProfile = () => {
         <CompanyDetailsView
           company={selectedCompany}
           role={role}
+          isLoggedIn={isLoggedIn}
           backLinkHref={backLinkHref}
           hasPendingRequest={hasPendingRequest}
           loading={{

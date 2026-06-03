@@ -16,6 +16,7 @@ export interface CompaniesState {
     delete: OperationState;
     changeStatus: OperationState;
     changeLogo: OperationState;
+    changeRole: OperationState;
     removeMember: OperationState;
     leave: OperationState;
   };

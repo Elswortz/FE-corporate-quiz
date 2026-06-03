@@ -33,6 +33,7 @@ const companiesState: CompaniesState = {
     delete: initialOperationState,
     changeStatus: initialOperationState,
     changeLogo: initialOperationState,
+    changeRole: initialOperationState,
     removeMember: initialOperationState,
     leave: initialOperationState,
   },

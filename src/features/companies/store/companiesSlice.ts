@@ -14,6 +14,7 @@ import {
   changeCompanyLogo,
   removeCompanyMember,
   leaveCompany,
+  changeMemberRole,
 } from './companiesThunks';
 
 const updateCompanyEverywhere = (state: CompaniesState, updated: Company) => {
@@ -24,20 +25,11 @@ const updateCompanyEverywhere = (state: CompaniesState, updated: Company) => {
   if (updated.company_status === 'hidden') {
     state.lists.all.data = state.lists.all.data.filter(comp => comp.id !== updated.id);
   } else {
-    const exists = state.lists.all.data.some(comp => comp.id === updated.id);
-
-    if (exists) {
-      state.lists.all.data = state.lists.all.data.map(comp => (comp.id === updated.id ? updated : comp));
-    } else {
-      state.lists.all.data.push(updated);
-    }
+    state.lists.all.data = state.lists.all.data.map(comp => (comp.id === updated.id ? updated : comp));
   }
 
-  if (state.selected.data && state.selected.data.id === updated.id) {
-    state.selected.data = {
-      ...state.selected.data,
-      ...updated,
-    };
+  if (state.selected.data?.id === updated.id) {
+    Object.assign(state.selected.data, updated);
   }
 };
 
@@ -187,6 +179,22 @@ const companiesSlice = createSlice({
       .addCase(changeCompanyLogo.rejected, (state, { payload }) => {
         state.mutations.changeLogo.isLoading = false;
         state.mutations.changeLogo.error = payload ?? null;
+      })
+      // --- changeMemberRole ---
+      .addCase(changeMemberRole.pending, state => {
+        state.mutations.changeRole.isLoading = true;
+        state.mutations.changeRole.error = null;
+      })
+      .addCase(changeMemberRole.fulfilled, (state, { payload }) => {
+        state.mutations.changeRole.isLoading = false;
+        const member = state.selected.data?.members.find(member => member.id === payload.id);
+        if (member) {
+          member.role = payload.role;
+        }
+      })
+      .addCase(changeMemberRole.rejected, (state, { payload }) => {
+        state.mutations.changeRole.isLoading = false;
+        state.mutations.changeRole.error = payload ?? null;
       })
       // --- removeCompanyMember ---
       .addCase(removeCompanyMember.pending, state => {
