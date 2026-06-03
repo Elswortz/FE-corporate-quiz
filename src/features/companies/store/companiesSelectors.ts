@@ -1,4 +1,4 @@
-import type { RootState } from '../../../store/store';
+import { RootState } from '@/store/store';
 import { CompanyId } from '../types/companiesTypes';
 
 export const selectAllCompanies = (state: RootState) => state.companies.lists.all.data;

@@ -5,6 +5,7 @@ import { companiesReducer } from '../features/companies/store/companiesSlice.ts'
 import { invitationsReducer } from '@/features/invitations/store/invitationsSlice.ts';
 import { notificationReducer } from '../features/notifications/store/notificationsSlice.ts';
 import { setupInterceptors } from '../api/interceptors.ts';
+import { quizzesReducer } from '@/features/quizzes/store/quizzesSlice.ts';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     users: usersReducer,
     companies: companiesReducer,
     invitations: invitationsReducer,
+    quizzes: quizzesReducer,
     notification: notificationReducer,
   },
 });
