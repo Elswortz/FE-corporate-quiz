@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import quizzesState from './quizzesState';
-import { createQuizz, deleteQuizz, getCompanyQuizzes, updateQuizz } from './quizzesThunks';
+import { createQuizz, deleteQuizz, getCompanyQuizzes, getQuizz, updateQuizz } from './quizzesThunks';
 
 const quizzesSlice = createSlice({
   name: 'quizzes',
@@ -26,6 +26,19 @@ const quizzesSlice = createSlice({
       .addCase(getCompanyQuizzes.rejected, (state, { payload }) => {
         state.list.isLoading = false;
         state.list.error = payload ?? null;
+      })
+      // --- fetchCompaniesById ---
+      .addCase(getQuizz.pending, state => {
+        state.selected.isLoading = true;
+        state.selected.error = null;
+      })
+      .addCase(getQuizz.fulfilled, (state, { payload }) => {
+        state.selected.isLoading = false;
+        state.selected.data = payload;
+      })
+      .addCase(getQuizz.rejected, (state, { payload }) => {
+        state.selected.isLoading = false;
+        state.selected.error = payload ?? null;
       })
       // --- createQuizz ---
       .addCase(createQuizz.pending, state => {

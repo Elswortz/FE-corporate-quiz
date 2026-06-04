@@ -5,6 +5,10 @@ export const selectCompanyQuizzesLoading = (state: RootState) => state.quizzes.l
 export const selectCompanyQuizzesError = (state: RootState) => state.quizzes.list.error;
 export const selectCompanyQuizzesMeta = (state: RootState) => state.quizzes.list.meta;
 
+export const selectSelectedQuizz = (state: RootState) => state.quizzes.selected.data;
+export const selectSelectedQuizzLoading = (state: RootState) => state.quizzes.selected.isLoading;
+export const selectSelectedQuizzError = (state: RootState) => state.quizzes.selected.error;
+
 export const selectCreateQuizzLoading = (state: RootState) => state.quizzes.mutations.create.isLoading;
 export const selectCreateQuizzError = (state: RootState) => state.quizzes.mutations.create.error;
 

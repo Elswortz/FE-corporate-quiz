@@ -2,14 +2,54 @@ import { CompanyId } from '@/features/companies/types/companiesTypes';
 import { UserId } from '@/features/users/types/userTypes';
 import { Pagination } from '@/types/globalTypes';
 
+export type QuizzId = string;
+
 export interface Quizz {
   id: QuizzId;
   company_id: CompanyId;
   title: string;
   description: string;
   counter: number;
+}
+
+export interface QuizzDetails extends Quizz {
   questions: Question[];
 }
+
+export type Question = {
+  id: string;
+  quiz_id: string;
+  question_text: string;
+  answers: Answer[];
+};
+
+export type QuestionForCreate = {
+  question_text: string;
+  answers: CorrectAnswer[];
+};
+
+export type AttemptQuestion = {
+  question_id: string;
+  selected_answer_id: string;
+};
+
+export type Answer = {
+  id: string;
+  answer_text: string;
+};
+
+export type CorrectAnswer = {
+  answer_text: string;
+  is_correct: boolean;
+};
+
+export type AnswersDetails = {
+  question_id: string;
+  question_text: string;
+  selected_answer_id: string;
+  selected_answer_text: string;
+  is_correct: boolean;
+};
 
 export type QuizzResponse = {
   user_id: UserId;
@@ -18,44 +58,42 @@ export type QuizzResponse = {
   score: number;
   total_questions: number;
   correct_answers_count: number;
-  answers_detail: Answer[];
+  answers_detail: AnswersDetails[];
 };
 
-export type QuizzId = string;
+// DTO
 
-export type Question = {
-  question_text: string;
-  answers: Answer[];
-};
-export type Answer = {
-  answer_text: string;
-  is_correct: boolean;
+type CreateQuizzPayload = Pick<Quizz, 'title' | 'description'> & {
+  questions: QuestionForCreate[];
 };
 
 export type CreateQuizzDto = {
   companyId: CompanyId;
-  payload: Pick<Quizz, 'title' | 'description' | 'questions'>;
+  payload: CreateQuizzPayload;
 };
 
 export type GetCompanyQuizzesDto = {
   companyId: CompanyId;
   params: Pagination;
 };
+
+export type GetQuizzDto = DeleteQuizzDto;
+
 export type UpdateQuizzDto = {
-  quizzId: QuizzId;
   companyId: CompanyId;
-  payload: CreateQuizzDto;
+  quizzId: QuizzId;
+  payload: CreateQuizzPayload;
 };
 
 export type DeleteQuizzDto = {
-  quizzId: QuizzId;
   companyId: CompanyId;
+  quizzId: QuizzId;
 };
 
 export type AttemptQuizzDto = {
-  quizzId: QuizzId;
   companyId: CompanyId;
-  payload: Pick<Quizz, 'questions'>;
+  quizzId: QuizzId;
+  payload: { questions: AttemptQuestion[] };
 };
 
 export type GetQuizzAnswersDto = DeleteQuizzDto;

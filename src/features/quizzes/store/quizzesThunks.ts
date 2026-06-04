@@ -1,7 +1,15 @@
 import * as quizzesApi from '../api/quizzesApi';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { PaginatedResponse } from '@/types/globalTypes';
-import { CreateQuizzDto, DeleteQuizzDto, GetCompanyQuizzesDto, Quizz, UpdateQuizzDto } from '../types/quizzesTypes';
+import {
+  CreateQuizzDto,
+  DeleteQuizzDto,
+  GetCompanyQuizzesDto,
+  GetQuizzDto,
+  Quizz,
+  QuizzDetails,
+  UpdateQuizzDto,
+} from '../types/quizzesTypes';
 
 type RejectValue = string;
 
@@ -30,11 +38,23 @@ export const getCompanyQuizzes = createAsyncThunk<
   }
 });
 
+export const getQuizz = createAsyncThunk<QuizzDetails, GetQuizzDto, { rejectValue: RejectValue }>(
+  'quizzes/fetchById',
+  async ({ companyId, quizzId }, { rejectWithValue }) => {
+    try {
+      const res = await quizzesApi.getQuizz({ companyId, quizzId });
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to load quizz');
+    }
+  }
+);
+
 export const updateQuizz = createAsyncThunk<Quizz, UpdateQuizzDto, { rejectValue: RejectValue }>(
   'quizzes/update',
-  async ({ quizzId, companyId, payload }, { rejectWithValue }) => {
+  async ({ companyId, quizzId, payload }, { rejectWithValue }) => {
     try {
-      const res = await quizzesApi.updateQuizz({ quizzId, companyId, payload });
+      const res = await quizzesApi.updateQuizz({ companyId, quizzId, payload });
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to update company quizz');
@@ -44,10 +64,10 @@ export const updateQuizz = createAsyncThunk<Quizz, UpdateQuizzDto, { rejectValue
 
 export const deleteQuizz = createAsyncThunk<DeleteQuizzDto, DeleteQuizzDto, { rejectValue: RejectValue }>(
   'quizzes/delete',
-  async ({ quizzId, companyId }, { rejectWithValue }) => {
+  async ({ companyId, quizzId }, { rejectWithValue }) => {
     try {
-      await quizzesApi.deleteQuizz({ quizzId, companyId });
-      return { quizzId, companyId };
+      await quizzesApi.deleteQuizz({ companyId, quizzId });
+      return { companyId, quizzId };
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to update company quizz');
     }

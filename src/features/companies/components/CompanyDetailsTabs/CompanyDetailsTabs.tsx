@@ -27,7 +27,7 @@ const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   const canViewInvitations = role === 'owner' || role === 'admin';
 
   return (
-    <Box mt={4}>
+    <Box mt={4} mb={2}>
       <Tabs value={tabValue} textColor="primary" indicatorColor="primary">
         <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
         <Tab label="Quizzes" component={NavLink} to={`${basePath}/quizzes`} />

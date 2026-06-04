@@ -25,6 +25,7 @@ import ResetPassword from './features/auth/components/ResetPassword/ResetPasswor
 
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import QuizzDetails from './pages/QuizzDetails';
 
 function App() {
   const { i18n } = useTranslation();
@@ -67,6 +68,7 @@ function App() {
             <Route path="quizzes" element={<Quizzes />} />
             <Route path="invitations" element={<Invitations />} />
           </Route>
+          <Route path="companies/:companyId/quizzes/:quizzId" element={<QuizzDetails />} />
           <Route
             path="registration"
             element={
