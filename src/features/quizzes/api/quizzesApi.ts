@@ -19,7 +19,7 @@ export const getQuizz = ({ companyId, quizzId }: GetQuizzDto) => api.get(`quizze
 export const updateQuizz = ({ companyId, quizzId, payload }: UpdateQuizzDto) =>
   api.put(`quizzes/${companyId}/${quizzId}`, payload);
 
-export const deleteQuizz = ({ companyId, quizzId }: DeleteQuizzDto) => api.delete(`quizzes/${quizzId}/${companyId}`);
+export const deleteQuizz = ({ companyId, quizzId }: DeleteQuizzDto) => api.delete(`quizzes/${companyId}/${quizzId}`);
 
 export const attemptQuizz = ({ companyId, quizzId, payload }: AttemptQuizzDto) =>
   api.post(`quizzes/${companyId}/${quizzId}/attempts`, payload);

@@ -2,9 +2,13 @@ import * as quizzesApi from '../api/quizzesApi';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { PaginatedResponse } from '@/types/globalTypes';
 import {
+  AnswersDetails,
+  AttemptQuizzDto,
+  AttemptResponse,
   CreateQuizzDto,
   DeleteQuizzDto,
   GetCompanyQuizzesDto,
+  GetQuizzAnswersDto,
   GetQuizzDto,
   Quizz,
   QuizzDetails,
@@ -70,6 +74,30 @@ export const deleteQuizz = createAsyncThunk<DeleteQuizzDto, DeleteQuizzDto, { re
       return { companyId, quizzId };
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to update company quizz');
+    }
+  }
+);
+
+export const attemptQuizz = createAsyncThunk<AttemptResponse, AttemptQuizzDto, { rejectValue: RejectValue }>(
+  'quizzes/attempt',
+  async ({ companyId, quizzId, payload }, { rejectWithValue }) => {
+    try {
+      const res = await quizzesApi.attemptQuizz({ companyId, quizzId, payload });
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to attempt company quizz');
+    }
+  }
+);
+
+export const getQuizzAnswers = createAsyncThunk<AnswersDetails[], GetQuizzAnswersDto, { rejectValue: RejectValue }>(
+  'quizzes/getAnswers',
+  async ({ companyId, quizzId }, { rejectWithValue }) => {
+    try {
+      const res = await quizzesApi.getQuizzAnswers({ companyId, quizzId });
+      return res.data.answers_detail;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to load answers');
     }
   }
 );

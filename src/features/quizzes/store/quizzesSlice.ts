@@ -1,11 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
 import quizzesState from './quizzesState';
-import { createQuizz, deleteQuizz, getCompanyQuizzes, getQuizz, updateQuizz } from './quizzesThunks';
+import {
+  attemptQuizz,
+  createQuizz,
+  deleteQuizz,
+  getCompanyQuizzes,
+  getQuizz,
+  getQuizzAnswers,
+  updateQuizz,
+} from './quizzesThunks';
 
 const quizzesSlice = createSlice({
   name: 'quizzes',
   initialState: quizzesState,
-  reducers: {},
+  reducers: {
+    clearCurrentQuizz: state => {
+      state.selected.quiz.data = null;
+      state.selected.quiz.error = null;
+      state.selected.quiz.isLoading = false;
+    },
+  },
   extraReducers: builder =>
     builder
       // --- getCompanyQuizzes ---
@@ -27,18 +41,18 @@ const quizzesSlice = createSlice({
         state.list.isLoading = false;
         state.list.error = payload ?? null;
       })
-      // --- fetchCompaniesById ---
+      // --- getQuizz ---
       .addCase(getQuizz.pending, state => {
-        state.selected.isLoading = true;
-        state.selected.error = null;
+        state.selected.quiz.isLoading = true;
+        state.selected.quiz.error = null;
       })
       .addCase(getQuizz.fulfilled, (state, { payload }) => {
-        state.selected.isLoading = false;
-        state.selected.data = payload;
+        state.selected.quiz.isLoading = false;
+        state.selected.quiz.data = payload;
       })
       .addCase(getQuizz.rejected, (state, { payload }) => {
-        state.selected.isLoading = false;
-        state.selected.error = payload ?? null;
+        state.selected.quiz.isLoading = false;
+        state.selected.quiz.error = payload ?? null;
       })
       // --- createQuizz ---
       .addCase(createQuizz.pending, state => {
@@ -65,7 +79,8 @@ const quizzesSlice = createSlice({
       .addCase(updateQuizz.rejected, (state, { payload }) => {
         state.mutations.update.isLoading = false;
         state.mutations.update.error = payload ?? null;
-      }) // --- deleteQuizz ---
+      })
+      // --- deleteQuizz ---
       .addCase(deleteQuizz.pending, state => {
         state.mutations.delete.isLoading = true;
         state.mutations.delete.error = null;
@@ -77,8 +92,34 @@ const quizzesSlice = createSlice({
       .addCase(deleteQuizz.rejected, (state, { payload }) => {
         state.mutations.delete.isLoading = false;
         state.mutations.delete.error = payload ?? null;
+      })
+      // --- attemptQuizz ---
+      .addCase(attemptQuizz.pending, state => {
+        state.selected.results.isLoading = true;
+        state.selected.results.error = null;
+      })
+      .addCase(attemptQuizz.fulfilled, (state, { payload }) => {
+        state.selected.results.data = payload;
+        state.selected.results.isLoading = false;
+      })
+      .addCase(attemptQuizz.rejected, (state, { payload }) => {
+        state.selected.results.isLoading = false;
+        state.selected.results.error = payload ?? null;
+      })
+      // --- getQuizzAnswers ---
+      .addCase(getQuizzAnswers.pending, state => {
+        state.selected.answers.isLoading = true;
+        state.selected.answers.error = null;
+      })
+      .addCase(getQuizzAnswers.fulfilled, (state, { payload }) => {
+        state.selected.answers.data = payload;
+        state.selected.answers.isLoading = false;
+      })
+      .addCase(getQuizzAnswers.rejected, (state, { payload }) => {
+        state.selected.answers.isLoading = false;
+        state.selected.answers.error = payload ?? null;
       }),
 });
 
-// export const { clearCurrentCompany } = companiesSlice.actions;
+export const { clearCurrentQuizz } = quizzesSlice.actions;
 export const quizzesReducer = quizzesSlice.reducer;

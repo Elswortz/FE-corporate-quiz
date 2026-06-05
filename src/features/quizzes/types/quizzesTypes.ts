@@ -61,10 +61,26 @@ export type QuizzResponse = {
   answers_detail: AnswersDetails[];
 };
 
+export type AttemptResponse = {
+  score: number;
+  total_questions: number;
+  correct_answers_count: number;
+  quiz_id: QuizzId;
+  user_id: UserId;
+  company_id: CompanyId;
+  last_attempt_time: Date;
+};
+
 // DTO
 
-type CreateQuizzPayload = Pick<Quizz, 'title' | 'description'> & {
+export type CreateQuizzPayload = Pick<Quizz, 'title' | 'description'> & {
   questions: QuestionForCreate[];
+};
+
+export type UpdateQuizzPayload = CreateQuizzPayload;
+
+export type AttemptQuizzPayload = {
+  questions: AttemptQuestion[];
 };
 
 export type CreateQuizzDto = {
@@ -82,7 +98,7 @@ export type GetQuizzDto = DeleteQuizzDto;
 export type UpdateQuizzDto = {
   companyId: CompanyId;
   quizzId: QuizzId;
-  payload: CreateQuizzPayload;
+  payload: UpdateQuizzPayload;
 };
 
 export type DeleteQuizzDto = {
@@ -93,7 +109,7 @@ export type DeleteQuizzDto = {
 export type AttemptQuizzDto = {
   companyId: CompanyId;
   quizzId: QuizzId;
-  payload: { questions: AttemptQuestion[] };
+  payload: AttemptQuizzPayload;
 };
 
 export type GetQuizzAnswersDto = DeleteQuizzDto;
