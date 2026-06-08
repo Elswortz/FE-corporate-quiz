@@ -17,6 +17,10 @@ const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   let tabValue = 0;
 
   if (currentPath.endsWith('/quizzes')) {
+    tabValue = 0;
+  }
+
+  if (currentPath.endsWith('/members')) {
     tabValue = 1;
   }
 
@@ -29,8 +33,8 @@ const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   return (
     <Box mt={4} mb={2}>
       <Tabs value={tabValue} textColor="primary" indicatorColor="primary">
-        <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
         <Tab label="Quizzes" component={NavLink} to={`${basePath}/quizzes`} />
+        <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
         {canViewInvitations && <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />}
       </Tabs>
     </Box>

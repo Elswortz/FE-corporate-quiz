@@ -50,6 +50,10 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { getUserRoleInCompany } from '@/utils/companyHelpers';
 import { useEffect, useState, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { QuizzFormModal } from '@/features/quizzes/components/QuizzFormModal/QuizzFormModal';
+import { mapQuizzToFormData } from '@/features/quizzes/utils/quizzMappers';
+import { ConfirmModal } from '@/components/ui';
+import { fetchCompanyById } from '@/features/companies/store/companiesThunks';
 
 const QuizzDetails = () => {
   const { companyId, quizzId } = useParams();
@@ -91,6 +95,13 @@ const QuizzDetails = () => {
   const backLinkHref = location.state?.from ?? `/companies/${companyId}`;
 
   const isCompleted = quizz?.questions.every(q => answers[q.id]) ?? false;
+
+  useEffect(() => {
+    if (!companyId) return;
+    if (!selectedCompany) {
+      dispatch(fetchCompanyById(companyId));
+    }
+  });
 
   useEffect(() => {
     if (!companyId || !quizzId) return;
@@ -136,6 +147,7 @@ const QuizzDetails = () => {
     try {
       await dispatch(deleteQuizz({ companyId, quizzId })).unwrap();
       dispatch(showNotification({ message: 'Quizz deleted successfuly', severity: 'success' }));
+      navigate(backLinkHref);
     } catch (err: any) {
       dispatch(showNotification({ message: err || 'Failed to delete quizz', severity: 'error' }));
     }
@@ -314,6 +326,24 @@ const QuizzDetails = () => {
           </Card>
         )}
       </Stack>
+      <QuizzFormModal
+        open={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        error={updateQuizzError}
+        isLoading={updateQuizzLoading}
+        initialData={quizz ? mapQuizzToFormData(quizz) : undefined}
+        onSubmit={handleUpdate}
+      />
+      <ConfirmModal
+        isOpen={isConfirmDeleteOpen}
+        title="Confirm quiz deletion"
+        description="Are you sure you want to delete this quiz?"
+        confirmText="Delete"
+        confirmColor="error"
+        onConfirm={handleDelete}
+        onCancel={() => setIsConfirmDeleteOpen(false)}
+        isLoading={deleteQuizzLoading}
+      />
     </Container>
   );
 };

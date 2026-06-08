@@ -73,7 +73,7 @@ export const deleteQuizz = createAsyncThunk<DeleteQuizzDto, DeleteQuizzDto, { re
       await quizzesApi.deleteQuizz({ companyId, quizzId });
       return { companyId, quizzId };
     } catch (err: any) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to update company quizz');
+      return rejectWithValue(err.response?.data?.message || 'Failed to delete company quizz');
     }
   }
 );

@@ -16,11 +16,11 @@ import { sendRequest, cancelRequest, fetchUserInvitations } from '@/features/inv
 
 import {
   selectChangeStatusLoading,
-  selectDeleteCompanyLoading,
   selectLeaveCompanyLoading,
   selectPendingInvitationIdByCompany,
   selectSelectedCompany,
   selectSelectedCompanyError,
+  selectSelectedCompanyLoading,
 } from '@/features/companies/store/companiesSelectors';
 
 import {
@@ -46,7 +46,7 @@ const CompanyProfile = () => {
   const { isLoggedIn, user } = useAuth();
 
   const selectedCompany = useAppSelector(selectSelectedCompany);
-  const selectedCompanyLoading = useAppSelector(selectDeleteCompanyLoading);
+  const selectedCompanyLoading = useAppSelector(selectSelectedCompanyLoading);
   const selectedCompanyError = useAppSelector(selectSelectedCompanyError);
 
   const changeStatusLoading = useAppSelector(selectChangeStatusLoading);

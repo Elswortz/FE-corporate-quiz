@@ -1,6 +1,7 @@
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { Controller, useFieldArray, useForm, Control, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateQuizzFormData, createQuizzSchema } from '../../schemas/createQuizzSchema';
+import { QuizzFormData, quizzFormSchema } from '../../schemas/quizzFormSchema';
 import {
   Box,
   Button,
@@ -17,47 +18,47 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { useAppDispatch } from '@/store/hooks';
-import { createQuizz } from '../../store/quizzesThunks';
-import { showNotification } from '@/features/notifications/store/notificationsSlice';
 
 type Props = {
   open: boolean;
   onClose: () => void;
-  companyId: string;
   isLoading: boolean;
   error: string | null;
+
+  initialData?: QuizzFormData;
+  onSubmit: (data: QuizzFormData) => void;
 };
 
-export const CreateQuizzModal = ({ open, onClose, companyId, isLoading, error }: Props) => {
-  const dispatch = useAppDispatch();
+const emptyValues: QuizzFormData = {
+  title: '',
+  description: '',
+  questions: [
+    {
+      question_text: '',
+      answers: [
+        {
+          answer_text: '',
+          is_correct: false,
+        },
+        {
+          answer_text: '',
+          is_correct: false,
+        },
+      ],
+    },
+  ],
+};
+
+export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, onSubmit }: Props) => {
   const {
     control,
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateQuizzFormData>({
-    resolver: zodResolver(createQuizzSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      questions: [
-        {
-          question_text: '',
-          answers: [
-            {
-              answer_text: '',
-              is_correct: false,
-            },
-            {
-              answer_text: '',
-              is_correct: false,
-            },
-          ],
-        },
-      ],
-    },
+  } = useForm<QuizzFormData>({
+    resolver: zodResolver(quizzFormSchema),
+    defaultValues: emptyValues,
   });
 
   const {
@@ -69,22 +70,25 @@ export const CreateQuizzModal = ({ open, onClose, companyId, isLoading, error }:
     name: 'questions',
   });
 
-  const onSubmit = (data: CreateQuizzFormData) => {
-    try {
-      dispatch(createQuizz({ companyId, payload: data }));
-      reset();
-      onClose();
-      dispatch(showNotification({ message: 'New quizz successfuly created', severity: 'success' }));
-    } catch (error: any) {
-      dispatch(
-        showNotification({ message: error.response?.data?.message || 'Failed to create a quizz', severity: 'error' })
-      );
-    }
+  useEffect(() => {
+    if (!open) return;
+
+    reset(initialData ?? emptyValues);
+  }, [open, initialData, reset]);
+
+  const handleFormSubmit = (data: QuizzFormData) => {
+    onSubmit(data);
+    onClose();
+  };
+
+  const handleClose = () => {
+    reset(emptyValues);
+    onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Create Quiz</DialogTitle>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+      <DialogTitle>{initialData ? 'Edit Quiz' : 'Create Quiz'}</DialogTitle>
 
       <DialogContent>
         <Stack spacing={3} mt={1}>
@@ -142,10 +146,10 @@ export const CreateQuizzModal = ({ open, onClose, companyId, isLoading, error }:
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
 
-        <Button loading={isLoading} variant="contained" onClick={handleSubmit(onSubmit)}>
-          Create
+        <Button loading={isLoading} variant="contained" onClick={handleSubmit(handleFormSubmit)}>
+          {initialData ? 'Save' : 'Create'}
         </Button>
       </DialogActions>
     </Dialog>
@@ -154,8 +158,8 @@ export const CreateQuizzModal = ({ open, onClose, companyId, isLoading, error }:
 
 type QuestionBlockProps = {
   questionIndex: number;
-  control: any;
-  register: any;
+  control: Control<QuizzFormData>;
+  register: UseFormRegister<QuizzFormData>;
   removeQuestion: (index: number) => void;
 };
 

@@ -16,6 +16,10 @@ export interface QuizzDetails extends Quizz {
   questions: Question[];
 }
 
+export interface QuizzDetailsWithAnswers extends Quizz {
+  questions: QuestionForForm[];
+}
+
 export type Question = {
   id: string;
   quiz_id: string;
@@ -23,7 +27,7 @@ export type Question = {
   answers: Answer[];
 };
 
-export type QuestionForCreate = {
+export type QuestionForForm = {
   question_text: string;
   answers: CorrectAnswer[];
 };
@@ -73,11 +77,11 @@ export type AttemptResponse = {
 
 // DTO
 
-export type CreateQuizzPayload = Pick<Quizz, 'title' | 'description'> & {
-  questions: QuestionForCreate[];
+export type QuizzFormPayload = Pick<Quizz, 'title' | 'description'> & {
+  questions: QuestionForForm[];
 };
 
-export type UpdateQuizzPayload = CreateQuizzPayload;
+export type UpdateQuizzPayload = QuizzFormPayload;
 
 export type AttemptQuizzPayload = {
   questions: AttemptQuestion[];
@@ -85,7 +89,7 @@ export type AttemptQuizzPayload = {
 
 export type CreateQuizzDto = {
   companyId: CompanyId;
-  payload: CreateQuizzPayload;
+  payload: QuizzFormPayload;
 };
 
 export type GetCompanyQuizzesDto = {

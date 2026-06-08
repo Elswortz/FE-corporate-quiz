@@ -63,9 +63,9 @@ function App() {
           />
           <Route path="companies" element={<Companies />} />
           <Route path="companies/:companyId" element={<CompanyProfile />}>
-            <Route index element={<Navigate to="members" replace />} />
-            <Route path="members" element={<Members />} />
+            <Route index element={<Navigate to="quizzes" replace />} />
             <Route path="quizzes" element={<Quizzes />} />
+            <Route path="members" element={<Members />} />
             <Route path="invitations" element={<Invitations />} />
           </Route>
           <Route path="companies/:companyId/quizzes/:quizzId" element={<QuizzDetails />} />

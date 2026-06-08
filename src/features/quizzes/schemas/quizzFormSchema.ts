@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const createQuizzSchema = z.object({
+export const quizzFormSchema = z.object({
   title: z.string().min(3, 'Title is required'),
   description: z.string().min(3, 'Description is required'),
   questions: z
@@ -21,4 +21,4 @@ export const createQuizzSchema = z.object({
     .min(1, 'At least one question is required'),
 });
 
-export type CreateQuizzFormData = z.infer<typeof createQuizzSchema>;
+export type QuizzFormData = z.infer<typeof quizzFormSchema>;
