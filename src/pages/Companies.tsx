@@ -23,11 +23,15 @@ const Companies = () => {
   const allCompaniesLoading = useAppSelector(selectAllCompaniesLoading);
   const allCompaniesError = useAppSelector(selectAllCompaniesError);
   const allCompaniesMeta = useAppSelector(selectAllCompaniesMeta);
+  const isInitialLoading = allCompaniesLoading && allCompanies.length === 0;
+
   const { limit, offset, loadMore } = usePagination({});
 
   useEffect(() => {
-    dispatch(fetchAllCompanies({ limit, offset }));
-  }, [dispatch, limit, offset]);
+    if (!allCompanies) {
+      dispatch(fetchAllCompanies({ limit, offset }));
+    }
+  }, [dispatch, limit, offset, allCompanies]);
 
   const filteredCompanies = useMemo(() => {
     return allCompanies.filter(company => company.company_name.toLowerCase().includes(search.toLowerCase()));
@@ -59,10 +63,15 @@ const Companies = () => {
           </Button>
         </Box>
         <CompaniesList companies={filteredCompanies} isLoading={allCompaniesLoading} error={allCompaniesError} />
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          Total companies: {allCompaniesMeta?.total ?? 0}
-        </Typography>
-        <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={allCompaniesLoading} onClick={loadMore} />
+        {!isInitialLoading && (
+          <>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              Total companies: {allCompaniesMeta?.total ?? 0}
+            </Typography>
+
+            <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={allCompaniesLoading} onClick={loadMore} />
+          </>
+        )}
         <CreateCompanyModal open={modalOpen} onClose={() => setModalOpen(false)} />
       </Container>
     </Box>

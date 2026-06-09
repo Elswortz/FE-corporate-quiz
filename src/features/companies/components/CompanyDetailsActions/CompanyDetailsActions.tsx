@@ -6,7 +6,7 @@ import MemberCompanyActions from '../MemberCompanyActions/MemberCompanyActions';
 import { CompanyStatus, CompanyRole } from '../../types/companiesTypes';
 
 type Props = {
-  role: CompanyRole | null;
+  role: CompanyRole | undefined;
 
   isLoggedIn: boolean;
 
@@ -42,7 +42,7 @@ const CompanyDetailsActions = ({
   modalActions,
   actions,
 }: Props) => {
-  const isGuest = isLoggedIn && role === null;
+  const isGuest = isLoggedIn && role === undefined;
 
   return (
     <Box display="flex" gap={1} mt={0.5}>

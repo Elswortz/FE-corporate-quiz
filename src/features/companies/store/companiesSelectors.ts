@@ -1,5 +1,6 @@
 import { RootState } from '@/store/store';
-import { CompanyId } from '../types/companiesTypes';
+import { CompanyId, CompanyRole } from '../types/companiesTypes';
+import { User, UserId } from '@/features/users/types/userTypes';
 
 export const selectAllCompanies = (state: RootState) => state.companies.lists.all.data;
 export const selectAllCompaniesLoading = (state: RootState) => state.companies.lists.all.isLoading;
@@ -49,4 +50,9 @@ export const selectPendingInvitationIdByCompany = (companyId: CompanyId) => (sta
       return invitation.status === 'pending' && String(invitation.company.id) === String(companyId);
     })?.id ?? null
   );
+};
+
+export const selectUserRoleInCompany = (state: RootState): CompanyRole | undefined => {
+  const currentUserId = state.users.profile.data?.id;
+  return state.companies.selected.data?.members.find(member => member.id === currentUserId)?.role;
 };

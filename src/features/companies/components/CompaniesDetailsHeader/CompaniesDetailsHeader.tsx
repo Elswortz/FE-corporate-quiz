@@ -9,7 +9,7 @@ import CompanyDetailsActions from '../CompanyDetailsActions/CompanyDetailsAction
 type Props = {
   company: Company;
 
-  role: CompanyRole | null;
+  role: CompanyRole | undefined;
 
   isLoggedIn: boolean;
 
@@ -56,8 +56,8 @@ const CompanyDetailsHeader = ({
           ml: 2,
         },
       }}
-      avatar={<CompanyLogo company={company} isOwner={role === 'owner'} onChangeLogo={actions.handleChangeLogo} />}
-      title={<CompanyMeta companyName={company.company_name} companyStatus={company.company_status} />}
+      avatar={<CompanyLogo company={company} role={role} onChangeLogo={actions.handleChangeLogo} />}
+      title={<CompanyMeta companyName={company.company_name} companyStatus={company.company_status} role={role} />}
       subheader={<CompanyAddress address={company.company_address} />}
       action={
         <CompanyDetailsActions

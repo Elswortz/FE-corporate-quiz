@@ -1,15 +1,4 @@
-import {
-  CardActionArea,
-  Box,
-  Stack,
-  Link,
-  Chip,
-  Typography,
-  CardContent,
-  Avatar,
-  CardHeader,
-  Card,
-} from '@mui/material';
+import { Card, CardActionArea, Box, Stack, Link, Typography, Avatar } from '@mui/material';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LanguageIcon from '@mui/icons-material/Language';
@@ -26,13 +15,12 @@ const getInitials = (name = '') =>
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map(s => s[0]?.toUpperCase() ?? '')
+    .map(word => word[0]?.toUpperCase() ?? '')
     .join('');
 
 const CompaniesItem = ({ company }: Props) => {
   const location = useLocation();
   const navigate = useNavigate();
-  if (!company) return null;
 
   const {
     company_name,
@@ -42,11 +30,15 @@ const CompaniesItem = ({ company }: Props) => {
     company_website,
     company_logo_url,
     company_description,
-    company_status,
   } = company;
 
   return (
-    <Card variant="outlined" sx={{ width: '100%', height: '100%' }}>
+    <Card
+      variant="outlined"
+      sx={{
+        height: '100%',
+      }}
+    >
       <CardActionArea
         onClick={() =>
           navigate(`/companies/${company.id}`, {
@@ -55,82 +47,140 @@ const CompaniesItem = ({ company }: Props) => {
         }
         sx={{
           height: '100%',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
           alignItems: 'stretch',
         }}
       >
-        <CardHeader
-          avatar={
-            company_logo_url ? (
-              <Avatar src={company_logo_url} alt={company_name} />
-            ) : (
-              <Avatar>{getInitials(company_name)}</Avatar>
-            )
-          }
-          title={
-            <Box display="flex" alignItems="center" gap={1}>
-              <Typography variant="h6">{company_name}</Typography>
+        <Stack direction="row" spacing={2} alignItems="flex-start">
+          <Avatar
+            src={company_logo_url}
+            alt={company_name}
+            sx={{
+              width: 48,
+              height: 48,
+              flexShrink: 0,
+            }}
+          >
+            {getInitials(company_name)}
+          </Avatar>
 
-              <Chip
-                label={company_status || 'unknown'}
-                size="small"
-                color={company_status === 'hidden' ? 'default' : 'primary'}
+          <Box flex={1} minWidth={0}>
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {company_name}
+            </Typography>
+
+            <Stack direction="row" spacing={0.5} alignItems="flex-start" mt={1}>
+              <LocationOnIcon
+                fontSize="small"
+                color="action"
+                sx={{
+                  mt: '2px',
+                  flexShrink: 0,
+                }}
               />
-            </Box>
-          }
-          subheader={
-            company_address && (
-              <Box display="flex" alignItems="center" gap={0.5}>
-                <LocationOnIcon fontSize="small" />
-                <Typography variant="body2" color="text.secondary">
-                  {company_address}
-                </Typography>
-              </Box>
-            )
-          }
-        />
 
-        <CardContent>
-          <Stack spacing={1}>
-            {company_email && (
-              <Box display="flex" alignItems="center" gap={1}>
-                <EmailIcon fontSize="small" color="action" />
-                <Link href={`mailto:${company_email}`} underline="hover" onClick={e => e.stopPropagation()}>
-                  <Typography variant="body2">{company_email}</Typography>
-                </Link>
-              </Box>
-            )}
-
-            {company_phone && (
-              <Box display="flex" alignItems="center" gap={1}>
-                <PhoneIcon fontSize="small" color="action" />
-                <Link href={`tel:${company_phone}`} underline="hover" onClick={e => e.stopPropagation()}>
-                  <Typography variant="body2">{company_phone}</Typography>
-                </Link>
-              </Box>
-            )}
-
-            {company_website && (
-              <Box display="flex" alignItems="center" gap={1}>
-                <LanguageIcon fontSize="small" color="action" />
-                <Link
-                  href={company_website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  underline="hover"
-                  onClick={e => e.stopPropagation()}
-                >
-                  <Typography variant="body2">{company_website}</Typography>
-                </Link>
-              </Box>
-            )}
-
-            {company_description && (
-              <Typography variant="body2" color="text.secondary">
-                {company_description}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  minHeight: 40,
+                }}
+              >
+                {company_address || 'No address'}
               </Typography>
+            </Stack>
+          </Box>
+        </Stack>
+
+        <Stack
+          spacing={1}
+          mt={3}
+          sx={{
+            minHeight: 84,
+          }}
+        >
+          <Box display="flex" alignItems="center" gap={1}>
+            <EmailIcon fontSize="small" color="action" sx={{ flexShrink: 0 }} />
+
+            <Typography
+              variant="body2"
+              noWrap
+              sx={{
+                flex: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {company_email || '—'}
+            </Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center" gap={1}>
+            <PhoneIcon fontSize="small" color="action" sx={{ flexShrink: 0 }} />
+
+            <Typography
+              variant="body2"
+              noWrap
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {company_phone || '—'}
+            </Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center" gap={1}>
+            <LanguageIcon fontSize="small" color="action" sx={{ flexShrink: 0 }} />
+
+            {company_website ? (
+              <Link
+                href={company_website}
+                target="_blank"
+                rel="noopener noreferrer"
+                underline="hover"
+                onClick={e => e.stopPropagation()}
+                sx={{
+                  flex: 1,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {company_website}
+              </Link>
+            ) : (
+              <Typography variant="body2">—</Typography>
             )}
-          </Stack>
-        </CardContent>
+          </Box>
+        </Stack>
+
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          noWrap
+          sx={{
+            mt: 'auto',
+            pt: 2,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {company_description || 'No description'}
+        </Typography>
       </CardActionArea>
     </Card>
   );

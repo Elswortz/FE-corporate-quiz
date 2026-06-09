@@ -21,6 +21,7 @@ import {
   selectSelectedCompany,
   selectSelectedCompanyError,
   selectSelectedCompanyLoading,
+  selectUserRoleInCompany,
 } from '@/features/companies/store/companiesSelectors';
 
 import {
@@ -73,10 +74,12 @@ const CompanyProfile = () => {
     };
   }, [dispatch, companyId]);
 
-  const role = useMemo(() => {
-    if (!selectedCompany || !user) return null;
-    return getUserRoleInCompany(selectedCompany, user.id);
-  }, [selectedCompany, user]);
+  // const role = useMemo(() => {
+  //   if (!selectedCompany || !user) return null;
+  //   return getUserRoleInCompany(selectedCompany, user.id);
+  // }, [selectedCompany, user]);
+
+  const role = useAppSelector(selectUserRoleInCompany);
 
   const handleToggleStatus = async () => {
     if (!selectedCompany) return;

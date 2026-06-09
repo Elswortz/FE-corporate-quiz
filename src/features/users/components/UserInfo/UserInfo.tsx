@@ -15,6 +15,7 @@ import ChangePassModal from '../../../auth/components/ChangePassModal/ChangePass
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useNavigate } from 'react-router-dom';
+import { selectIsSSOAuth } from '@/features/auth/store/authSelectors';
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +25,7 @@ const UserInfo = () => {
   const editLoading = useAppSelector(selectUpdateUserLoading);
   const removeLoading = useAppSelector(selectRemoveUserLoading);
   const changeAvatarLoading = useAppSelector(selectUpdateUserAvatarLoading);
+  const isSSOAuth = useAppSelector(selectIsSSOAuth);
 
   const [firstName, setFirstName] = useState(user?.first_name || '');
   const [lastName, setLastName] = useState(user?.last_name || '');
@@ -175,9 +177,11 @@ const UserInfo = () => {
         <Button variant="contained" color="primary" onClick={handleSave} loading={editLoading}>
           Save Changes
         </Button>
-        <Button variant="outlined" color="secondary" onClick={() => setIsPassChangeOpen(true)}>
-          Change Password
-        </Button>
+        {!isSSOAuth && (
+          <Button variant="outlined" color="secondary" onClick={() => setIsPassChangeOpen(true)}>
+            Change Password
+          </Button>
+        )}
         <Button variant="outlined" color="error" onClick={() => setIsConfirmDelOpen(true)}>
           Delete Account
         </Button>

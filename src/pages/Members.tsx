@@ -30,7 +30,15 @@ const Members = () => {
   const dispatch = useAppDispatch();
   const selectedCompany = useAppSelector(selectSelectedCompany);
   const user = useAppSelector(selectUserProfileData);
+
+  const roleOrder: Record<CompanyRole, number> = {
+    owner: 0,
+    admin: 1,
+    member: 2,
+  };
+
   const members = selectedCompany?.members || [];
+  const sortedMembers = [...members].sort((a, b) => roleOrder[a.role] - roleOrder[b.role]);
 
   if (!selectedCompany) return null;
 
@@ -69,7 +77,6 @@ const Members = () => {
           severity: 'success',
         })
       );
-      // Можно добавить обновление данных компании после удаления
     } catch (err: any) {
       dispatch(
         showNotification({
@@ -86,9 +93,9 @@ const Members = () => {
   return (
     <>
       <Box>
-        {members?.length ? (
+        {sortedMembers?.length ? (
           <List>
-            {members.map(member => (
+            {sortedMembers.map(member => (
               <div key={member.id}>
                 <ListItem
                   secondaryAction={

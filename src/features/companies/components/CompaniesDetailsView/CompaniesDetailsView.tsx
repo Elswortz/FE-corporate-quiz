@@ -8,7 +8,7 @@ import CompanyDetailsModals from '../CompanyDetailsModals/CompanyDetailsModals';
 type Props = {
   company: Company;
 
-  role: CompanyRole | null;
+  role: CompanyRole | undefined;
 
   isLoggedIn: boolean;
 

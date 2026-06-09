@@ -17,6 +17,7 @@ import { QuizzFormModal } from '@/features/quizzes/components/QuizzFormModal/Qui
 import QuizzesList from '@/features/quizzes/components/QuizzesList/QuizzesList';
 import { QuizzFormData } from '@/features/quizzes/schemas/quizzFormSchema';
 import { showNotification } from '@/features/notifications/store/notificationsSlice';
+import { selectUserRoleInCompany } from '@/features/companies/store/companiesSelectors';
 
 const Quizzes = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,6 +31,8 @@ const Quizzes = () => {
   const quizzesMeta = useAppSelector(selectCompanyQuizzesMeta);
   const createQuizzLoading = useAppSelector(selectCreateQuizzLoading);
   const createQuizzError = useAppSelector(selectCreateQuizzError);
+  const role = useAppSelector(selectUserRoleInCompany);
+  const isAdmin = role === 'owner' || role === 'admin';
 
   const { limit, offset, loadMore } = usePagination({});
   const dispatch = useAppDispatch();
@@ -49,9 +52,11 @@ const Quizzes = () => {
 
   return (
     <>
-      <Button sx={{ mb: 2 }} variant="contained" color="primary" onClick={() => setModalOpen(true)}>
-        Create quizz
-      </Button>
+      {isAdmin && (
+        <Button sx={{ mb: 2 }} variant="contained" color="primary" onClick={() => setModalOpen(true)}>
+          Create quizz
+        </Button>
+      )}
       <QuizzesList quizzes={quizzes} isLoading={quizzesLoading} error={quizzesError} />
       <LoadMoreButton hasMore={quizzesMeta?.has_next} isLoading={quizzesLoading} onClick={loadMore} />
       <QuizzFormModal

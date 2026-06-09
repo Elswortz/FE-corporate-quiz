@@ -4,7 +4,7 @@ import { CompanyRole } from '../../types/companiesTypes';
 
 type Props = {
   companyId: string;
-  role: CompanyRole | null;
+  role: CompanyRole | undefined;
 };
 
 const CompanyDetailsTabs = ({ companyId, role }: Props) => {

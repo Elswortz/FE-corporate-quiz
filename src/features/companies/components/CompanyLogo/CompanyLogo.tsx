@@ -1,15 +1,15 @@
-import { Company } from '../../types/companiesTypes';
+import { Company, CompanyRole } from '../../types/companiesTypes';
 import { useRef, ChangeEvent } from 'react';
 import { Box, Avatar } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
 type Props = {
   company: Company;
-  isOwner: boolean;
+  role: CompanyRole | undefined;
   onChangeLogo: (formData: FormData) => Promise<void>;
 };
 
-const CompanyLogo = ({ company, isOwner, onChangeLogo }: Props) => {
+const CompanyLogo = ({ company, role, onChangeLogo }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -35,10 +35,10 @@ const CompanyLogo = ({ company, isOwner, onChangeLogo }: Props) => {
           width: 80,
           height: 80,
           fontSize: 24,
-          cursor: isOwner ? 'pointer' : 'default',
+          cursor: role === 'owner' ? 'pointer' : 'default',
         }}
         onClick={() => {
-          if (isOwner) {
+          if (role === 'owner') {
             fileInputRef.current?.click();
           }
         }}
@@ -51,7 +51,7 @@ const CompanyLogo = ({ company, isOwner, onChangeLogo }: Props) => {
             .join('')}
       </Avatar>
 
-      {isOwner && (
+      {role === 'owner' && (
         <Box
           onClick={() => fileInputRef.current?.click()}
           sx={{
