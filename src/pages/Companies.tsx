@@ -28,7 +28,7 @@ const Companies = () => {
   const { limit, offset, loadMore } = usePagination({});
 
   useEffect(() => {
-    if (!allCompanies) {
+    if (allCompanies.length === 0) {
       dispatch(fetchAllCompanies({ limit, offset }));
     }
   }, [dispatch, limit, offset, allCompanies]);

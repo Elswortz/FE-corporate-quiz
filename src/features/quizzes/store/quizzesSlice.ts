@@ -7,6 +7,7 @@ import {
   getCompanyQuizzes,
   getQuizz,
   getQuizzAnswers,
+  getQuizzForAdmin,
   updateQuizz,
 } from './quizzesThunks';
 
@@ -51,6 +52,19 @@ const quizzesSlice = createSlice({
         state.selected.quiz.data = payload;
       })
       .addCase(getQuizz.rejected, (state, { payload }) => {
+        state.selected.quiz.isLoading = false;
+        state.selected.quiz.error = payload ?? null;
+      })
+      // --- getQuizzForAdmin ---
+      .addCase(getQuizzForAdmin.pending, state => {
+        state.selected.quiz.isLoading = true;
+        state.selected.quiz.error = null;
+      })
+      .addCase(getQuizzForAdmin.fulfilled, (state, { payload }) => {
+        state.selected.quiz.isLoading = false;
+        state.selected.quiz.data = payload;
+      })
+      .addCase(getQuizzForAdmin.rejected, (state, { payload }) => {
         state.selected.quiz.isLoading = false;
         state.selected.quiz.error = payload ?? null;
       })

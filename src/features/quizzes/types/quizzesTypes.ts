@@ -4,6 +4,8 @@ import { Pagination } from '@/types/globalTypes';
 
 export type QuizzId = string;
 
+// GET QUIZZES
+
 export interface Quizz {
   id: QuizzId;
   company_id: CompanyId;
@@ -12,60 +14,62 @@ export interface Quizz {
   counter: number;
 }
 
-export interface QuizzDetails extends Quizz {
-  questions: Question[];
+export interface QuizzDetails<TAnswer = Answer> extends Quizz {
+  questions: Question<TAnswer>[];
 }
 
-export interface QuizzDetailsWithAnswers extends Quizz {
-  questions: QuestionForForm[];
-}
-
-export type Question = {
+export type Question<TAnswer = Answer> = {
   id: string;
   quiz_id: string;
   question_text: string;
-  answers: Answer[];
+  answers: TAnswer[];
 };
 
-export type QuestionForForm = {
-  question_text: string;
-  answers: CorrectAnswer[];
-};
+// export type AnswerForUser = {
+//   id: string;
+//   answer_text: string;
+// };
 
-export type AttemptQuestion = {
-  question_id: string;
-  selected_answer_id: string;
-};
+// export type AnswerForAdmin = {
+//   id: string;
+//   answer_text: string;
+//   is_correct: boolean;
+// };
 
 export type Answer = {
   id: string;
   answer_text: string;
+  is_correct?: boolean;
 };
 
-export type CorrectAnswer = {
-  answer_text: string;
-  is_correct: boolean;
-};
+// CREATE, UPDATE
 
-export type AnswersDetails = {
-  question_id: string;
+export type AnswerForForm = Omit<Answer, 'id'>;
+
+export type QuestionForForm = {
   question_text: string;
+  answers: AnswerForForm[];
+};
+
+export type QuizzPayload = Pick<Quizz, 'title' | 'description'> & {
+  questions: QuestionForForm[];
+};
+
+export type CreateQuizzPayload = QuizzPayload;
+export type UpdateQuizzPayload = QuizzPayload;
+
+// ATTEMPT
+
+export type QuestionForAttempt = {
+  question_id: string;
   selected_answer_id: string;
-  selected_answer_text: string;
-  is_correct: boolean;
 };
 
-export type QuizzResponse = {
-  user_id: UserId;
-  company_id: CompanyId;
-  quizz_id: QuizzId;
-  score: number;
-  total_questions: number;
-  correct_answers_count: number;
-  answers_detail: AnswersDetails[];
+export type AttemptQuizzPayload = {
+  questions: QuestionForAttempt[];
 };
 
-export type AttemptResponse = {
+export type AttemptQuizzResponse = {
   score: number;
   total_questions: number;
   correct_answers_count: number;
@@ -75,21 +79,25 @@ export type AttemptResponse = {
   last_attempt_time: Date;
 };
 
+// GET ANSWERS
+
+export type AnswerForDetails = {
+  question_id: string;
+  question_text: string;
+  selected_answer_id: string;
+  selected_answer_text: string;
+  is_correct: boolean;
+};
+
+export type GetQuizzAnswersResponse = Omit<AttemptQuizzResponse, 'last_attempt_time'> & {
+  answers_detail: AnswerForDetails[];
+};
+
 // DTO
 
-export type QuizzFormPayload = Pick<Quizz, 'title' | 'description'> & {
-  questions: QuestionForForm[];
-};
-
-export type UpdateQuizzPayload = QuizzFormPayload;
-
-export type AttemptQuizzPayload = {
-  questions: AttemptQuestion[];
-};
-
-export type CreateQuizzDto = {
+export type QuizzParamsDto = {
   companyId: CompanyId;
-  payload: QuizzFormPayload;
+  quizzId: QuizzId;
 };
 
 export type GetCompanyQuizzesDto = {
@@ -97,7 +105,10 @@ export type GetCompanyQuizzesDto = {
   params: Pagination;
 };
 
-export type GetQuizzDto = DeleteQuizzDto;
+export type CreateQuizzDto = {
+  companyId: CompanyId;
+  payload: CreateQuizzPayload;
+};
 
 export type UpdateQuizzDto = {
   companyId: CompanyId;
@@ -105,15 +116,8 @@ export type UpdateQuizzDto = {
   payload: UpdateQuizzPayload;
 };
 
-export type DeleteQuizzDto = {
-  companyId: CompanyId;
-  quizzId: QuizzId;
-};
-
 export type AttemptQuizzDto = {
   companyId: CompanyId;
   quizzId: QuizzId;
   payload: AttemptQuizzPayload;
 };
-
-export type GetQuizzAnswersDto = DeleteQuizzDto;

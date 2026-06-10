@@ -68,7 +68,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
       dispatch(showNotification({ message: `${data.company_name} company successfuly created`, severity: 'success' }));
     } catch (err: any) {
       dispatch(
-        showNotification({ message: err.response?.data?.message || 'Failed to create a company', severity: 'success' })
+        showNotification({ message: err.response?.data?.message || 'Failed to create a company', severity: 'error' })
       );
     }
   };

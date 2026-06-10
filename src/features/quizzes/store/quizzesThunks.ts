@@ -2,17 +2,16 @@ import * as quizzesApi from '../api/quizzesApi';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { PaginatedResponse } from '@/types/globalTypes';
 import {
-  AnswersDetails,
+  AnswerForDetails,
   AttemptQuizzDto,
-  AttemptResponse,
+  AttemptQuizzResponse,
   CreateQuizzDto,
-  DeleteQuizzDto,
   GetCompanyQuizzesDto,
-  GetQuizzAnswersDto,
-  GetQuizzDto,
+  QuizzParamsDto,
   Quizz,
   QuizzDetails,
   UpdateQuizzDto,
+  Answer,
 } from '../types/quizzesTypes';
 
 type RejectValue = string;
@@ -42,11 +41,23 @@ export const getCompanyQuizzes = createAsyncThunk<
   }
 });
 
-export const getQuizz = createAsyncThunk<QuizzDetails, GetQuizzDto, { rejectValue: RejectValue }>(
+export const getQuizz = createAsyncThunk<QuizzDetails<Answer>, QuizzParamsDto, { rejectValue: RejectValue }>(
   'quizzes/fetchById',
   async ({ companyId, quizzId }, { rejectWithValue }) => {
     try {
       const res = await quizzesApi.getQuizz({ companyId, quizzId });
+      return res.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to load quizz');
+    }
+  }
+);
+
+export const getQuizzForAdmin = createAsyncThunk<QuizzDetails<Answer>, QuizzParamsDto, { rejectValue: RejectValue }>(
+  'quizzes/fetchByIdForAdmin',
+  async ({ companyId, quizzId }, { rejectWithValue }) => {
+    try {
+      const res = await quizzesApi.getQuizzForAdmin({ companyId, quizzId });
       return res.data;
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to load quizz');
@@ -66,7 +77,7 @@ export const updateQuizz = createAsyncThunk<Quizz, UpdateQuizzDto, { rejectValue
   }
 );
 
-export const deleteQuizz = createAsyncThunk<DeleteQuizzDto, DeleteQuizzDto, { rejectValue: RejectValue }>(
+export const deleteQuizz = createAsyncThunk<QuizzParamsDto, QuizzParamsDto, { rejectValue: RejectValue }>(
   'quizzes/delete',
   async ({ companyId, quizzId }, { rejectWithValue }) => {
     try {
@@ -78,7 +89,7 @@ export const deleteQuizz = createAsyncThunk<DeleteQuizzDto, DeleteQuizzDto, { re
   }
 );
 
-export const attemptQuizz = createAsyncThunk<AttemptResponse, AttemptQuizzDto, { rejectValue: RejectValue }>(
+export const attemptQuizz = createAsyncThunk<AttemptQuizzResponse, AttemptQuizzDto, { rejectValue: RejectValue }>(
   'quizzes/attempt',
   async ({ companyId, quizzId, payload }, { rejectWithValue }) => {
     try {
@@ -90,7 +101,7 @@ export const attemptQuizz = createAsyncThunk<AttemptResponse, AttemptQuizzDto, {
   }
 );
 
-export const getQuizzAnswers = createAsyncThunk<AnswersDetails[], GetQuizzAnswersDto, { rejectValue: RejectValue }>(
+export const getQuizzAnswers = createAsyncThunk<AnswerForDetails[], QuizzParamsDto, { rejectValue: RejectValue }>(
   'quizzes/getAnswers',
   async ({ companyId, quizzId }, { rejectWithValue }) => {
     try {

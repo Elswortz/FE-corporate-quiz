@@ -1,12 +1,12 @@
 import { AsyncState, OperationState, PaginatedAsyncState } from '@/types/globalTypes';
-import { AnswersDetails, AttemptResponse, Quizz, QuizzDetails } from './quizzesTypes';
+import { Answer, AnswerForDetails, AttemptQuizzResponse, Quizz, QuizzDetails } from './quizzesTypes';
 
 export interface QuizzesState {
   list: PaginatedAsyncState<Quizz[]>;
   selected: {
-    quiz: AsyncState<QuizzDetails | null>;
-    results: AsyncState<AttemptResponse | null>;
-    answers: AsyncState<AnswersDetails[] | null>;
+    quiz: AsyncState<QuizzDetails<Answer> | null>;
+    results: AsyncState<AttemptQuizzResponse | null>;
+    answers: AsyncState<AnswerForDetails[] | null>;
   };
   mutations: {
     create: OperationState;

@@ -20,7 +20,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { selectSelectedCompany } from '@/features/companies/store/companiesSelectors';
+import { selectSelectedCompany, selectUserRoleInCompany } from '@/features/companies/store/companiesSelectors';
 import { showNotification } from '@/features/notifications/store/notificationsSlice';
 import {
   selectDeleteQuizzError,
@@ -43,6 +43,7 @@ import {
   deleteQuizz,
   getQuizz,
   getQuizzAnswers,
+  getQuizzForAdmin,
   updateQuizz,
 } from '@/features/quizzes/store/quizzesThunks';
 import { AttemptQuizzPayload, UpdateQuizzPayload } from '@/features/quizzes/types/quizzesTypes';
@@ -60,7 +61,7 @@ const QuizzDetails = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoggedIn, user } = useAuth();
+  // const { isLoggedIn, user } = useAuth();
 
   const selectedCompany = useAppSelector(selectSelectedCompany);
 
@@ -87,10 +88,13 @@ const QuizzDetails = () => {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [showAnswers, setShowAnswers] = useState(false);
 
-  const role = useMemo(() => {
-    if (!selectedCompany || !user) return null;
-    return getUserRoleInCompany(selectedCompany, user.id);
-  }, [selectedCompany, user]);
+  // const role = useMemo(() => {
+  //   if (!selectedCompany || !user) return null;
+  //   return getUserRoleInCompany(selectedCompany, user.id);
+  // }, [selectedCompany, user]);
+
+  const role = useAppSelector(selectUserRoleInCompany);
+  const isAdmin = role === 'owner' || role === 'admin';
 
   const backLinkHref = location.state?.from ?? `/companies/${companyId}`;
 
@@ -105,7 +109,12 @@ const QuizzDetails = () => {
 
   useEffect(() => {
     if (!companyId || !quizzId) return;
-    dispatch(getQuizz({ companyId, quizzId }));
+
+    if (isAdmin) {
+      dispatch(getQuizzForAdmin({ companyId, quizzId }));
+    } else {
+      dispatch(getQuizz({ companyId, quizzId }));
+    }
 
     return () => {
       dispatch(clearCurrentQuizz());

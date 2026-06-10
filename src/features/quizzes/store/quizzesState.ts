@@ -1,13 +1,13 @@
 import { QuizzesState } from '../types/quizzesStateTypes';
 import { initialAsyncState, initialPaginatedAsyncState, initialOperationState } from '@/utils/initialStateHelpers';
-import { AnswersDetails, AttemptResponse, Quizz, QuizzDetails } from '../types/quizzesTypes';
+import { Answer, AnswerForDetails, AttemptQuizzResponse, Quizz, QuizzDetails } from '../types/quizzesTypes';
 
 const quizzesState: QuizzesState = {
   list: initialPaginatedAsyncState<Quizz[]>([]),
   selected: {
-    quiz: initialAsyncState<QuizzDetails | null>(null),
-    results: initialAsyncState<AttemptResponse | null>(null),
-    answers: initialAsyncState<AnswersDetails[]>([]),
+    quiz: initialAsyncState<QuizzDetails<Answer> | null>(null),
+    results: initialAsyncState<AttemptQuizzResponse | null>(null),
+    answers: initialAsyncState<AnswerForDetails[]>([]),
   },
   mutations: {
     create: initialOperationState,
