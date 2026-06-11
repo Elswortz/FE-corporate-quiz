@@ -10,14 +10,13 @@ import {
   selectAllCompaniesMeta,
 } from '@/features/companies/store/companiesSelectors';
 import { fetchAllCompanies } from '@/features/companies/store/companiesThunks';
-import { usePagination } from '@/hooks/usePagination';
 import LoadMoreButton from '@/components/ui/LoadMoreButton/LoadMoreButton';
 
 const Companies = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const handleCreate = () => setModalOpen(true);
   const dispatch = useAppDispatch();
   const allCompanies = useAppSelector(selectAllCompanies);
   const allCompaniesLoading = useAppSelector(selectAllCompaniesLoading);
@@ -25,13 +24,26 @@ const Companies = () => {
   const allCompaniesMeta = useAppSelector(selectAllCompaniesMeta);
   const isInitialLoading = allCompaniesLoading && allCompanies.length === 0;
 
-  const { limit, offset, loadMore } = usePagination({});
+  const COMPANIES_LIMIT = 8;
 
   useEffect(() => {
-    if (allCompanies.length === 0) {
-      dispatch(fetchAllCompanies({ limit, offset }));
+    if (!allCompanies.length && !allCompaniesLoading) {
+      dispatch(fetchAllCompanies({ limit: COMPANIES_LIMIT, offset: 0 }));
     }
-  }, [dispatch, limit, offset, allCompanies]);
+  }, [dispatch, allCompanies.length, allCompaniesLoading]);
+
+  const handleLoadMore = async () => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
+
+    await dispatch(
+      fetchAllCompanies({
+        limit: COMPANIES_LIMIT,
+        offset: allCompanies.length,
+      })
+    );
+    setIsLoadingMore(false);
+  };
 
   const filteredCompanies = useMemo(() => {
     return allCompanies.filter(company => company.company_name.toLowerCase().includes(search.toLowerCase()));
@@ -53,7 +65,7 @@ const Companies = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleCreate}
+            onClick={() => setModalOpen(true)}
             sx={{
               height: 56,
               flexShrink: 0,
@@ -62,14 +74,13 @@ const Companies = () => {
             Create company
           </Button>
         </Box>
-        <CompaniesList companies={filteredCompanies} isLoading={allCompaniesLoading} error={allCompaniesError} />
+        <CompaniesList companies={filteredCompanies} isLoading={isInitialLoading} error={allCompaniesError} />
         {!isInitialLoading && (
           <>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
               Total companies: {allCompaniesMeta?.total ?? 0}
             </Typography>
-
-            <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={allCompaniesLoading} onClick={loadMore} />
+            <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />
           </>
         )}
         <CreateCompanyModal open={modalOpen} onClose={() => setModalOpen(false)} />

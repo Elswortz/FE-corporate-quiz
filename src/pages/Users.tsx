@@ -7,9 +7,8 @@ import {
   selectUsersListLoading,
   selectUsersListMeta,
 } from '@/features/users/store/usersSelectors';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchUsers } from '@/features/users/store/usersThunks';
-import { usePagination } from '@/hooks/usePagination';
 import { LoadMoreButton } from '@/components/ui';
 
 const Users = () => {
@@ -18,12 +17,34 @@ const Users = () => {
   const isLoading = useAppSelector(selectUsersListLoading);
   const error = useAppSelector(selectUsersListError);
   const meta = useAppSelector(selectUsersListMeta);
+  const isInitialLoading = isLoading && users.length === 0;
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const { limit, offset, loadMore } = usePagination({});
+  const USERS_LIMIT = 20;
 
   useEffect(() => {
-    dispatch(fetchUsers({ limit: 20, offset }));
-  }, [dispatch, limit, offset]);
+    if (!users.length && !isLoading) {
+      dispatch(
+        fetchUsers({
+          limit: USERS_LIMIT,
+          offset: 0,
+        })
+      );
+    }
+  }, [dispatch, users.length, isLoading]);
+
+  const handleLoadMore = async () => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
+
+    await dispatch(
+      fetchUsers({
+        limit: USERS_LIMIT,
+        offset: users.length,
+      })
+    );
+    setIsLoadingMore(false);
+  };
 
   return (
     <>
@@ -31,8 +52,10 @@ const Users = () => {
         <Typography variant="h4" gutterBottom>
           List of all users
         </Typography>
-        <UsersList users={users} isLoading={isLoading} error={error} />
-        <LoadMoreButton hasMore={meta?.has_next} isLoading={isLoading} onClick={loadMore} />
+        <UsersList users={users} isLoading={isInitialLoading} error={error} />
+        {!isInitialLoading && (
+          <LoadMoreButton hasMore={meta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />
+        )}
       </Container>
     </>
   );

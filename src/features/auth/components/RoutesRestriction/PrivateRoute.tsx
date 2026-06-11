@@ -8,12 +8,12 @@ type PrivateRouteProps = {
 };
 
 const PrivateRoute: FC<PrivateRouteProps> = ({ children, redirectTo = '/login' }) => {
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoggedIn } = useAuth();
   const location = useLocation();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (!isLoggedIn) {
     return <Navigate to={redirectTo} state={{ from: location }} replace />;
