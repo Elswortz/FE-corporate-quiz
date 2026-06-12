@@ -50,8 +50,11 @@ const Companies = () => {
   }, [allCompanies, search]);
 
   return (
-    <Box sx={{ py: 6 }}>
+    <Box>
       <Container maxWidth="lg">
+        <Typography variant="h4" gutterBottom>
+          Companies
+        </Typography>
         <Box
           sx={{
             display: 'flex',
@@ -75,11 +78,12 @@ const Companies = () => {
           </Button>
         </Box>
         <CompaniesList companies={filteredCompanies} isLoading={isInitialLoading} error={allCompaniesError} />
-        {!isInitialLoading && (
+        {!isInitialLoading && !allCompaniesError && allCompanies.length > 0 && (
           <>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
               Total companies: {allCompaniesMeta?.total ?? 0}
             </Typography>
+
             <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />
           </>
         )}

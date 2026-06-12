@@ -1,4 +1,4 @@
-import { Grid, Typography, CircularProgress, Box } from '@mui/material';
+import { Grid, Typography, CircularProgress, Box, Alert } from '@mui/material';
 import CompaniesItem from '../CompaniesItem/CompaniesItem';
 import { Company } from '../../types/companiesTypes';
 
@@ -25,28 +25,22 @@ const CompaniesList = ({ companies = [], isLoading, error }: CompaniesListProps)
   }
 
   if (error) {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Typography color="error">{error}</Typography>
-      </Box>
-    );
+    return <Alert severity="error">{error}</Alert>;
+  }
+
+  if (!companies.length) {
+    return <Alert severity="info">No companies found</Alert>;
   }
 
   return (
     <Box>
-      {companies.length === 0 ? (
-        <Typography variant="body1">No companies found</Typography>
-      ) : (
-        <>
-          <Grid container spacing={2}>
-            {companies.map(company => (
-              <Grid key={company.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-                <CompaniesItem company={company} />
-              </Grid>
-            ))}
+      <Grid container spacing={2}>
+        {companies.map(company => (
+          <Grid key={company.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <CompaniesItem company={company} />
           </Grid>
-        </>
-      )}
+        ))}
+      </Grid>
     </Box>
   );
 };

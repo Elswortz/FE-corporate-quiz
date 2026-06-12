@@ -27,16 +27,16 @@ const UsersList = ({ users, isLoading, error }: UsersListProps) => {
       </Box>
     );
 
-  if (!users.length) {
-    return <Alert severity="info">No users found</Alert>;
-  }
-
   if (error) {
     return <Alert severity="error">{error}</Alert>;
   }
 
+  if (!users.length) {
+    return <Alert severity="info">No users found</Alert>;
+  }
+
   return (
-    <Box>
+    <Box sx={{ mb: 4 }}>
       <Grid container spacing={2}>
         {users.map(user => (
           <Grid

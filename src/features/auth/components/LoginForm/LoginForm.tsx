@@ -90,6 +90,7 @@ const LoginForm = () => {
 
         <Link
           component="button"
+          type="button"
           variant="body2"
           sx={{
             textAlign: 'center',

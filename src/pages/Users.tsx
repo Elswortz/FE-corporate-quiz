@@ -1,13 +1,13 @@
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import UsersList from '../features/users/components/UsersList/UsersList';
-import { Container, Typography } from '@mui/material';
+import { Container, TextField, Typography } from '@mui/material';
 import {
   selectUsersList,
   selectUsersListError,
   selectUsersListLoading,
   selectUsersListMeta,
 } from '@/features/users/store/usersSelectors';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { fetchUsers } from '@/features/users/store/usersThunks';
 import { LoadMoreButton } from '@/components/ui';
 
@@ -19,6 +19,7 @@ const Users = () => {
   const meta = useAppSelector(selectUsersListMeta);
   const isInitialLoading = isLoading && users.length === 0;
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [search, setSearch] = useState('');
 
   const USERS_LIMIT = 20;
 
@@ -46,13 +47,24 @@ const Users = () => {
     setIsLoadingMore(false);
   };
 
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => user.email.includes(search));
+  }, [users, search]);
+
   return (
     <>
       <Container maxWidth="lg">
         <Typography variant="h4" gutterBottom>
-          List of all users
+          Users
         </Typography>
-        <UsersList users={users} isLoading={isInitialLoading} error={error} />
+        <TextField
+          fullWidth
+          label="Search users"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          sx={{ mb: 4 }}
+        />
+        <UsersList users={filteredUsers} isLoading={isInitialLoading} error={error} />
         {!isInitialLoading && (
           <LoadMoreButton hasMore={meta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />
         )}

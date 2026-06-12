@@ -32,7 +32,7 @@ const features = [
 const About = () => {
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 8 }}>
+      <Box sx={{ py: 4 }}>
         <Stack spacing={8}>
           <Box textAlign="center">
             <Typography variant="h3" fontWeight={700} gutterBottom>
