@@ -46,7 +46,7 @@ type Props = {
     handleCancelRequest: () => Promise<void>;
     handleLeave: () => Promise<void>;
     handleDelete: () => Promise<void>;
-    handleChangeLogo: (formData: FormData) => Promise<void>;
+    handleChangeLogo: (file: File) => Promise<void>;
   };
 };
 

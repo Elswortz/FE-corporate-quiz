@@ -11,11 +11,14 @@ import {
 } from '@/features/companies/store/companiesSelectors';
 import { fetchAllCompanies } from '@/features/companies/store/companiesThunks';
 import LoadMoreButton from '@/components/ui/LoadMoreButton/LoadMoreButton';
+import { useTranslation } from 'react-i18next';
 
 const Companies = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  const { t } = useTranslation('companies');
 
   const dispatch = useAppDispatch();
   const allCompanies = useAppSelector(selectAllCompanies);
@@ -53,7 +56,7 @@ const Companies = () => {
     <Box>
       <Container maxWidth="lg">
         <Typography variant="h4" gutterBottom>
-          Companies
+          {t('title')}
         </Typography>
         <Box
           sx={{
@@ -63,7 +66,7 @@ const Companies = () => {
             mb: 4,
           }}
         >
-          <TextField fullWidth label="Search companies" value={search} onChange={e => setSearch(e.target.value)} />
+          <TextField fullWidth label={t('searchText')} value={search} onChange={e => setSearch(e.target.value)} />
 
           <Button
             variant="contained"
@@ -74,14 +77,14 @@ const Companies = () => {
               flexShrink: 0,
             }}
           >
-            Create company
+            {t('createCompanyButton')}
           </Button>
         </Box>
         <CompaniesList companies={filteredCompanies} isLoading={isInitialLoading} error={allCompaniesError} />
         {!isInitialLoading && !allCompaniesError && allCompanies.length > 0 && (
           <>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-              Total companies: {allCompaniesMeta?.total ?? 0}
+              {t('totalCompaniesText')}: {allCompaniesMeta?.total ?? 0}
             </Typography>
 
             <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation, NavLink } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
@@ -31,7 +31,6 @@ import {
 
 import { showNotification } from '@/features/notifications/store/notificationsSlice';
 
-import { getUserRoleInCompany } from '@/utils/companyHelpers';
 import CompanyDetailsView from '@/features/companies/components/CompaniesDetailsView/CompaniesDetailsView';
 import { Outlet } from 'react-router-dom';
 import { Container, Typography, Box, CircularProgress, Button } from '@mui/material';
@@ -44,7 +43,7 @@ const CompanyProfile = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoggedIn, user } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   const selectedCompany = useAppSelector(selectSelectedCompany);
   const selectedCompanyLoading = useAppSelector(selectSelectedCompanyLoading);
@@ -74,11 +73,6 @@ const CompanyProfile = () => {
     };
   }, [dispatch, companyId]);
 
-  // const role = useMemo(() => {
-  //   if (!selectedCompany || !user) return null;
-  //   return getUserRoleInCompany(selectedCompany, user.id);
-  // }, [selectedCompany, user]);
-
   const role = useAppSelector(selectUserRoleInCompany);
 
   const handleToggleStatus = async () => {
@@ -96,8 +90,10 @@ const CompanyProfile = () => {
     await dispatch(fetchCompanyById(selectedCompany.id)).unwrap();
   };
 
-  const handleChangeLogo = async (formData: FormData) => {
+  const handleChangeLogo = async (file: File) => {
     if (!selectedCompany) return;
+    const formData = new FormData();
+    formData.append('logo_file', file);
 
     await dispatch(
       changeCompanyLogo({
@@ -231,7 +227,7 @@ const CompanyProfile = () => {
   return (
     <>
       <Container maxWidth="lg">
-        <Button component={NavLink} to={backLinkHref} startIcon={<ArrowBackIcon />} sx={{ mt: 4 }}>
+        <Button component={NavLink} to={backLinkHref} startIcon={<ArrowBackIcon />}>
           Back
         </Button>
         <CompanyDetailsView

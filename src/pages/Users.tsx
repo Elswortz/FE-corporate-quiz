@@ -10,6 +10,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { fetchUsers } from '@/features/users/store/usersThunks';
 import { LoadMoreButton } from '@/components/ui';
+import { useTranslation } from 'react-i18next';
 
 const Users = () => {
   const dispatch = useAppDispatch();
@@ -17,6 +18,7 @@ const Users = () => {
   const isLoading = useAppSelector(selectUsersListLoading);
   const error = useAppSelector(selectUsersListError);
   const meta = useAppSelector(selectUsersListMeta);
+  const { t } = useTranslation('users');
   const isInitialLoading = isLoading && users.length === 0;
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [search, setSearch] = useState('');
@@ -55,18 +57,23 @@ const Users = () => {
     <>
       <Container maxWidth="lg">
         <Typography variant="h4" gutterBottom>
-          Users
+          {t('title')}
         </Typography>
         <TextField
           fullWidth
-          label="Search users"
+          label={t('searchFieldText')}
           value={search}
           onChange={e => setSearch(e.target.value)}
           sx={{ mb: 4 }}
         />
         <UsersList users={filteredUsers} isLoading={isInitialLoading} error={error} />
         {!isInitialLoading && (
-          <LoadMoreButton hasMore={meta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />
+          <>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              {t('totalText')} {meta?.total ?? 0}
+            </Typography>
+            <LoadMoreButton hasMore={meta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />
+          </>
         )}
       </Container>
     </>

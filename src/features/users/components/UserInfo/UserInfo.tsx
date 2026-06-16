@@ -1,5 +1,5 @@
-import { Box, Avatar, Typography, TextField, Button, CircularProgress, Stack } from '@mui/material';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { Box, Typography, TextField, Button, CircularProgress, Stack } from '@mui/material';
+import { useState, useEffect } from 'react';
 import { updateUser, updateUserAvatar, removeUser } from '../../store/usersThunks';
 import {
   selectUserProfileData,
@@ -16,6 +16,7 @@ import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useNavigate } from 'react-router-dom';
 import { selectIsSSOAuth } from '@/features/auth/store/authSelectors';
+import ImageUploader from '@/components/ui/ImageUpload/ImageUpload';
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
@@ -54,9 +55,7 @@ const UserInfo = () => {
     }
   };
 
-  const handleAvatarChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleAvatarChange = async (file: File) => {
     const formData = new FormData();
     formData.append('avatar_file', file);
 
@@ -101,7 +100,6 @@ const UserInfo = () => {
     <Box
       sx={{
         mx: 'auto',
-        mt: 5,
         p: 4,
         boxShadow: 2,
         borderRadius: 1,
@@ -114,43 +112,14 @@ const UserInfo = () => {
 
       <Stack direction="row" alignItems="center" spacing={3}>
         <Box>
-          <Box sx={{ position: 'relative', width: 100, height: 100 }}>
-            <Avatar src={user?.avatar_url || ''} sx={{ width: 100, height: 100 }}>
-              {!user?.avatar_url && !changeAvatarLoading && <PersonIcon fontSize={'large'} />}
-            </Avatar>
-            {changeAvatarLoading && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                  borderRadius: '50%',
-                  zIndex: 1,
-                }}
-              />
-            )}
-            {changeAvatarLoading && (
-              <CircularProgress
-                size={36}
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  marginTop: '-18px',
-                  marginLeft: '-18px',
-                  zIndex: 2,
-                  color: 'primary.main',
-                }}
-              />
-            )}
-          </Box>
-          <Button variant="outlined" component="label" size="small" sx={{ mt: 1 }}>
-            Upload
-            <input type="file" hidden accept="image/*" onChange={handleAvatarChange} />
-          </Button>
+          <ImageUploader
+            src={user.avatar_url}
+            alt={user.email}
+            size={100}
+            loading={changeAvatarLoading}
+            fallback={<PersonIcon fontSize="large" />}
+            onUpload={handleAvatarChange}
+          />
         </Box>
         <Box flex={1}>
           <Typography variant="body1" color="text.secondary">

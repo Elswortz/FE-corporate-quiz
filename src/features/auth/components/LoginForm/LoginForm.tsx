@@ -98,7 +98,7 @@ const LoginForm = () => {
           }}
           onClick={() => setForgotOpen(true)}
         >
-          Forgot your password? Reset password
+          {t('text.forgotPassword')}
         </Link>
 
         <AlterLogin />

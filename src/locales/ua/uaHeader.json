@@ -7,5 +7,9 @@
   "authButtons": {
     "loginBtn": "Логін",
     "registerBtn": "Зареєструватись"
+  },
+  "profileMenu": {
+    "option1": "Мій профіль",
+    "option2": "Вихід"
   }
 }

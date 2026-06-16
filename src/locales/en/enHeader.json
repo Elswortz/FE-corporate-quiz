@@ -7,5 +7,9 @@
   "authButtons": {
     "loginBtn": "Login",
     "registerBtn": "Registration"
+  },
+  "profileMenu": {
+    "option1": "My profile",
+    "option2": "Log out"
   }
 }

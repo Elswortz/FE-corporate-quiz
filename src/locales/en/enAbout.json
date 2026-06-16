@@ -1,0 +1,26 @@
+{
+  "hero": {
+    "title": "Quiz Platform for Companies",
+    "text": "A modern platform where companies can create quizzes, manage employees, and improve learning through interactive assessments and progress tracking.",
+    "buttonText": "Get started"
+  },
+  "features": {
+    "title": "Main Features",
+    "feature1": {
+      "title": "Company Quizzes",
+      "text": "Companies can create quizzes for onboarding, education, certification, and employee evaluation."
+    },
+    "feature2": {
+      "title": "Team Collaboration",
+      "text": "Invite employees, manage members, and organize learning inside your company workspace."
+    },
+    "feature3": {
+      "title": "Interactive Learning",
+      "text": "Users can complete quizzes, improve their knowledge, and track their progress."
+    },
+    "feature4": {
+      "title": "Performance Tracking",
+      "text": "Monitor quiz results and evaluate user performance through detailed statistics."
+    }
+  }
+}
