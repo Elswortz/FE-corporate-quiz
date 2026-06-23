@@ -2,6 +2,10 @@ import { useEffect } from 'react';
 import { Controller, useFieldArray, useForm, Control, UseFormRegister } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { QuizzFormData, quizzFormSchema } from '../../schemas/quizzFormSchema';
+import { parseQuizExcel } from '../../utils/quizzImport';
+import { downloadQuizTemplate } from '../../utils/quizzTemplate';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import DownloadIcon from '@mui/icons-material/Download';
 import {
   Box,
   Button,
@@ -76,6 +80,18 @@ export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, o
     reset(initialData ?? emptyValues);
   }, [open, initialData, reset]);
 
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const importedQuiz = await parseQuizExcel(file);
+      reset(importedQuiz);
+    } catch (error) {
+      console.error(error);
+    }
+    event.target.value = '';
+  };
+
   const handleFormSubmit = (data: QuizzFormData) => {
     onSubmit(data);
     onClose();
@@ -88,7 +104,22 @@ export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, o
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle>{initialData ? 'Edit Quiz' : 'Create Quiz'}</DialogTitle>
+      <DialogTitle>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">{initialData ? 'Edit Quiz' : 'Create Quiz'}</Typography>
+
+          <Stack direction="row" spacing={1}>
+            <Button size="small" variant="outlined" startIcon={<DownloadIcon />} onClick={downloadQuizTemplate}>
+              Template
+            </Button>
+
+            <Button component="label" size="small" variant="outlined" startIcon={<UploadFileIcon />}>
+              Import
+              <input hidden type="file" accept=".xlsx,.xls" onChange={handleImport} />
+            </Button>
+          </Stack>
+        </Stack>
+      </DialogTitle>
 
       <DialogContent>
         <Stack spacing={3} mt={1}>

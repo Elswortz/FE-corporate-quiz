@@ -55,6 +55,8 @@ import { QuizzFormModal } from '@/features/quizzes/components/QuizzFormModal/Qui
 import { mapQuizzToFormData } from '@/features/quizzes/utils/quizzMappers';
 import { ConfirmModal } from '@/components/ui';
 import { fetchCompanyById } from '@/features/companies/store/companiesThunks';
+import { exportToJson } from '@/features/quizzes/utils/exportToJson';
+import { exportToCsv } from '@/features/quizzes/utils/exportToCsv';
 
 const QuizzDetails = () => {
   const { companyId, quizzId } = useParams();
@@ -309,7 +311,19 @@ const QuizzDetails = () => {
           <Card>
             <CardContent>
               <Stack spacing={3}>
-                <Typography variant="h5">Answers Review</Typography>
+                <Stack direction="row" justifyContent="space-between" alignItems="center">
+                  <Typography variant="h5">Answers Review</Typography>
+
+                  <Stack direction="row" spacing={2}>
+                    <Button variant="outlined" onClick={() => exportToJson(quizz, quizzResults, quizzAnswers)}>
+                      Export JSON
+                    </Button>
+
+                    <Button variant="outlined" onClick={() => exportToCsv(quizz, quizzAnswers)}>
+                      Export CSV
+                    </Button>
+                  </Stack>
+                </Stack>
 
                 {quizzAnswers.map((answer, index) => (
                   <Box key={answer.question_id}>
