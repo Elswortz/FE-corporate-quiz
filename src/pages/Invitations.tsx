@@ -6,12 +6,14 @@ import { useParams } from 'react-router-dom';
 
 import InvitationsList from '@/features/invitations/components/InvitationsList/InvitationsList';
 import { useAppDispatch } from '@/store/hooks';
+import { useTranslation } from 'react-i18next';
 
 const Invitations = () => {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const { t } = useTranslation('invitations');
 
   const dispatch = useAppDispatch();
 
@@ -50,18 +52,18 @@ const Invitations = () => {
     <>
       <Box>
         <Button variant="contained" color="primary" onClick={handleOpen}>
-          Invite
+          {t('buttons.invite')}
         </Button>
 
         <InvitationsList />
 
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          <DialogTitle>Invite member</DialogTitle>
+          <DialogTitle>{t('modal.title')}</DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
               margin="dense"
-              label="Email"
+              label={t('modal.email')}
               type="email"
               fullWidth
               value={email}
@@ -71,9 +73,9 @@ const Invitations = () => {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button variant="contained" onClick={handleSend}>
-              {isLoading ? 'Loading...' : 'Send'}
+            <Button onClick={handleClose}>{t('modal.cancelButton')}</Button>
+            <Button variant="contained" onClick={handleSend} loading={isLoading}>
+              {t('modal.sendButton')}
             </Button>
           </DialogActions>
         </Dialog>

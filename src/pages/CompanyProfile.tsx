@@ -36,9 +36,11 @@ import { Outlet } from 'react-router-dom';
 import { Container, Typography, Box, CircularProgress, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 const CompanyProfile = () => {
   const { companyId } = useParams();
+  const { t } = useTranslation('companiesDetails');
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -228,7 +230,7 @@ const CompanyProfile = () => {
     <>
       <Container maxWidth="lg">
         <Button component={NavLink} to={backLinkHref} startIcon={<ArrowBackIcon />}>
-          Back
+          {t('buttons.back')}
         </Button>
         <CompanyDetailsView
           company={selectedCompany}

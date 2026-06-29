@@ -1,6 +1,7 @@
 import { Alert, Card, CardContent, CardActionArea, Chip, Grid, Skeleton, Stack, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Quizz } from '../../types/quizzesTypes';
+import { useTranslation } from 'react-i18next';
 
 type QuizzesListProps = {
   quizzes: Quizz[];
@@ -11,6 +12,7 @@ type QuizzesListProps = {
 const QuizzesList = ({ quizzes, isLoading, error }: QuizzesListProps) => {
   const navigate = useNavigate();
   const { companyId } = useParams();
+  const { t } = useTranslation('quizzes');
 
   if (error) {
     return <Alert severity="error">{error}</Alert>;
@@ -65,7 +67,7 @@ const QuizzesList = ({ quizzes, isLoading, error }: QuizzesListProps) => {
                     {quizz.description}
                   </Typography>
 
-                  <Chip label={`Completed: ${quizz.counter}`} size="small" sx={{ alignSelf: 'flex-start' }} />
+                  <Chip label={`${t('completed')}: ${quizz.counter}`} size="small" sx={{ alignSelf: 'flex-start' }} />
                 </Stack>
               </CardContent>
             </CardActionArea>

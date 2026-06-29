@@ -2,6 +2,7 @@ import { ListItem, ListItemAvatar, ListItemText, Box, Typography, Chip, Stack, B
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import { Invitation, InvitationId } from '../../types/invitationsTypes';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   inv: Invitation;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const InvitationsItem = ({ inv, onAccept, onReject, onCancel }: Props) => {
+  const { t } = useTranslation('invitations');
   const user = inv.invited_user;
   const invitedBy = inv.invited_by;
   const avatarUrl = user?.avatar_url;
@@ -36,7 +38,7 @@ const InvitationsItem = ({ inv, onAccept, onReject, onCancel }: Props) => {
             </Typography>
 
             <Chip
-              label={inv.invitation_type === 'company_invite' ? 'Invite' : 'Request'}
+              label={inv.invitation_type === 'company_invite' ? t('types.invite') : t('types.request')}
               size="small"
               color={inv.invitation_type === 'company_invite' ? 'secondary' : 'success'}
             />
@@ -53,7 +55,7 @@ const InvitationsItem = ({ inv, onAccept, onReject, onCancel }: Props) => {
 
             {inv.invitation_type === 'company_invite' && (
               <Typography variant="caption" component="span" color="text.secondary">
-                Invited by: {invitedByName}
+                {`${t('invitedBy')} ${invitedByName}`}
               </Typography>
             )}
           </Box>
@@ -63,7 +65,7 @@ const InvitationsItem = ({ inv, onAccept, onReject, onCancel }: Props) => {
         <>
           {inv.invitation_type === 'company_invite' && (
             <Button variant="outlined" color="error" size="small" onClick={onCancel}>
-              Cancel
+              {t('buttons.cancel')}
             </Button>
           )}
           {inv.invitation_type === 'user_request' && (
@@ -76,7 +78,7 @@ const InvitationsItem = ({ inv, onAccept, onReject, onCancel }: Props) => {
                   onAccept(inv.id);
                 }}
               >
-                Accept
+                {t('buttons.accept')}
               </Button>
               <Button
                 variant="outlined"
@@ -85,7 +87,7 @@ const InvitationsItem = ({ inv, onAccept, onReject, onCancel }: Props) => {
                   onReject(inv.id);
                 }}
               >
-                Reject
+                {t('buttons.reject')}
               </Button>
             </>
           )}

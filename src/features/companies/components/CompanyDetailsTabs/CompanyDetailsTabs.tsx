@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Box, Tab, Tabs } from '@mui/material';
 import { CompanyRole } from '../../types/companiesTypes';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   companyId: string;
@@ -9,6 +10,7 @@ type Props = {
 
 const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   const location = useLocation();
+  const { t } = useTranslation('companiesDetails');
 
   const basePath = `/companies/${companyId}`;
 
@@ -33,9 +35,9 @@ const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   return (
     <Box mt={4} mb={2}>
       <Tabs value={tabValue} textColor="primary" indicatorColor="primary">
-        <Tab label="Quizzes" component={NavLink} to={`${basePath}/quizzes`} />
-        <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
-        {canViewInvitations && <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />}
+        <Tab label={t('tabs.quizzes')} component={NavLink} to={`${basePath}/quizzes`} />
+        <Tab label={t('tabs.members')} component={NavLink} to={`${basePath}/members`} />
+        {canViewInvitations && <Tab label={t('tabs.invitations')} component={NavLink} to={`${basePath}/invitations`} />}
       </Tabs>
     </Box>
   );

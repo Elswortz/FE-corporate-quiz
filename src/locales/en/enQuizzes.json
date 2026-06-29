@@ -1,0 +1,31 @@
+{
+  "createQuizzButton": "Create quizz",
+  "completed": "Completed",
+  "modals": {
+    "create": {
+      "title": "Create quizz",
+      "fields": {
+        "title": "Title",
+        "description": "Description",
+        "question": "Question",
+        "answer": "Answer"
+      },
+      "buttons": {
+        "template": "Tempalte",
+        "import": "Import",
+        "addQuestion": "Add question",
+        "addAnswer": "Add answer",
+        "create": "Create",
+        "cancel": "Cancel",
+        "edit": "Edit"
+      },
+      "correct": "Correct"
+    },
+    "edit": {
+      "title": "Edit quizz",
+      "buttons": {
+        "save": "Save"
+      }
+    }
+  }
+}

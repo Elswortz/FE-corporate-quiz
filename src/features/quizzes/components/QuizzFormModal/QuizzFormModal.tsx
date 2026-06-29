@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   open: boolean;
@@ -54,6 +55,7 @@ const emptyValues: QuizzFormData = {
 };
 
 export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, onSubmit }: Props) => {
+  const { t } = useTranslation('quizzes');
   const {
     control,
     register,
@@ -106,15 +108,15 @@ export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, o
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">{initialData ? 'Edit Quiz' : 'Create Quiz'}</Typography>
+          <Typography variant="h6">{initialData ? t('modals.edit.title') : t('modals.create.title')}</Typography>
 
           <Stack direction="row" spacing={1}>
             <Button size="small" variant="outlined" startIcon={<DownloadIcon />} onClick={downloadQuizTemplate}>
-              Template
+              {t('modals.create.buttons.template')}
             </Button>
 
             <Button component="label" size="small" variant="outlined" startIcon={<UploadFileIcon />}>
-              Import
+              {t('modals.create.buttons.import')}
               <input hidden type="file" accept=".xlsx,.xls" onChange={handleImport} />
             </Button>
           </Stack>
@@ -124,7 +126,7 @@ export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, o
       <DialogContent>
         <Stack spacing={3} mt={1}>
           <TextField
-            label="Title"
+            label={t('modals.create.fields.title')}
             fullWidth
             {...register('title')}
             error={!!errors.title}
@@ -132,7 +134,7 @@ export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, o
           />
 
           <TextField
-            label="Description"
+            label={t('modals.create.fields.description')}
             multiline
             rows={3}
             fullWidth
@@ -169,7 +171,7 @@ export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, o
               })
             }
           >
-            Add Question
+            {t('modals.create.buttons.addQuestion')}
           </Button>
 
           {error && <Typography color="error">{error}</Typography>}
@@ -177,10 +179,10 @@ export const QuizzFormModal = ({ open, onClose, isLoading, error, initialData, o
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>{t('modals.create.buttons.cancel')}</Button>
 
         <Button loading={isLoading} variant="contained" onClick={handleSubmit(handleFormSubmit)}>
-          {initialData ? 'Save' : 'Create'}
+          {initialData ? t('modals.edit.buttons.save') : t('modals.create.buttons.create')}
         </Button>
       </DialogActions>
     </Dialog>
@@ -195,6 +197,7 @@ type QuestionBlockProps = {
 };
 
 const QuestionBlock = ({ questionIndex, control, register, removeQuestion }: QuestionBlockProps) => {
+  const { t } = useTranslation('quizzes');
   const {
     fields: answers,
     append: appendAnswer,
@@ -215,20 +218,24 @@ const QuestionBlock = ({ questionIndex, control, register, removeQuestion }: Que
     >
       <Stack spacing={2}>
         <Stack direction="row" justifyContent="space-between">
-          <Typography variant="h6">Question {questionIndex + 1}</Typography>
+          <Typography variant="h6">{`${t('modals.create.fields.question')} ${questionIndex + 1}`}</Typography>
 
           <IconButton onClick={() => removeQuestion(questionIndex)}>
             <DeleteIcon />
           </IconButton>
         </Stack>
 
-        <TextField fullWidth label="Question" {...register(`questions.${questionIndex}.question_text`)} />
+        <TextField
+          fullWidth
+          label={t('modals.create.fields.question')}
+          {...register(`questions.${questionIndex}.question_text`)}
+        />
 
         {answers.map((answer, answerIndex) => (
           <Stack key={answer.id} direction="row" spacing={2} alignItems="center">
             <TextField
               fullWidth
-              label={`Answer ${answerIndex + 1}`}
+              label={`${t('modals.create.fields.answer')} ${answerIndex + 1}`}
               {...register(`questions.${questionIndex}.answers.${answerIndex}.answer_text`)}
             />
 
@@ -237,7 +244,7 @@ const QuestionBlock = ({ questionIndex, control, register, removeQuestion }: Que
               name={`questions.${questionIndex}.answers.${answerIndex}.is_correct`}
               render={({ field }) => (
                 <FormControlLabel
-                  label="Correct"
+                  label={t('modals.create.correct')}
                   control={<Checkbox checked={field.value} onChange={field.onChange} />}
                 />
               )}
@@ -258,7 +265,7 @@ const QuestionBlock = ({ questionIndex, control, register, removeQuestion }: Que
             })
           }
         >
-          Add Answer
+          {t('modals.create.buttons.addAnswer')}
         </Button>
       </Stack>
     </Box>

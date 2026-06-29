@@ -1,0 +1,24 @@
+{
+  "buttons": {
+    "invite": "Invite",
+    "cancel": "Cancel",
+    "accept": "Accept",
+    "reject": "Reject"
+  },
+  "types": {
+    "invite": "Invite",
+    "request": "Request"
+  },
+  "modal": {
+    "title": "Invite user",
+    "email": "Email",
+    "sendButton": "Send",
+    "cancelButton": "Cancel"
+  },
+  "confirmModal": {
+    "title": "Confirm invitation cancellation",
+    "description": "Are you sure you want to cancel your invitation? This action cannot be undone",
+    "confirmText": "Confirm"
+  },
+  "invitedBy": "Invited by:"
+}

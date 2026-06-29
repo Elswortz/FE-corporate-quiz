@@ -1,0 +1,44 @@
+{
+  "buttons": {
+    "hide": "Hide",
+    "show": "Show",
+    "edit": "Edit",
+    "delete": "Delete",
+    "request": "Join company",
+    "cancelRequest": "Cancel request",
+    "leave": "Leave",
+    "back": "Back"
+  },
+  "tabs": {
+    "quizzes": "Quizzes",
+    "members": "Members",
+    "invitations": "Invitations"
+  },
+  "status": {
+    "visible": "Visible",
+    "hidden": "Hidden"
+  },
+  "modals": {
+    "delete": {
+      "title": "Confirm Company Deletion",
+      "description": "Are you sure you want to delete your company? This action cannot be undone.",
+      "confirmText": "Delete"
+    },
+    "leave": {
+      "title": "Confirm Leave From Company",
+      "description": "Are you sure you want to leave this company? This action cannot be undone.",
+      "confirmText": "Leave"
+    },
+    "edit": {
+      "title": "Edit company",
+      "companyName": "Company name",
+      "adress": "Adress",
+      "phone": "Phone",
+      "website": "Website",
+      "description": "Description",
+      "confirmText": "Save"
+    },
+    "cancel": "Cancel"
+  },
+  "aboutTitle": "About"
+}

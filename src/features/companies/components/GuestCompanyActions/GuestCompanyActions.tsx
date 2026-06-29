@@ -1,4 +1,5 @@
 import { Button } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   hasPendingRequest: boolean;
@@ -16,17 +17,19 @@ const GuestCompanyActions = ({
   onRequest,
   onCancelRequest,
 }: Props) => {
+  const { t } = useTranslation('companiesDetails');
+
   if (hasPendingRequest) {
     return (
       <Button onClick={onCancelRequest} size="small" variant="outlined" color="warning" loading={cancelRequestLoading}>
-        Cancel request
+        {t('buttons.cancelRequest')}
       </Button>
     );
   }
 
   return (
     <Button onClick={onRequest} size="small" variant="contained" loading={sendRequestLoading}>
-      Request to join
+      {t('buttons.request')}
     </Button>
   );
 };

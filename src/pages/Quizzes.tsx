@@ -18,10 +18,12 @@ import QuizzesList from '@/features/quizzes/components/QuizzesList/QuizzesList';
 import { QuizzFormData } from '@/features/quizzes/schemas/quizzFormSchema';
 import { showNotification } from '@/features/notifications/store/notificationsSlice';
 import { selectUserRoleInCompany } from '@/features/companies/store/companiesSelectors';
+import { useTranslation } from 'react-i18next';
 
 const Quizzes = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const params = useParams();
+  const { t } = useTranslation('quizzes');
   const selectedCompanyId = params.companyId;
   if (!selectedCompanyId) return null;
 
@@ -54,7 +56,7 @@ const Quizzes = () => {
     <>
       {isAdmin && (
         <Button sx={{ mb: 2 }} variant="contained" color="primary" onClick={() => setModalOpen(true)}>
-          Create quizz
+          {t('createQuizzButton')}
         </Button>
       )}
       <QuizzesList quizzes={quizzes} isLoading={quizzesLoading} error={quizzesError} />

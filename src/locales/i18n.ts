@@ -11,12 +11,20 @@ import enUsers from './en/enUsers.json';
 import uaUsers from './ua/uaUsers.json';
 import enCompanies from './en/enCompanies.json';
 import uaCompanies from './ua/uaCompanies.json';
+import enCompaniesDetails from './en/enCompaniesDetails.json';
+import uaCompaniesDetails from './ua/uaCompaniesDetails.json';
+import enQuizzes from './en/enQuizzes.json';
+import uaQuizzes from './ua/uaQuizzes.json';
+import enMembers from './en/enMembers.json';
+import uaMembers from './ua/uaMembers.json';
+import enInvitations from './en/enInvitations.json';
+import uaInvitations from './ua/uaInvitations.json';
 
 i18next.use(initReactI18next).init({
   lng: 'en',
   debug: true,
   fallbackLng: 'en',
-  ns: ['header', 'auth', 'about', 'users', 'companies'],
+  ns: ['header', 'auth', 'about', 'users', 'companies', 'companiesDetails', 'quizzes', 'members', 'invitations'],
   resources: {
     en: {
       header: enHeader,
@@ -24,6 +32,10 @@ i18next.use(initReactI18next).init({
       about: enAbout,
       users: enUsers,
       companies: enCompanies,
+      companiesDetails: enCompaniesDetails,
+      quizzes: enQuizzes,
+      members: enMembers,
+      invitations: enInvitations,
     },
     ua: {
       header: uaHeader,
@@ -31,6 +43,10 @@ i18next.use(initReactI18next).init({
       about: uaAbout,
       users: uaUsers,
       companies: uaCompanies,
+      companiesDetails: uaCompaniesDetails,
+      quizzes: uaQuizzes,
+      members: uaMembers,
+      invitations: uaInvitations,
     },
   },
 });
