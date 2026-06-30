@@ -1,0 +1,30 @@
+{
+  "card": {
+    "title": "My profile",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email"
+  },
+  "buttons": {
+    "save": "Save changes",
+    "changePass": "Change password",
+    "deleteAcc": "Delete account"
+  },
+  "tabs": {
+    "owned": "Owned companies",
+    "joined": "Joined companies"
+  },
+  "confirmModal": {
+    "title": "Confirm Account Deletion",
+    "description": "Are you sure you want to delete your account? This action cannot be undone.",
+    "confirmText": "Delete"
+  },
+  "changePassModal": {
+    "title": "Change password",
+    "oldPass": "Old password",
+    "newPass": "New password",
+    "confirmPass": "Confirm password",
+    "saveBtn": "Save",
+    "cancelBtn": "Cancel"
+  }
+}

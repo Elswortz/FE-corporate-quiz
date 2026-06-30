@@ -11,5 +11,22 @@
   "profileMenu": {
     "option1": "Мій профіль",
     "option2": "Вихід"
+  },
+  "notificationBell": {
+    "noInvitations": "Немає запрошень",
+    "companyInvitation": "запрошує вас до компанії",
+    "requested": "Запит на приєднання до",
+    "from": "Від:",
+    "awaitingResponse": "Чекає відповіді"
+  },
+  "invitationModal": {
+    "invitationTitle": "Запрошення від компанії",
+    "requestTitle": "Запит до компанії",
+    "invitedYou": "Вас запросив",
+    "youRequested": "Ви запросили приєднання",
+    "status": "Статус:",
+    "acceptBtn": "Прийняти",
+    "rejectBtn": "Відхилити",
+    "cancelBtn": "Скасувати"
   }
 }

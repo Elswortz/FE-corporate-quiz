@@ -17,10 +17,12 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useNavigate } from 'react-router-dom';
 import { selectIsSSOAuth } from '@/features/auth/store/authSelectors';
 import ImageUploader from '@/components/ui/ImageUpload/ImageUpload';
+import { useTranslation } from 'react-i18next';
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation('profile');
 
   const user = useAppSelector(selectUserProfileData);
   const editLoading = useAppSelector(selectUpdateUserLoading);
@@ -107,7 +109,7 @@ const UserInfo = () => {
       }}
     >
       <Typography variant="h4" mb={3}>
-        My Profile
+        {t('card.title')}
       </Typography>
 
       <Stack direction="row" alignItems="center" spacing={3}>
@@ -126,41 +128,41 @@ const UserInfo = () => {
             ID: {user?.id}
           </Typography>
           <TextField
-            label="First Name"
+            label={t('card.firstName')}
             value={firstName}
             onChange={e => setFirstName(e.target.value)}
             fullWidth
             sx={{ mt: 2 }}
           />
           <TextField
-            label="Last Name"
+            label={t('card.lastName')}
             value={lastName}
             onChange={e => setLastName(e.target.value)}
             fullWidth
             sx={{ mt: 2 }}
           />
-          <TextField label="Email" value={user?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
+          <TextField label={t('card.email')} value={user?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
         </Box>
       </Stack>
       <Box mt={4} display="flex" justifyContent="space-between">
         <Button variant="contained" color="primary" onClick={handleSave} loading={editLoading}>
-          Save Changes
+          {t('buttons.save')}
         </Button>
         {!isSSOAuth && (
           <Button variant="outlined" color="secondary" onClick={() => setIsPassChangeOpen(true)}>
-            Change Password
+            {t('buttons.changePass')}
           </Button>
         )}
         <Button variant="outlined" color="error" onClick={() => setIsConfirmDelOpen(true)}>
-          Delete Account
+          {t('buttons.deleteAcc')}
         </Button>
       </Box>
 
       <ConfirmModal
         isOpen={isConfirmDelOpen}
-        title={'Confirm Account Deletion'}
-        description={'Are you sure you want to delete your account? This action cannot be undone.'}
-        confirmText={'Delete'}
+        title={t('confirmModal.title')}
+        description={t('confirmModal.description')}
+        confirmText={t('confirmModal.confirmText')}
         confirmColor={'error'}
         onConfirm={handleDelete}
         onCancel={() => setIsConfirmDelOpen(false)}

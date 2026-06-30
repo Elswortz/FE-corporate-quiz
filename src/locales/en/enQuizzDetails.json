@@ -1,0 +1,21 @@
+{
+  "questions": "questions",
+  "editBtn": "Edit",
+  "deleteBtn": "Delete",
+  "submitBtn": "Submit quiz",
+  "showCorrectBtn": "Show correct answers",
+  "quizCompleted": "Quiz completed",
+  "correctAnswers": "Correct answers:",
+  "lastAttempt": "Last attempt:",
+  "answersReview": "Answers review",
+  "yourAnswer": "Your answer",
+  "exportJsonBtn": "Export JSON",
+  "exportCsvBtn": "Export CSV",
+  "correct": "Correct",
+  "incorrect": "Incorrect",
+  "confirmModal": {
+    "title": "Confirm quiz deletion",
+    "description": "Are you sure you want to delete this quiz? This action can't be undone.",
+    "confirmText": "Delete"
+  }
+}

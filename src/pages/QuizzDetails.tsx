@@ -57,12 +57,14 @@ import { ConfirmModal } from '@/components/ui';
 import { fetchCompanyById } from '@/features/companies/store/companiesThunks';
 import { exportToJson } from '@/features/quizzes/utils/exportToJson';
 import { exportToCsv } from '@/features/quizzes/utils/exportToCsv';
+import { useTranslation } from 'react-i18next';
 
 const QuizzDetails = () => {
   const { companyId, quizzId } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation('quizDetails');
   // const { isLoggedIn, user } = useAuth();
 
   const selectedCompany = useAppSelector(selectSelectedCompany);
@@ -214,12 +216,12 @@ const QuizzDetails = () => {
 
               <Typography color="text.secondary">{quizz.description}</Typography>
 
-              <Chip label={`${quizz.questions.length} questions`} sx={{ alignSelf: 'flex-start' }} />
+              <Chip label={`${quizz.questions.length} ${t('questions')}`} sx={{ alignSelf: 'flex-start' }} />
 
               {(role === 'owner' || role === 'admin') && (
                 <Stack direction="row" spacing={2}>
                   <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setIsEditOpen(true)}>
-                    Edit
+                    {t('editBtn')}
                   </Button>
 
                   <Button
@@ -228,7 +230,7 @@ const QuizzDetails = () => {
                     startIcon={<DeleteIcon />}
                     onClick={() => setIsConfirmDeleteOpen(true)}
                   >
-                    Delete
+                    {t('deleteBtn')}
                   </Button>
                 </Stack>
               )}
@@ -267,7 +269,7 @@ const QuizzDetails = () => {
             ))}
 
             <Button variant="contained" disabled={!isCompleted || quizzResultsLoading} onClick={handleSubmitQuiz}>
-              Submit Quiz
+              {t('submitBtn')}
             </Button>
           </>
         )}
@@ -276,7 +278,7 @@ const QuizzDetails = () => {
           <Card>
             <CardContent>
               <Stack spacing={3}>
-                <Typography variant="h5">Quiz completed</Typography>
+                <Typography variant="h5">{t('quizCompleted')}</Typography>
 
                 <LinearProgress
                   variant="determinate"
@@ -286,11 +288,11 @@ const QuizzDetails = () => {
                 <Typography variant="h4">{quizzResults.score}%</Typography>
 
                 <Typography>
-                  Correct answers: {quizzResults.correct_answers_count} / {quizzResults.total_questions}
+                  {`${t('correctAnswers')} ${quizzResults.correct_answers_count} / ${quizzResults.total_questions}`}
                 </Typography>
 
                 <Typography color="text.secondary">
-                  Last attempt: {new Date(quizzResults.last_attempt_time).toLocaleString()}
+                  {`${t('lastAttempt')} ${new Date(quizzResults.last_attempt_time).toLocaleString()}`}
                 </Typography>
 
                 <Button
@@ -300,7 +302,7 @@ const QuizzDetails = () => {
                     setShowAnswers(true);
                   }}
                 >
-                  Show Correct Answers
+                  {t('showCorrectBtn')}
                 </Button>
               </Stack>
             </CardContent>
@@ -312,15 +314,15 @@ const QuizzDetails = () => {
             <CardContent>
               <Stack spacing={3}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography variant="h5">Answers Review</Typography>
+                  <Typography variant="h5">{t('answersReview')}</Typography>
 
                   <Stack direction="row" spacing={2}>
                     <Button variant="outlined" onClick={() => exportToJson(quizz, quizzResults, quizzAnswers)}>
-                      Export JSON
+                      {t('exportJsonBtn')}
                     </Button>
 
                     <Button variant="outlined" onClick={() => exportToCsv(quizz, quizzAnswers)}>
-                      Export CSV
+                      {t('exportCsvBtn')}
                     </Button>
                   </Stack>
                 </Stack>
@@ -332,12 +334,12 @@ const QuizzDetails = () => {
                     </Typography>
 
                     <Typography color={answer.is_correct ? 'success.main' : 'error.main'}>
-                      Your answer: {answer.selected_answer_text}
+                      {`${t('yourAnswer')} ${answer.selected_answer_text}`}
                     </Typography>
 
                     <Chip
                       color={answer.is_correct ? 'success' : 'error'}
-                      label={answer.is_correct ? 'Correct' : 'Incorrect'}
+                      label={answer.is_correct ? t('correct') : t('incorrect')}
                       size="small"
                     />
 
@@ -359,9 +361,9 @@ const QuizzDetails = () => {
       />
       <ConfirmModal
         isOpen={isConfirmDeleteOpen}
-        title="Confirm quiz deletion"
-        description="Are you sure you want to delete this quiz?"
-        confirmText="Delete"
+        title={t('confirmModal.title')}
+        description={t('confirmModal.description')}
+        confirmText={t('confirmModal.confirmText')}
         confirmColor="error"
         onConfirm={handleDelete}
         onCancel={() => setIsConfirmDeleteOpen(false)}

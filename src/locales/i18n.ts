@@ -19,12 +19,28 @@ import enMembers from './en/enMembers.json';
 import uaMembers from './ua/uaMembers.json';
 import enInvitations from './en/enInvitations.json';
 import uaInvitations from './ua/uaInvitations.json';
+import enProfile from './en/enProfile.json';
+import uaProfile from './ua/uaProfile.json';
+import enQuizzDetails from './en/enQuizzDetails.json';
+import uaQuizzDetails from './ua/uaQuizzDetails.json';
 
 i18next.use(initReactI18next).init({
   lng: 'en',
   debug: true,
   fallbackLng: 'en',
-  ns: ['header', 'auth', 'about', 'users', 'companies', 'companiesDetails', 'quizzes', 'members', 'invitations'],
+  ns: [
+    'header',
+    'auth',
+    'about',
+    'users',
+    'companies',
+    'companiesDetails',
+    'quizzes',
+    'members',
+    'invitations',
+    'profile',
+    'quizDetails',
+  ],
   resources: {
     en: {
       header: enHeader,
@@ -36,6 +52,8 @@ i18next.use(initReactI18next).init({
       quizzes: enQuizzes,
       members: enMembers,
       invitations: enInvitations,
+      profile: enProfile,
+      quizDetails: enQuizzDetails,
     },
     ua: {
       header: uaHeader,
@@ -47,6 +65,8 @@ i18next.use(initReactI18next).init({
       quizzes: uaQuizzes,
       members: uaMembers,
       invitations: uaInvitations,
+      profile: uaProfile,
+      quizDetails: uaQuizzDetails,
     },
   },
 });

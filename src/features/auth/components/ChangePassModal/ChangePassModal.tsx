@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { changePasswordSchema, ChangePasswordFormData } from '../../schemas/authSchemas';
 import { useAppDispatch } from '@/store/hooks';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   open: boolean;
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const ChangePassModal = ({ open, onClose }: Props) => {
+  const { t } = useTranslation('profile');
   const dispatch = useAppDispatch();
   const {
     register,
@@ -66,11 +68,11 @@ const ChangePassModal = ({ open, onClose }: Props) => {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Change Password</DialogTitle>
+      <DialogTitle>{t('changePassModal.title')}</DialogTitle>
 
       <DialogContent>
         <TextField
-          label="Old Password"
+          label={t('changePassModal.oldPass')}
           type="password"
           fullWidth
           sx={{ mt: 1 }}
@@ -80,7 +82,7 @@ const ChangePassModal = ({ open, onClose }: Props) => {
         />
 
         <TextField
-          label="New Password"
+          label={t('changePassModal.newPass')}
           type="password"
           fullWidth
           sx={{ mt: 2 }}
@@ -90,7 +92,7 @@ const ChangePassModal = ({ open, onClose }: Props) => {
         />
 
         <TextField
-          label="Confirm Password"
+          label={t('changePassModal.confirmPass')}
           type="password"
           fullWidth
           sx={{ mt: 2 }}
@@ -101,10 +103,10 @@ const ChangePassModal = ({ open, onClose }: Props) => {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onClose}>{t('changePassModal.cancelBtn')}</Button>
 
         <Button variant="contained" loading={isSubmitting} onClick={handleSubmit(onSubmit)}>
-          Save
+          {t('changePassModal.saveBtn')}
         </Button>
       </DialogActions>
     </Dialog>

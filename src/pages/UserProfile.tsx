@@ -17,9 +17,11 @@ import {
 import { fetchOwnedCompanies, fetchJoinedCompanies } from '@/features/companies/store/companiesThunks';
 import { usePagination } from '@/hooks/usePagination';
 import LoadMoreButton from '@/components/ui/LoadMoreButton/LoadMoreButton';
+import { useTranslation } from 'react-i18next';
 
 const UserProfile = () => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('profile');
   const [activeTab, setActiveTab] = useState<'owned' | 'joined'>('owned');
 
   const ownedCompanies = useAppSelector(selectOwnedCompanies);
@@ -68,8 +70,8 @@ const UserProfile = () => {
           }}
         >
           <Tabs value={activeTab} onChange={(_, value) => setActiveTab(value)} sx={{ mb: 3 }}>
-            <Tab label="Owned Companies" value="owned" />
-            <Tab label="Joined Companies" value="joined" />
+            <Tab label={t('tabs.owned')} value="owned" />
+            <Tab label={t('tabs.joined')} value="joined" />
           </Tabs>
 
           {activeTab === 'owned' && (
