@@ -121,8 +121,8 @@ const companiesSlice = createSlice({
       })
       .addCase(createCompany.fulfilled, (state, { payload }) => {
         state.mutations.create.isLoading = false;
-        state.lists.owned.data.push(payload);
-        if (payload.company_status === 'visible') state.lists.all.data.push(payload);
+        state.lists.owned.data.unshift(payload);
+        if (payload.company_status === 'visible') state.lists.all.data.unshift(payload);
       })
       .addCase(createCompany.rejected, (state, { payload }) => {
         state.mutations.create.isLoading = false;

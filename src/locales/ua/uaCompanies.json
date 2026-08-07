@@ -1,0 +1,24 @@
+{
+  "title": "Компанії",
+  "searchText": "Пошук команій",
+  "createCompanyButton": "Створити компанію",
+  "totalCompaniesText": "Всього компаній",
+  "showMoreButtonText": "Показати більше",
+  "createModal": {
+    "title": "Створити компанію",
+    "companyName": "Назва компанії",
+    "adress": "Адреса",
+    "email": "Елекетронна адреса",
+    "phone": "Телефон",
+    "website": "Веб-сайт",
+    "logo": "Логотип",
+    "description": "Опис",
+    "status": {
+      "label": "Статус",
+      "visible": "Видима",
+      "hidden": "Прихована"
+    },
+    "createBtn": "Створити",
+    "cancelBtn": "Скасувати"
+  }
+}

@@ -7,5 +7,26 @@
   "authButtons": {
     "loginBtn": "Login",
     "registerBtn": "Registration"
+  },
+  "profileMenu": {
+    "option1": "My profile",
+    "option2": "Log out"
+  },
+  "notificationBell": {
+    "noInvitations": "No invitations",
+    "companyInvitation": "company invitation",
+    "requested": "Requested to join ",
+    "from": "From:",
+    "awaitingResponse": "Awaiting response"
+  },
+  "invitationModal": {
+    "invitationTitle": "Company Invitation",
+    "requestTitle": "Company Request",
+    "invitedYou": "Invited you",
+    "youRequested": "You requested to join",
+    "status": "Status:",
+    "acceptBtn": "Accept",
+    "rejectBtn": "Reject",
+    "cancelBtn": "Cancel"
   }
 }

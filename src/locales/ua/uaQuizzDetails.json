@@ -1,0 +1,21 @@
+{
+  "questions": "питань",
+  "editBtn": "Редагувати",
+  "deleteBtn": "Видалити",
+  "submitBtn": "Пройти квіз",
+  "showCorrectBtn": "Показати правильні відповіді",
+  "quizCompleted": "Квіз пройдено",
+  "correctAnswers": "Правильні відповіді:",
+  "lastAttempt": "Остання спроба:",
+  "answersReview": "Перегляд відповідей",
+  "yourAnswer": "Ваша відповідь:",
+  "exportJsonBtn": "Експорт JSON",
+  "exportCsvBtn": "Експорт CSV",
+  "correct": "Правильно",
+  "incorrect": "Неправильно",
+  "confirmModal": {
+    "title": "Підтвердіть видалення квізу",
+    "description": "Ви впевнені що хочете видалити вибраний квіз? Ці дію не можна буде скасувати.",
+    "confirmText": "Видалити"
+  }
+}

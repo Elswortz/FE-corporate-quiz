@@ -18,10 +18,12 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { InvitationId } from '../../types/invitationsTypes';
+import { useTranslation } from 'react-i18next';
 
 const InvitationsList = () => {
   const [isConfirmDialogOpen, setIsConfirmDelOpen] = useState(false);
   const [selectedInvitationId, setSelectedInvitationId] = useState<string | null>('');
+  const { t } = useTranslation('invitations');
 
   const dispatch = useAppDispatch();
   const { companyId } = useParams();
@@ -132,9 +134,9 @@ const InvitationsList = () => {
 
       <ConfirmModal
         isOpen={isConfirmDialogOpen}
-        title={'Confirm invitation cancellation'}
-        description={'Are you sure you want to cancel your invitation? This action cannot be undone'}
-        confirmText={'Confirm'}
+        title={t('confirmModal.title')}
+        description={t('confirmModal.description')}
+        confirmText={t('confirmModal.confirmText')}
         confirmColor={'primary'}
         onConfirm={handleCancel}
         onCancel={() => setIsConfirmDelOpen(false)}

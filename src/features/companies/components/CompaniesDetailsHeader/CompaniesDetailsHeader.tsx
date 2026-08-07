@@ -1,15 +1,16 @@
 import { Company, CompanyRole } from '../../types/companiesTypes';
 import { CardHeader } from '@mui/material';
 
-import CompanyLogo from '../CompanyLogo/CompanyLogo';
+import BusinessIcon from '@mui/icons-material/Business';
 import CompanyMeta from '../CompanyMeta/CompanyMeta';
 import CompanyAddress from '../CompanyAddress/CompanyAddress';
 import CompanyDetailsActions from '../CompanyDetailsActions/CompanyDetailsActions';
+import ImageUploader from '@/components/ui/ImageUpload/ImageUpload';
 
 type Props = {
   company: Company;
 
-  role: CompanyRole | null;
+  role: CompanyRole | undefined;
 
   isLoggedIn: boolean;
 
@@ -31,7 +32,7 @@ type Props = {
     handleToggleStatus: () => Promise<void>;
     handleRequest: () => Promise<void>;
     handleCancelRequest: () => Promise<void>;
-    handleChangeLogo: (formData: FormData) => Promise<void>;
+    handleChangeLogo: (file: File) => Promise<void>;
   };
 };
 
@@ -56,8 +57,17 @@ const CompanyDetailsHeader = ({
           ml: 2,
         },
       }}
-      avatar={<CompanyLogo company={company} isOwner={role === 'owner'} onChangeLogo={actions.handleChangeLogo} />}
-      title={<CompanyMeta companyName={company.company_name} companyStatus={company.company_status} />}
+      avatar={
+        <ImageUploader
+          src={company.company_logo_url}
+          alt={company.company_name}
+          size={80}
+          disabled={role !== 'owner'}
+          onUpload={actions.handleChangeLogo}
+          fallback={<BusinessIcon fontSize="large" />}
+        />
+      }
+      title={<CompanyMeta companyName={company.company_name} companyStatus={company.company_status} role={role} />}
       subheader={<CompanyAddress address={company.company_address} />}
       action={
         <CompanyDetailsActions

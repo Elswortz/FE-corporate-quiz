@@ -17,6 +17,7 @@ import {
 import { updateCompany } from '../../store/companiesThunks';
 import { selectSelectedCompany, selectUpdateCompanyLoading } from '../../store/companiesSelectors';
 import { editCompanySchema, EditCompanyFormData } from '../../schemas/companiesSchemas';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   open: boolean;
@@ -25,6 +26,7 @@ type Props = {
 
 const EditCompanyModal = ({ open, onClose }: Props) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('companiesDetails');
   const company = useAppSelector(selectSelectedCompany);
   const isLoading = useAppSelector(selectUpdateCompanyLoading);
 
@@ -80,7 +82,7 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" disableRestoreFocus>
-      <DialogTitle>Edit Company</DialogTitle>
+      <DialogTitle>{t('modals.edit.title')}</DialogTitle>
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <DialogContent
@@ -91,7 +93,7 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
           }}
         >
           <TextField
-            label="Company name"
+            label={t('modals.edit.companyName')}
             fullWidth
             required
             {...register('company_name')}
@@ -100,7 +102,7 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Address"
+            label={t('modals.edit.adress')}
             fullWidth
             {...register('company_address')}
             error={!!errors.company_address}
@@ -108,7 +110,7 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Phone"
+            label={t('modals.edit.phone')}
             fullWidth
             {...register('company_phone')}
             error={!!errors.company_phone}
@@ -116,7 +118,7 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Website"
+            label={t('modals.edit.website')}
             fullWidth
             {...register('company_website')}
             error={!!errors.company_website}
@@ -124,7 +126,7 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Description"
+            label={t('modals.edit.description')}
             fullWidth
             multiline
             minRows={3}
@@ -136,11 +138,11 @@ const EditCompanyModal = ({ open, onClose }: Props) => {
 
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={handleClose} disabled={isLoading}>
-            Cancel
+            {t('modals.cancel')}
           </Button>
 
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? <CircularProgress size={20} /> : 'Save'}
+            {isLoading ? <CircularProgress size={20} /> : t('modals.edit.confirmText')}
           </Button>
         </DialogActions>
       </Box>

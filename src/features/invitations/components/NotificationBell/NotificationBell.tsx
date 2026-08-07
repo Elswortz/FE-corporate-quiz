@@ -18,9 +18,11 @@ import { selectUserInvitations, selectUserInvitationsLoading } from '../../store
 import InvitationModal from '../InvitationModal/InvitationModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Invitation } from '../../types/invitationsTypes';
+import { useTranslation } from 'react-i18next';
 
 const NotificationsBell = () => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('header');
   const invitations = useAppSelector(selectUserInvitations);
   const count = invitations.length;
   const isLoading = useAppSelector(selectUserInvitationsLoading);
@@ -57,7 +59,7 @@ const NotificationsBell = () => {
             <CircularProgress size={20} />
           </MenuItem>
         ) : invitations.length === 0 ? (
-          <MenuItem disabled>No invitations</MenuItem>
+          <MenuItem disabled>{t('notificationBell.noInvitations')}</MenuItem>
         ) : (
           invitations.map(invite => (
             <MenuItem key={invite.id} onClick={() => handleItemClick(invite)}>
@@ -68,19 +70,19 @@ const NotificationsBell = () => {
                 <ListItemText
                   primary={
                     <Typography variant="subtitle1">
-                      <strong>{invite.company.company_name}</strong> company invitation
+                      <strong>{invite.company.company_name}</strong> {t('notificationBell.companyInvitation')}
                     </Typography>
                   }
-                  secondary={`From: ${invite.invited_by.first_name} ${invite.invited_by.last_name}`}
+                  secondary={`${t('notificationBell.from')} ${invite.invited_by.first_name} ${invite.invited_by.last_name}`}
                 />
               ) : (
                 <ListItemText
                   primary={
                     <Typography variant="subtitle1">
-                      Requested to join <strong>{invite.company.company_name}</strong>
+                      {t('notificationBell.requested')} <strong>{invite.company.company_name}</strong>
                     </Typography>
                   }
-                  secondary={`Awaiting response`}
+                  secondary={t('notificationBell.awaitingResponse')}
                 />
               )}
             </MenuItem>

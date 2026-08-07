@@ -14,6 +14,7 @@
   "text": {
     "loginTitle": "Login to account",
     "registerTitle": "Account registration",
-    "or": "OR"
+    "or": "OR",
+    "forgotPassword": "Forgot your password? Reset password"
   }
 }

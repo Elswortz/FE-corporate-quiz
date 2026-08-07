@@ -1,6 +1,7 @@
 import ConfirmModal from '@/components/ui/ConfirmModal/ConfirmModal';
 
 import EditCompanyModal from '../EditCompanyModal/EditCompanyModal';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   modalState: {
@@ -24,13 +25,14 @@ type Props = {
 };
 
 const CompanyDetailsModals = ({ modalState, modalActions, loading, onDelete, onLeave }: Props) => {
+  const { t } = useTranslation('companiesDetails');
   return (
     <>
       <ConfirmModal
         isOpen={modalState.isConfirmDeleteOpen}
-        title="Confirm Company Deletion"
-        description="Are you sure you want to delete your company? This action cannot be undone."
-        confirmText="Delete"
+        title={t('modals.delete.title')}
+        description={t('modals.delete.description')}
+        confirmText={t('modals.delete.confirmText')}
         confirmColor="error"
         onConfirm={onDelete}
         onCancel={modalActions.closeDelete}
@@ -38,9 +40,9 @@ const CompanyDetailsModals = ({ modalState, modalActions, loading, onDelete, onL
 
       <ConfirmModal
         isOpen={modalState.isConfirmLeaveOpen}
-        title="Confirm Leave From Company"
-        description="Are you sure you want to leave this company? This action cannot be undone."
-        confirmText="Leave"
+        title={t('modals.leave.title')}
+        description={t('modals.leave.description')}
+        confirmText={t('modals.leave.confirmText')}
         confirmColor="error"
         onConfirm={onLeave}
         onCancel={modalActions.closeLeave}

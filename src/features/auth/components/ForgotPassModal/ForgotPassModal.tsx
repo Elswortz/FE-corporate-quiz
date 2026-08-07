@@ -56,9 +56,9 @@ const ForgotPassModal = ({ open, onClose }: ForgotPassModalProps) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Отмена</Button>
+        <Button onClick={onClose}>Cancel</Button>
         <Button onClick={handleSubmit(onSubmit)} loading={isSubmitting} variant="contained">
-          Отправить
+          Send
         </Button>
       </DialogActions>
     </Dialog>

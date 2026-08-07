@@ -1,0 +1,24 @@
+{
+  "title": "Companies",
+  "searchText": "Search companies",
+  "createCompanyButton": "Create company",
+  "totalCompaniesText": "Total companies",
+  "showMoreButtonText": "Show more",
+  "createModal": {
+    "title": "Create company",
+    "companyName": "Company name",
+    "adress": "Adress",
+    "email": "Email",
+    "phone": "Phone",
+    "website": "Website",
+    "logo": "Logo URL",
+    "description": "Description",
+    "status": {
+      "label": "Status",
+      "visible": "Visible",
+      "hidden": "Hidden"
+    },
+    "createBtn": "Create",
+    "cancelBtn": "Cancel"
+  }
+}

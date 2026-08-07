@@ -1,14 +1,16 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { Box, Tab, Tabs } from '@mui/material';
 import { CompanyRole } from '../../types/companiesTypes';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   companyId: string;
-  role: CompanyRole | null;
+  role: CompanyRole | undefined;
 };
 
 const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   const location = useLocation();
+  const { t } = useTranslation('companiesDetails');
 
   const basePath = `/companies/${companyId}`;
 
@@ -17,6 +19,10 @@ const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   let tabValue = 0;
 
   if (currentPath.endsWith('/quizzes')) {
+    tabValue = 0;
+  }
+
+  if (currentPath.endsWith('/members')) {
     tabValue = 1;
   }
 
@@ -27,11 +33,11 @@ const CompanyDetailsTabs = ({ companyId, role }: Props) => {
   const canViewInvitations = role === 'owner' || role === 'admin';
 
   return (
-    <Box mt={4}>
+    <Box mt={4} mb={2}>
       <Tabs value={tabValue} textColor="primary" indicatorColor="primary">
-        <Tab label="Members" component={NavLink} to={`${basePath}/members`} />
-        <Tab label="Quizzes" component={NavLink} to={`${basePath}/quizzes`} />
-        {canViewInvitations && <Tab label="Invitations" component={NavLink} to={`${basePath}/invitations`} />}
+        <Tab label={t('tabs.quizzes')} component={NavLink} to={`${basePath}/quizzes`} />
+        <Tab label={t('tabs.members')} component={NavLink} to={`${basePath}/members`} />
+        {canViewInvitations && <Tab label={t('tabs.invitations')} component={NavLink} to={`${basePath}/invitations`} />}
       </Tabs>
     </Box>
   );

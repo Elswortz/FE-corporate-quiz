@@ -10,32 +10,54 @@ import {
   selectAllCompaniesMeta,
 } from '@/features/companies/store/companiesSelectors';
 import { fetchAllCompanies } from '@/features/companies/store/companiesThunks';
-import { usePagination } from '@/hooks/usePagination';
 import LoadMoreButton from '@/components/ui/LoadMoreButton/LoadMoreButton';
+import { useTranslation } from 'react-i18next';
 
 const Companies = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const handleCreate = () => setModalOpen(true);
+  const { t } = useTranslation('companies');
+
   const dispatch = useAppDispatch();
   const allCompanies = useAppSelector(selectAllCompanies);
   const allCompaniesLoading = useAppSelector(selectAllCompaniesLoading);
   const allCompaniesError = useAppSelector(selectAllCompaniesError);
   const allCompaniesMeta = useAppSelector(selectAllCompaniesMeta);
-  const { limit, offset, loadMore } = usePagination({});
+  const isInitialLoading = allCompaniesLoading && allCompanies.length === 0;
+
+  const COMPANIES_LIMIT = 8;
 
   useEffect(() => {
-    dispatch(fetchAllCompanies({ limit, offset }));
-  }, [dispatch, limit, offset]);
+    if (!allCompanies.length && !allCompaniesLoading) {
+      dispatch(fetchAllCompanies({ limit: COMPANIES_LIMIT, offset: 0 }));
+    }
+  }, [dispatch, allCompanies.length, allCompaniesLoading]);
+
+  const handleLoadMore = async () => {
+    if (isLoadingMore) return;
+    setIsLoadingMore(true);
+
+    await dispatch(
+      fetchAllCompanies({
+        limit: COMPANIES_LIMIT,
+        offset: allCompanies.length,
+      })
+    );
+    setIsLoadingMore(false);
+  };
 
   const filteredCompanies = useMemo(() => {
     return allCompanies.filter(company => company.company_name.toLowerCase().includes(search.toLowerCase()));
   }, [allCompanies, search]);
 
   return (
-    <Box sx={{ py: 6 }}>
+    <Box>
       <Container maxWidth="lg">
+        <Typography variant="h4" gutterBottom>
+          {t('title')}
+        </Typography>
         <Box
           sx={{
             display: 'flex',
@@ -44,25 +66,30 @@ const Companies = () => {
             mb: 4,
           }}
         >
-          <TextField fullWidth label="Search companies" value={search} onChange={e => setSearch(e.target.value)} />
+          <TextField fullWidth label={t('searchText')} value={search} onChange={e => setSearch(e.target.value)} />
 
           <Button
             variant="contained"
             color="primary"
-            onClick={handleCreate}
+            onClick={() => setModalOpen(true)}
             sx={{
               height: 56,
               flexShrink: 0,
             }}
           >
-            Create company
+            {t('createCompanyButton')}
           </Button>
         </Box>
-        <CompaniesList companies={filteredCompanies} isLoading={allCompaniesLoading} error={allCompaniesError} />
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          Total companies: {allCompaniesMeta?.total ?? 0}
-        </Typography>
-        <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={allCompaniesLoading} onClick={loadMore} />
+        <CompaniesList companies={filteredCompanies} isLoading={isInitialLoading} error={allCompaniesError} />
+        {!isInitialLoading && !allCompaniesError && allCompanies.length > 0 && (
+          <>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+              {t('totalCompaniesText')}: {allCompaniesMeta?.total ?? 0}
+            </Typography>
+
+            <LoadMoreButton hasMore={allCompaniesMeta?.has_next} isLoading={isLoadingMore} onClick={handleLoadMore} />
+          </>
+        )}
         <CreateCompanyModal open={modalOpen} onClose={() => setModalOpen(false)} />
       </Container>
     </Box>

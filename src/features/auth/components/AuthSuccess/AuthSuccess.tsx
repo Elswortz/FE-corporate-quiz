@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { setTokens } from '@/features/auth/store/authSlice';
+import { setSSOAuth, setTokens } from '@/features/auth/store/authSlice';
 import { fetchUserProfile } from '@/features/users/store/usersThunks';
 import { tokenService } from '@/api/tokenService';
 import { useAppDispatch } from '@/store/hooks';
@@ -18,6 +18,7 @@ const AuthSuccess = () => {
     if (accessToken && refreshToken) {
       dispatch(setTokens({ accessToken, refreshToken }));
       tokenService.setTokens({ accessToken, refreshToken });
+      dispatch(setSSOAuth(true));
       dispatch(fetchUserProfile())
         .unwrap()
         .then(() => {

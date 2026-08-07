@@ -12,6 +12,7 @@ type AuthState = {
   refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isSSOAuth: boolean;
   error: string | null;
 };
 
@@ -19,6 +20,7 @@ const initialState: AuthState = {
   accessToken: tokenService.getAccessToken(),
   refreshToken: tokenService.getRefreshToken(),
   isAuthenticated: !!tokenService.getAccessToken(),
+  isSSOAuth: localStorage.getItem('isSSOAuth') === 'true',
   isLoading: false,
   error: null,
 };
@@ -27,6 +29,7 @@ const resetAuth = (state: AuthState) => {
   state.accessToken = null;
   state.refreshToken = null;
   state.isAuthenticated = false;
+  state.isSSOAuth = false;
   state.error = null;
   state.isLoading = false;
 };
@@ -40,6 +43,10 @@ const authSlice = createSlice({
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
       state.isAuthenticated = true;
+    },
+    setSSOAuth: (state, action: PayloadAction<boolean>) => {
+      state.isSSOAuth = action.payload;
+      localStorage.setItem('isSSOAuth', String(action.payload));
     },
     logOut: resetAuth,
   },
@@ -66,5 +73,5 @@ const authSlice = createSlice({
       .addCase(checkAuth.rejected, resetAuth),
 });
 
-export const { logOut, setTokens } = authSlice.actions;
+export const { logOut, setTokens, setSSOAuth } = authSlice.actions;
 export const authReducer = authSlice.reducer;

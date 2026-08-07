@@ -28,9 +28,15 @@ const usersSlice = createSlice({
         state.list.isLoading = true;
         state.list.error = null;
       })
-      .addCase(fetchUsers.fulfilled, (state, { payload }) => {
+      .addCase(fetchUsers.fulfilled, (state, { payload, meta }) => {
+        const offset = meta.arg.offset;
+        if (offset === 0) {
+          state.list.data = payload.items;
+        } else {
+          state.list.data = [...state.list.data, ...payload.items];
+        }
         state.list.isLoading = false;
-        state.list.data = payload;
+        state.list.meta = payload.meta;
       })
       .addCase(fetchUsers.rejected, (state, { payload }) => {
         state.list.isLoading = false;

@@ -4,6 +4,7 @@ import { Avatar, Menu, MenuItem, Button, Typography, Box, Divider } from '@mui/m
 import { logout } from '@/features/auth/store/authThunks';
 import { selectUserProfileData } from '../../store/usersSelectors';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { useTranslation } from 'react-i18next';
 
 type AccountMenuProps = {
   isMobile?: boolean;
@@ -12,6 +13,7 @@ type AccountMenuProps = {
 const AccountMenu = ({ isMobile = false }: AccountMenuProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation('header');
 
   const user = useAppSelector(selectUserProfileData);
 
@@ -90,10 +92,10 @@ const AccountMenu = ({ isMobile = false }: AccountMenuProps) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleProfile}>My profile</MenuItem>
+        <MenuItem onClick={handleProfile}>{t('profileMenu.option1')}</MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
-          Log out
+          {t('profileMenu.option2')}
         </MenuItem>
       </Menu>
     </Box>

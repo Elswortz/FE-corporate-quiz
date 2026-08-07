@@ -7,6 +7,7 @@ export const selectUserProfileError = (state: RootState) => state.users.profile.
 export const selectUsersList = (state: RootState) => state.users.list.data;
 export const selectUsersListLoading = (state: RootState) => state.users.list.isLoading;
 export const selectUsersListError = (state: RootState) => state.users.list.error;
+export const selectUsersListMeta = (state: RootState) => state.users.list.meta;
 
 export const selectSelectedUser = (state: RootState) => state.users.selected.data;
 export const selectSelectedUserLoading = (state: RootState) => state.users.selected.isLoading;

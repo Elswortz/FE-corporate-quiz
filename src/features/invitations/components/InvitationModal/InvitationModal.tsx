@@ -20,6 +20,7 @@ import {
   selectCancelRequestLoading,
   selectRejectInvitationLoading,
 } from '../../store/invitationsSelectors';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   invite: Invitation;
@@ -28,6 +29,7 @@ type Props = {
 
 const InvitationModal = ({ invite, onClose }: Props) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('header');
   const acceptLoading = useAppSelector(selectAcceptInvitationLoading);
   const rejectLoading = useAppSelector(selectRejectInvitationLoading);
   const cancelLoading = useAppSelector(selectCancelRequestLoading);
@@ -86,7 +88,9 @@ const InvitationModal = ({ invite, onClose }: Props) => {
 
   return (
     <Dialog open onClose={onClose} maxWidth="xs" fullWidth>
-      <DialogTitle>{invType === 'company_invite' ? 'Company Invitation' : 'Company Request'}</DialogTitle>
+      <DialogTitle>
+        {invType === 'company_invite' ? t('invitationModal.invitationTitle') : t('invitationModal.requestTitle')}
+      </DialogTitle>
       <DialogContent>
         <Stack spacing={3} alignItems="center" textAlign="center">
           <Avatar src={companyLogoUrl} sx={{ width: 72, height: 72 }} />
@@ -99,13 +103,13 @@ const InvitationModal = ({ invite, onClose }: Props) => {
             <Box>
               <Typography variant="subtitle1">{`${byFirstName} ${byLastName}`}</Typography>
               <Typography variant="body2" color="text.secondary">
-                {invType === 'company_invite' ? 'Invited you' : 'You requested to join'}
+                {invType === 'company_invite' ? t('invitationModal.invitedYou') : t('invitationModal.youRequested')}
               </Typography>
             </Box>
           </Box>
 
           <Typography variant="caption" color="text.secondary">
-            Status: <b>{status}</b>
+            {t('invitationModal.status')} <b>{status}</b>
           </Typography>
         </Stack>
       </DialogContent>
@@ -114,15 +118,15 @@ const InvitationModal = ({ invite, onClose }: Props) => {
         {invType === 'company_invite' ? (
           <>
             <Button onClick={handleAccept} variant="contained" loading={acceptLoading}>
-              Accept
+              {t('invitationModal.acceptBtn')}
             </Button>
             <Button onClick={handleReject} variant="outlined" loading={rejectLoading}>
-              Reject
+              {t('invitationModal.rejectBtn')}
             </Button>
           </>
         ) : (
           <Button onClick={handleCancel} variant="outlined" color="error" loading={cancelLoading}>
-            Cancel
+            {t('invitationModal.cancelBtn')}
           </Button>
         )}
       </DialogActions>

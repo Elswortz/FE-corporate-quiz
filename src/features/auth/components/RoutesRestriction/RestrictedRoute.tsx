@@ -10,9 +10,9 @@ type RestrictedRouteProps = {
 const RestrictedRoute: FC<RestrictedRouteProps> = ({ children, redirectTo = '/' }) => {
   const { isLoggedIn, isLoading } = useAuth();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  // if (isLoading) {
+  //   return <div>Loading...</div>;
+  // }
 
   if (isLoggedIn) {
     return <Navigate to={redirectTo} replace />;

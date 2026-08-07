@@ -23,14 +23,24 @@ import ConfirmModal from '../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { selectSelectedCompany } from '@/features/companies/store/companiesSelectors';
 import { CompanyRole, Member } from '@/features/companies/types/companiesTypes';
+import { useTranslation } from 'react-i18next';
 
 const Members = () => {
   const [isConfirmDialogOpen, setisConfirmDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const { t } = useTranslation('members');
   const dispatch = useAppDispatch();
   const selectedCompany = useAppSelector(selectSelectedCompany);
   const user = useAppSelector(selectUserProfileData);
+
+  const roleOrder: Record<CompanyRole, number> = {
+    owner: 0,
+    admin: 1,
+    member: 2,
+  };
+
   const members = selectedCompany?.members || [];
+  const sortedMembers = [...members].sort((a, b) => roleOrder[a.role] - roleOrder[b.role]);
 
   if (!selectedCompany) return null;
 
@@ -69,7 +79,6 @@ const Members = () => {
           severity: 'success',
         })
       );
-      // Можно добавить обновление данных компании после удаления
     } catch (err: any) {
       dispatch(
         showNotification({
@@ -86,9 +95,9 @@ const Members = () => {
   return (
     <>
       <Box>
-        {members?.length ? (
+        {sortedMembers?.length ? (
           <List>
-            {members.map(member => (
+            {sortedMembers.map(member => (
               <div key={member.id}>
                 <ListItem
                   secondaryAction={
@@ -107,8 +116,8 @@ const Members = () => {
                             value={member.role}
                             onChange={e => handleChangeRole(member, e.target.value as CompanyRole)}
                           >
-                            <MenuItem value="admin">Admin</MenuItem>
-                            <MenuItem value="member">Member</MenuItem>
+                            <MenuItem value="admin">{t('status.admin')}</MenuItem>
+                            <MenuItem value="member">{t('status.member')}</MenuItem>
                           </Select>
                         </FormControl>
 
@@ -122,7 +131,7 @@ const Members = () => {
                             setSelectedMember(member);
                           }}
                         >
-                          Exclude
+                          {t('excludeButton')}
                         </Button>
                       </Box>
                     ) : null
@@ -139,7 +148,7 @@ const Members = () => {
                         </Typography>
 
                         <Chip
-                          label={member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                          label={t(`status.${member.role}`)}
                           size="small"
                           color={getRoleColor(member.role)}
                           variant="outlined"
@@ -159,9 +168,9 @@ const Members = () => {
       </Box>
       <ConfirmModal
         isOpen={isConfirmDialogOpen}
-        title={'Confirm member exclude'}
-        description={`Are you sure you want to remove ${selectedMember?.first_name} ${selectedMember?.last_name} from the company?`}
-        confirmText={'Remove'}
+        title={t('confirmModal.title')}
+        description={`${t('confirmModal.descriptionPart1')} ${selectedMember?.first_name} ${selectedMember?.last_name} ${t('confirmModal.descriptionPart2')}`}
+        confirmText={t('confirmModal.confirmText')}
         confirmColor={'error'}
         onConfirm={() => {
           if (selectedMember) {

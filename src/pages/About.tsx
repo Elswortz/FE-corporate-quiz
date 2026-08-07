@@ -5,53 +5,55 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import BusinessIcon from '@mui/icons-material/Business';
 import SchoolIcon from '@mui/icons-material/School';
 import InsightsIcon from '@mui/icons-material/Insights';
-
-const features = [
-  {
-    title: 'Company Quizzes',
-    description: 'Companies can create quizzes for onboarding, education, certification, and employee evaluation.',
-    icon: <BusinessIcon fontSize="large" />,
-  },
-  {
-    title: 'Team Collaboration',
-    description: 'Invite employees, manage members, and organize learning inside your company workspace.',
-    icon: <GroupsIcon fontSize="large" />,
-  },
-  {
-    title: 'Interactive Learning',
-    description: 'Users can complete quizzes, improve their knowledge, and track their progress.',
-    icon: <SchoolIcon fontSize="large" />,
-  },
-  {
-    title: 'Performance Tracking',
-    description: 'Monitor quiz results and evaluate user performance through detailed statistics.',
-    icon: <InsightsIcon fontSize="large" />,
-  },
-];
+import { useTranslation } from 'react-i18next';
 
 const About = () => {
+  const { t } = useTranslation('about');
+
+  const features = [
+    {
+      title: t('features.feature1.title'),
+      description: t('features.feature1.text'),
+      icon: <BusinessIcon fontSize="large" />,
+    },
+    {
+      title: t('features.feature2.title'),
+      description: t('features.feature2.text'),
+      icon: <GroupsIcon fontSize="large" />,
+    },
+    {
+      title: t('features.feature3.title'),
+      description: t('features.feature3.text'),
+      icon: <SchoolIcon fontSize="large" />,
+    },
+    {
+      title: t('features.feature4.title'),
+      description: t('features.feature4.text'),
+      icon: <InsightsIcon fontSize="large" />,
+    },
+  ];
+
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 8 }}>
+      <Box sx={{ py: 4 }}>
         <Stack spacing={8}>
           <Box textAlign="center">
             <Typography variant="h3" fontWeight={700} gutterBottom>
-              Quiz Platform for Companies
+              {t('hero.title')}
             </Typography>
 
             <Typography variant="body1" color="text.secondary" maxWidth={800} mx="auto">
-              A modern platform where companies can create quizzes, manage employees, and improve learning through
-              interactive assessments and progress tracking.
+              {t('hero.text')}
             </Typography>
 
             <Button variant="contained" sx={{ mt: 3 }} component={RouterLink} to="/companies">
-              Get started
+              {t('hero.buttonText')}
             </Button>
           </Box>
 
           <Box>
             <Typography variant="h4" fontWeight={600} mb={4} textAlign="center">
-              Main Features
+              {t('features.title')}
             </Typography>
 
             <Grid container spacing={3}>

@@ -1,5 +1,5 @@
-import { Box, Avatar, Typography, TextField, Button, CircularProgress, Stack } from '@mui/material';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { Box, Typography, TextField, Button, CircularProgress, Stack } from '@mui/material';
+import { useState, useEffect } from 'react';
 import { updateUser, updateUserAvatar, removeUser } from '../../store/usersThunks';
 import {
   selectUserProfileData,
@@ -15,15 +15,20 @@ import ChangePassModal from '../../../auth/components/ChangePassModal/ChangePass
 import ConfirmModal from '../../../../components/ui/ConfirmModal/ConfirmModal';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useNavigate } from 'react-router-dom';
+import { selectIsSSOAuth } from '@/features/auth/store/authSelectors';
+import ImageUploader from '@/components/ui/ImageUpload/ImageUpload';
+import { useTranslation } from 'react-i18next';
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation('profile');
 
   const user = useAppSelector(selectUserProfileData);
   const editLoading = useAppSelector(selectUpdateUserLoading);
   const removeLoading = useAppSelector(selectRemoveUserLoading);
   const changeAvatarLoading = useAppSelector(selectUpdateUserAvatarLoading);
+  const isSSOAuth = useAppSelector(selectIsSSOAuth);
 
   const [firstName, setFirstName] = useState(user?.first_name || '');
   const [lastName, setLastName] = useState(user?.last_name || '');
@@ -52,9 +57,7 @@ const UserInfo = () => {
     }
   };
 
-  const handleAvatarChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleAvatarChange = async (file: File) => {
     const formData = new FormData();
     formData.append('avatar_file', file);
 
@@ -99,7 +102,6 @@ const UserInfo = () => {
     <Box
       sx={{
         mx: 'auto',
-        mt: 5,
         p: 4,
         boxShadow: 2,
         borderRadius: 1,
@@ -107,87 +109,60 @@ const UserInfo = () => {
       }}
     >
       <Typography variant="h4" mb={3}>
-        My Profile
+        {t('card.title')}
       </Typography>
 
       <Stack direction="row" alignItems="center" spacing={3}>
         <Box>
-          <Box sx={{ position: 'relative', width: 100, height: 100 }}>
-            <Avatar src={user?.avatar_url || ''} sx={{ width: 100, height: 100 }}>
-              {!user?.avatar_url && !changeAvatarLoading && <PersonIcon fontSize={'large'} />}
-            </Avatar>
-            {changeAvatarLoading && (
-              <Box
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                  borderRadius: '50%',
-                  zIndex: 1,
-                }}
-              />
-            )}
-            {changeAvatarLoading && (
-              <CircularProgress
-                size={36}
-                sx={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  marginTop: '-18px',
-                  marginLeft: '-18px',
-                  zIndex: 2,
-                  color: 'primary.main',
-                }}
-              />
-            )}
-          </Box>
-          <Button variant="outlined" component="label" size="small" sx={{ mt: 1 }}>
-            Upload
-            <input type="file" hidden accept="image/*" onChange={handleAvatarChange} />
-          </Button>
+          <ImageUploader
+            src={user.avatar_url}
+            alt={user.email}
+            size={100}
+            loading={changeAvatarLoading}
+            fallback={<PersonIcon fontSize="large" />}
+            onUpload={handleAvatarChange}
+          />
         </Box>
         <Box flex={1}>
           <Typography variant="body1" color="text.secondary">
             ID: {user?.id}
           </Typography>
           <TextField
-            label="First Name"
+            label={t('card.firstName')}
             value={firstName}
             onChange={e => setFirstName(e.target.value)}
             fullWidth
             sx={{ mt: 2 }}
           />
           <TextField
-            label="Last Name"
+            label={t('card.lastName')}
             value={lastName}
             onChange={e => setLastName(e.target.value)}
             fullWidth
             sx={{ mt: 2 }}
           />
-          <TextField label="Email" value={user?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
+          <TextField label={t('card.email')} value={user?.email || ''} fullWidth sx={{ mt: 2 }} disabled />
         </Box>
       </Stack>
       <Box mt={4} display="flex" justifyContent="space-between">
         <Button variant="contained" color="primary" onClick={handleSave} loading={editLoading}>
-          Save Changes
+          {t('buttons.save')}
         </Button>
-        <Button variant="outlined" color="secondary" onClick={() => setIsPassChangeOpen(true)}>
-          Change Password
-        </Button>
+        {!isSSOAuth && (
+          <Button variant="outlined" color="secondary" onClick={() => setIsPassChangeOpen(true)}>
+            {t('buttons.changePass')}
+          </Button>
+        )}
         <Button variant="outlined" color="error" onClick={() => setIsConfirmDelOpen(true)}>
-          Delete Account
+          {t('buttons.deleteAcc')}
         </Button>
       </Box>
 
       <ConfirmModal
         isOpen={isConfirmDelOpen}
-        title={'Confirm Account Deletion'}
-        description={'Are you sure you want to delete your account? This action cannot be undone.'}
-        confirmText={'Delete'}
+        title={t('confirmModal.title')}
+        description={t('confirmModal.description')}
+        confirmText={t('confirmModal.confirmText')}
         confirmColor={'error'}
         onConfirm={handleDelete}
         onCancel={() => setIsConfirmDelOpen(false)}

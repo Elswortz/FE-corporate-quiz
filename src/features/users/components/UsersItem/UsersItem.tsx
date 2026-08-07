@@ -1,4 +1,4 @@
-import { Card, CardHeader, Avatar, Typography } from '@mui/material';
+import { Card, Avatar, Typography, Stack } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 import { User } from '../../types/userTypes';
 
@@ -10,15 +10,17 @@ const UsersItem = ({ user }: Props) => {
   return (
     <Card
       sx={{
-        display: 'flex',
-        alignItems: 'center',
+        height: '100%',
         p: 2,
         borderRadius: 3,
-        boxShadow: 2,
-        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        transition: 'all 0.2s ease',
+        boxShadow: 1,
         cursor: 'pointer',
         '&:hover': {
-          transform: 'scale(1.02)',
+          transform: 'translateY(-2px)',
           boxShadow: 4,
         },
       }}
@@ -27,28 +29,30 @@ const UsersItem = ({ user }: Props) => {
         src={user.avatar_url || ''}
         alt={`${user.first_name} ${user.last_name}`}
         sx={{
-          width: 56,
-          height: 56,
+          width: 64,
+          height: 64,
           bgcolor: deepPurple[500],
-          mr: 2,
+          flexShrink: 0,
         }}
       >
-        {!user.avatar_url && (user.first_name?.[0] || '?')}
+        {!user.avatar_url && user.first_name?.[0]}
       </Avatar>
 
-      <CardHeader
-        title={
-          <Typography variant="h6" fontWeight="500">
-            {user.first_name} {user.last_name}
-          </Typography>
-        }
-        subheader={
-          <Typography variant="body2" color="text.secondary">
-            {user.email}
-          </Typography>
-        }
-        sx={{ p: 0 }}
-      />
+      <Stack
+        spacing={0.5}
+        sx={{
+          minWidth: 0,
+          flex: 1,
+        }}
+      >
+        <Typography variant="subtitle1" fontWeight={600} noWrap>
+          {user.first_name} {user.last_name}
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" noWrap>
+          {user.email}
+        </Typography>
+      </Stack>
     </Card>
   );
 };

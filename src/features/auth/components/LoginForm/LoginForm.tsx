@@ -90,6 +90,7 @@ const LoginForm = () => {
 
         <Link
           component="button"
+          type="button"
           variant="body2"
           sx={{
             textAlign: 'center',
@@ -97,7 +98,7 @@ const LoginForm = () => {
           }}
           onClick={() => setForgotOpen(true)}
         >
-          Forgot your password? Reset password
+          {t('text.forgotPassword')}
         </Link>
 
         <AlterLogin />

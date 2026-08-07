@@ -1,24 +1,6 @@
-import { AsyncState, OperationState, PaginatedAsyncState } from '@/types/globalTypes';
 import { CompaniesState } from '../types/companiesStateTypes';
 import { Company, CompanyDetails } from '../types/companiesTypes';
-
-const initialAsyncState = <T>(data: T): AsyncState<T> => ({
-  data,
-  isLoading: false,
-  error: null,
-});
-
-const initialPaginatedAsyncState = <T>(data: T): PaginatedAsyncState<T> => ({
-  data,
-  isLoading: false,
-  error: null,
-  meta: null,
-});
-
-const initialOperationState: OperationState = {
-  isLoading: false,
-  error: null,
-};
+import { initialPaginatedAsyncState, initialAsyncState, initialOperationState } from '@/utils/initialStateHelpers';
 
 const companiesState: CompaniesState = {
   lists: {

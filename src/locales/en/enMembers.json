@@ -1,0 +1,14 @@
+{
+  "status": {
+    "owner": "Owner",
+    "admin": "Admin",
+    "member": "Member"
+  },
+  "confirmModal": {
+    "title": "Confirm member exclude",
+    "descriptionPart1": "Are you sure you want to exclude",
+    "descriptionPart2": "from the company? This action can't be undone.",
+    "confirmText": "Exclude"
+  },
+  "excludeButton": "Exclude"
+}

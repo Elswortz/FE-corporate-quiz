@@ -84,11 +84,11 @@ const ResetPassword = () => {
       }}
     >
       <Typography variant="h5" align="center">
-        Password reset
+        Reset password
       </Typography>
 
       <TextField
-        label="Новый пароль"
+        label="New password"
         type="password"
         error={!!errors.password}
         helperText={errors.password?.message}
@@ -96,7 +96,7 @@ const ResetPassword = () => {
       />
 
       <TextField
-        label="Повторите пароль"
+        label="Repeat password"
         type="password"
         error={!!errors.confirmPassword}
         helperText={errors.confirmPassword?.message}
@@ -104,7 +104,7 @@ const ResetPassword = () => {
       />
 
       <Button type="submit" variant="contained" loading={isSubmitting}>
-        Сбросить пароль
+        Reset
       </Button>
     </Box>
   );

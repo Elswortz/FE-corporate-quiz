@@ -23,6 +23,7 @@ import { createCompany } from '../../store/companiesThunks';
 import { createCompanySchema, CreateCompanyFormData } from '../../schemas/companiesSchemas';
 import { selectCreateCompanyLoading } from '../../store/companiesSelectors';
 import { showNotification } from '@/features/notifications/store/notificationsSlice';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   open: boolean;
@@ -42,6 +43,7 @@ const defaultValues: CreateCompanyFormData = {
 
 const CreateCompanyModal = ({ open, onClose }: Props) => {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation('companies');
   const isLoading = useAppSelector(selectCreateCompanyLoading);
   const {
     register,
@@ -68,7 +70,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
       dispatch(showNotification({ message: `${data.company_name} company successfuly created`, severity: 'success' }));
     } catch (err: any) {
       dispatch(
-        showNotification({ message: err.response?.data?.message || 'Failed to create a company', severity: 'success' })
+        showNotification({ message: err.response?.data?.message || 'Failed to create a company', severity: 'error' })
       );
     }
   };
@@ -80,7 +82,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>Create Company</DialogTitle>
+      <DialogTitle>{t('createModal.title')}</DialogTitle>
 
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <DialogContent
@@ -91,7 +93,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           }}
         >
           <TextField
-            label="Company name"
+            label={t('createModal.companyName')}
             fullWidth
             {...register('company_name')}
             error={!!errors.company_name}
@@ -99,7 +101,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Address"
+            label={t('createModal.adress')}
             fullWidth
             {...register('company_address')}
             error={!!errors.company_address}
@@ -107,7 +109,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Email"
+            label={t('createModal.email')}
             type="email"
             fullWidth
             {...register('company_email')}
@@ -116,7 +118,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Phone"
+            label={t('createModal.phone')}
             fullWidth
             {...register('company_phone')}
             error={!!errors.company_phone}
@@ -124,7 +126,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Website"
+            label={t('createModal.website')}
             fullWidth
             {...register('company_website')}
             error={!!errors.company_website}
@@ -132,7 +134,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Logo URL"
+            label={t('createModal.logo')}
             fullWidth
             {...register('company_logo_url')}
             error={!!errors.company_logo_url}
@@ -140,7 +142,7 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <TextField
-            label="Description"
+            label={t('createModal.description')}
             fullWidth
             multiline
             minRows={3}
@@ -150,16 +152,16 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
           />
 
           <FormControl fullWidth error={!!errors.company_status}>
-            <InputLabel>Status</InputLabel>
+            <InputLabel>{t('createModal.status.label')}</InputLabel>
 
             <Controller
               name="company_status"
               control={control}
               render={({ field }) => (
                 <Select {...field} label="Status">
-                  <MenuItem value="visible">Visible</MenuItem>
+                  <MenuItem value="visible">{t('createModal.status.visible')}</MenuItem>
 
-                  <MenuItem value="hidden">Hidden</MenuItem>
+                  <MenuItem value="hidden">{t('createModal.status.hidden')}</MenuItem>
                 </Select>
               )}
             />
@@ -170,11 +172,11 @@ const CreateCompanyModal = ({ open, onClose }: Props) => {
 
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={handleClose} disabled={isLoading}>
-            Cancel
+            {t('createModal.cancelBtn')}
           </Button>
 
           <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? <CircularProgress size={20} /> : 'Create'}
+            {isLoading ? <CircularProgress size={20} /> : t('createModal.createBtn')}
           </Button>
         </DialogActions>
       </Box>

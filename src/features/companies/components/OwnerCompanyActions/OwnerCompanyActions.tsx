@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { CompanyStatus } from '../../types/companiesTypes';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   companyStatus: CompanyStatus;
@@ -18,6 +19,7 @@ type Props = {
 };
 
 const OwnerCompanyActions = ({ companyStatus, isLoading, onToggleStatus, onEdit, onDelete }: Props) => {
+  const { t } = useTranslation('companiesDetails');
   const isHidden = companyStatus === 'hidden';
 
   return (
@@ -29,15 +31,15 @@ const OwnerCompanyActions = ({ companyStatus, isLoading, onToggleStatus, onEdit,
         size="small"
         variant="outlined"
       >
-        {isHidden ? 'Show' : 'Hide'}
+        {isHidden ? t('buttons.show') : t('buttons.hide')}
       </Button>
 
       <Button onClick={onEdit} startIcon={<EditIcon />} size="small" variant="outlined">
-        Edit
+        {t('buttons.edit')}
       </Button>
 
       <Button onClick={onDelete} startIcon={<DeleteIcon />} size="small" variant="contained" color="error">
-        Delete
+        {t('buttons.delete')}
       </Button>
     </>
   );

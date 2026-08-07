@@ -1,4 +1,5 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 type ConfirmModalProps = {
   isOpen: boolean;
@@ -21,6 +22,7 @@ const ConfirmModal = ({
   onCancel,
   isLoading,
 }: ConfirmModalProps) => {
+  const { t } = useTranslation('companiesDetails');
   return (
     <Dialog open={isOpen} onClose={onCancel}>
       <DialogTitle>{title}</DialogTitle>
@@ -28,7 +30,7 @@ const ConfirmModal = ({
         <Typography>{description}</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>Cancel</Button>
+        <Button onClick={onCancel}>{t('modals.cancel')}</Button>
         <Button color={confirmColor} onClick={onConfirm} loading={isLoading}>
           {confirmText}
         </Button>

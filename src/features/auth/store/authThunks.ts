@@ -1,7 +1,7 @@
 import * as authAPI from '../api/authApi.js';
 import { jwtDecode } from 'jwt-decode';
 import { fetchUserProfile } from '../../users/store/usersThunks.js';
-import { setTokens } from './authSlice.js';
+import { setSSOAuth, setTokens } from './authSlice.js';
 import { tokenService } from '../../../api/tokenService.js';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { logOut } from './authSlice.js';
@@ -26,6 +26,7 @@ export const logIn = createAsyncThunk<
 
     dispatch(setTokens({ accessToken, refreshToken }));
     tokenService.setTokens({ accessToken, refreshToken });
+    dispatch(setSSOAuth(false));
 
     await dispatch(fetchUserProfile());
   } catch (err: unknown) {
@@ -90,4 +91,5 @@ export const checkAuth = createAsyncThunk<
 export const logout = () => (dispatch: AppDispatch) => {
   tokenService.clearTokens();
   dispatch(logOut());
+  localStorage.removeItem('isSSOAuth');
 };

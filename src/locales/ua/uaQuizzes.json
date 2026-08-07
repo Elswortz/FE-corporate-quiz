@@ -1,0 +1,30 @@
+{
+  "createQuizzButton": "Створити квіз",
+  "completed": "Пройдено",
+  "modals": {
+    "create": {
+      "title": "Створити квіз",
+      "fields": {
+        "title": "Назва",
+        "description": "Опис",
+        "question": "Питання",
+        "answer": "Відповідь"
+      },
+      "buttons": {
+        "template": "Шаблон",
+        "import": "Імпорт",
+        "addQuestion": "Додати питання",
+        "addAnswer": "Додати відповідь",
+        "create": "Створити",
+        "cancel": "Скасувати"
+      },
+      "correct": "Правильне"
+    },
+    "edit": {
+      "title": "Редагувати квіз",
+      "buttons": {
+        "save": "Зберегти"
+      }
+    }
+  }
+}

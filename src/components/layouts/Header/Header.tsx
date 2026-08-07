@@ -19,9 +19,11 @@ import {
   IconButton,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useTranslation } from 'react-i18next';
 
 function Header() {
   const { isLoggedIn } = useAuth();
+  const { t } = useTranslation('header');
 
   const theme = useTheme();
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'));
@@ -39,7 +41,7 @@ function Header() {
 
   return (
     <>
-      <AppBar position="static" color="primary">
+      <AppBar position="static" color="primary" sx={{ mb: 4 }}>
         <Container maxWidth="lg">
           <Toolbar
             sx={{
@@ -77,15 +79,15 @@ function Header() {
         >
           <List>
             <ListItemButton component={RouterLink} to="/">
-              <ListItemText primary="About" />
+              <ListItemText primary={t('navigation.nav1')} />
             </ListItemButton>
 
             <ListItemButton component={RouterLink} to="/users">
-              <ListItemText primary="Users" />
+              <ListItemText primary={t('navigation.nav2')} />
             </ListItemButton>
 
             <ListItemButton component={RouterLink} to="/companies">
-              <ListItemText primary="Companies" />
+              <ListItemText primary={t('navigation.nav3')} />
             </ListItemButton>
           </List>
         </Box>
